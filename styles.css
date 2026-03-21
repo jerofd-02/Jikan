@@ -4,10 +4,30 @@ body {
     color: white;
 }
 
+.login {
+    font-family: Helvetica, sans-serif;
+    background: #253452;
+    color: white;
+}
+
 h1 {
     margin: 125px 10px 125px 5px;
     font-size: 64px;
     text-align: center;
+}
+
+.h1-login {
+    margin: 125px 10px 125px 5px;
+    font-size: 64px;
+    text-align: center;
+    background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.a-login {
+    color: white;
+    text-decoration: none;
 }
 
 label {
@@ -32,20 +52,22 @@ input {
     max-width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
-    background: #B3B3B3;
+    background: white;
+    border: none;
 }
 
-button {
+.confirmation-button {
     display: block;
     margin: 40px auto;
     border-radius: 15px;
     padding: 10px;
     cursor: pointer;
-    background-color: #B3B3B3;
+    background-color: #9E3DF1FF;
     color: white;
     text-align: center;
     font-weight: bold;
     font-size: 36px;
+    border: none;
 }
 
 .column {
@@ -136,4 +158,3 @@ button {
         margin: 0 auto 20px;
     }
 }
-
