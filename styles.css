@@ -77,6 +77,145 @@ input {
     padding: 125px;
 }
 
+/* Homepage styles */
+
+.homepage {
+    display: flex;
+    gap: 1rem;
+
+    .asside-left {
+        border-right: 1px solid white;
+        margin-right: 10px;
+        padding-right: 1rem;
+
+        width: 300px;
+
+        .user-information-asside {
+
+            display: flex;
+
+            gap: 10px;
+            align-items: center;
+
+            margin-bottom: 1rem;
+            border-bottom: 1px solid white;;
+
+            .user-picture {
+                height: 90px;
+                width: 90px;
+            }
+        }
+
+        .user-borads-asside {
+            margin-left: 5px;
+
+            h2 {
+                background: grey;
+                padding: 15px;
+
+                border-radius: 8px;
+
+                &:hover {
+                    background-color: #9E3DF1FF;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .main-content {
+
+        width: 100%;
+        margin: 0;
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            border-bottom: 1px solid white;
+            padding-bottom: 15px;
+
+            margin-top: 0.5rem;
+
+            h1 {
+                font-size: 36px;
+                margin: 0;
+            }
+
+            .header-buttons {
+                display: flex;
+                gap: 15px;
+
+                button {
+
+                    width: 8rem;
+                    height: 2.5rem;
+
+                    border: none;
+                    border-radius: 7px;
+
+                    color: black;
+                    font-weight: bold;
+                    background: white;
+
+                    &:hover {
+                        color: white;
+                        background: #9E3DF1FF;
+                    }
+                }
+            }
+        }
+
+        .boards-section {
+            display: flex;
+            gap: 1rem;
+
+            margin-top: 2rem;
+
+            overflow: auto;
+
+            .tasks-section {
+                margin-left: 2rem;
+
+                border-right: 1px solid white;
+                padding-right: 3rem;
+            }
+
+            .create-new-column {
+                margin-left: 2rem;
+                width: 260px;
+                height: 6rem;
+
+                border: none;
+                border-radius: 10px;
+
+                font-weight: bold;
+                font-size: 20px;
+
+                &:hover {
+                    color: white;
+                    background: grey;
+                }
+            }
+        }
+
+        .boards-section .tasks-section:nth-child(1) {
+            margin-left: 0;
+        }
+
+        .calendar-section {
+
+            margin: 2rem 1rem 0 0;
+
+            img {
+                width: 100%;
+                height: auto;
+            }
+        }
+    }
+}
+
 /* User profile */
 
 .user-profile {
@@ -156,5 +295,56 @@ input {
         border-radius: 50%;
         background: #B3B3B3;
         margin: 0 auto 20px;
+    }
+}
+
+/* column styles (template) */
+
+.column {
+    display: flex;
+    flex-direction: column;
+
+    font-family: system-ui;
+    width: 260px;
+    background: #2c2c2c;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+
+    h3 {
+        align-self: flex-start;
+        margin-left: 5px;
+    }
+
+    .task-list {
+        background: #bdbdbd;
+        border-radius: 12px;
+        padding: 10px;
+        max-height: 300px;
+        overflow: auto;
+    }
+}
+
+.task {
+    color: black;
+    background: white;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    display: flex;
+    padding: 5px;
+    gap: 5px;
+
+
+    button {
+        padding: 10px;
+        border-radius: 50%;
+        height: 50%;
+        align-self: center;
+    }
+
+    p {
+        max-width: 260px;
+        margin: 0;
+        word-break: break-word;
     }
 }
