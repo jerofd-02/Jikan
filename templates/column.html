@@ -1,5 +1,6 @@
 <style>
     .column {
+        font-family: system-ui;
         width: 260px;
         background: #2c2c2c;
         padding: 12px;
@@ -11,28 +12,46 @@
         background: #bdbdbd;
         border-radius: 12px;
         padding: 10px;
-        height: 300px;
-    }
+        max-height: 300px;
+        overflow: auto;
 
-    .task {
-        color: black;
-        background: white;
-        margin-bottom: 10px;
-
-        button {
+        .task {
+            color: black;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
             padding: 5px;
-            border-radius: 50%;
+            gap: 5px;
+
+
+            button {
+                padding: 10px;
+                border-radius: 50%;
+                height: 50%;
+                align-self: center;
+            }
+
+            p {
+                max-width: 260px;
+                margin: 0;
+                word-break: break-word;
+            }
         }
 
     }
+
+
 </style>
 
 <div class="column">
     <h3>Lorem Ipsum</h3>
 
     <div class="task-list">
-        <div class="task"><button></button>hola1</div>
-        <div class="task"><button></button>hola2</div>
+        <div class="task"><button></button><p>olaqevdsfbdgnfgwfegrhtjyrthergef1</p></div>
+        <div class="task"><button></button><p>hola2</p></div>
+        <div class="task"><button></button><p>olaqevdsfbdgnfgwfegrhtjyrthergef1</p></div>
+        <div class="task"><button></button><p>hola2</p></div>
     </div>
 
     <div class="add-task">
