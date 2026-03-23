@@ -8,44 +8,61 @@
     <script src="../js/sectionsNav.js" defer></script>
 </head>
 <body class="user-profile">
-    <aside>
-        <div>
-            <div class="user-img"></div>
-            <h3>Nombre de Usuario</h3>
-        </div>
-        <nav id="nav">
-            <ul>
-                <li><button class="nav-item active" data-section="account-info">Información de la cuenta</button></li>
-                <li><button class="nav-item" data-section="security">Seguridad</button></li>
-                <li><button class="nav-item" data-section="notifications">Notificaciones</button></li>
-                <li><button class="nav-item" data-section="recommendations">Recomendaciones</button></li>
-                <li><button class="nav-item" data-section="account-management">Gestionar cuenta</button></li>
-            </ul>
-        </nav>
-    </aside>
-    <main>
-        <section class="section active" id="section-account-info">
-            <div class="avatar-wrapper"></div>
-            <form action="">
-                <label for="username">Cambiar nombre de usuario:</label>
-                <div class="input-wrapper">
-                    <input type="text" id="username" name="username" value="Nombre">
-                    <button type="submit"></button>
-                </div>
-            </form>
-            <form action="">
-                <label for="email">Cambiar correo electrónico:</label>
-                <div class="input-wrapper">
-                    <input type="email" id="email" name="email" value="correo@ejemplo.com">
-                    <button type="submit"></button>
-                </div>
-            </form>
-        </section>
-        <section class="section" id="section-security"></section>
-        <section class="section" id="section-notifications"></section>
-        <section class="section" id="section-recommendations"></section>
-        <section class="section" id="section-account-management"></section>
-    </main>
-    
+<aside>
+    <div>
+        <div class="user-img"></div>
+        <h3>Nombre de Usuario</h3>
+    </div>
+    <nav id="nav">
+        <ul>
+            <li>
+                <button class="nav-item active" data-section="account-info">Información de la cuenta</button>
+            </li>
+            <li>
+                <button class="nav-item" data-section="security">Seguridad</button>
+            </li>
+            <li>
+                <button class="nav-item" data-section="notifications">Notificaciones</button>
+            </li>
+            <li>
+                <button class="nav-item" data-section="recommendations">Recomendaciones</button>
+            </li>
+            <li>
+                <button class="nav-item" data-section="account-management">Gestionar cuenta</button>
+            </li>
+        </ul>
+    </nav>
+</aside>
+<main>
+    <section class="section active" id="section-account-info">
+        <div class="avatar-wrapper"></div>
+        <form action="">
+            <label for="username">Cambiar nombre de usuario:</label>
+            <div class="input-wrapper">
+                <input type="text" id="username" name="username" value="Nombre">
+                <button type="submit"></button>
+            </div>
+        </form>
+        <form action="">
+            <label for="email">Cambiar correo electrónico:</label>
+            <div class="input-wrapper">
+                <input type="email" id="email" name="email" value="correo@ejemplo.com">
+                <button type="submit"></button>
+            </div>
+        </form>
+        <form action="">
+            <label for="email">Contraseña</label>
+            <div class="input-wrapper">
+                <input type="email" id="password" name="password" value="********">
+                <button type="submit"></button>
+            </div>
+        </form>
+    </section>
+    <section class="section" id="section-security"></section>
+    <section class="section" id="section-notifications"></section>
+    <section class="section" id="section-recommendations"></section>
+    <section class="section" id="section-account-management"></section>
+</main>
+
 </body>
 </html>
