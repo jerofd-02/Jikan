@@ -5,31 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="../styles.css">
+    <script src="../js/sectionsNav.js" defer></script>
 </head>
 <body class="user-profile">
-    <header></header>
     <aside>
         <div>
             <div class="user-img"></div>
             <h3>Nombre de Usuario</h3>
         </div>
-        <nav>
+        <nav id="nav">
             <ul>
-                <li><button>Información de la cuenta</button></li>
-                <li><button>Seguridad</button></li>
-                <li><button>Notificaciones</button></li>
-                <li><button>Recomendaciones</button></li>
-                <li><button>Gestionar cuenta</button></li>
+                <li><button class="nav-item active" data-section="account-info">Información de la cuenta</button></li>
+                <li><button class="nav-item" data-section="security">Seguridad</button></li>
+                <li><button class="nav-item" data-section="notifications">Notificaciones</button></li>
+                <li><button class="nav-item" data-section="recommendations">Recomendaciones</button></li>
+                <li><button class="nav-item" data-section="account-management">Gestionar cuenta</button></li>
             </ul>
         </nav>
     </aside>
     <main>
-        <section class="section" id="account-info">
+        <section class="section active" id="section-account-info">
             <div class="avatar-wrapper"></div>
             <form action="">
                 <label for="username">Cambiar nombre de usuario:</label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" name="username" value="nombre_usuario">
+                    <input type="text" id="username" name="username" value="Nombre">
                     <button type="submit"></button>
                 </div>
             </form>
@@ -41,10 +41,10 @@
                 </div>
             </form>
         </section>
-        <section class="section" id="security"></section>
-        <section class="section" id="notifications"></section>
-        <section class="section" id="recommendations"></section>
-        <section class="section" id="account-management"></section>
+        <section class="section" id="section-security"></section>
+        <section class="section" id="section-notifications"></section>
+        <section class="section" id="section-recommendations"></section>
+        <section class="section" id="section-account-management"></section>
     </main>
     
 </body>
