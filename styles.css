@@ -348,3 +348,169 @@ input {
         word-break: break-word;
     }
 }
+
+
+/* ---------------- CALENDAR ---------------- */
+.calendar-wrap {
+    --bg: #d6d6d6;
+    --border: #999;
+    --sidebar: #c8c8c8;
+    --cell: #d0d0d0;
+    --cell-hover: #bababa;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --today-bg: #1a1a1a;
+    --today-text: #d6d6d6;
+    --weekend: #888;
+
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    display: flex;
+    width: 100%;
+    box-shadow: 4px 4px 0 #999;
+    font-family: 'DM Mono', monospace;
+    margin-top: 1rem;
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 100px;
+        flex-shrink: 0;
+        background: var(--sidebar);
+        border-right: 1.5px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .sidebar-info {
+        padding: 14px 12px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .label-weekday {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .label-month {
+        font-family: 'DM Serif Display', serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text);
+    }
+
+    .label-year {
+        font-size: 24px;
+        font-family: 'DM Serif Display', serif;
+        color: var(--text);
+        letter-spacing: 0.02em;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        border-top: 1.5px solid var(--border);
+    }
+
+    .nav-btn {
+        flex: 1;
+        height: 42px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: var(--text);
+        font-family: 'DM Mono', monospace;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+    }
+
+    .nav-btn:first-child {
+        border-right: 1.5px solid var(--border);
+    }
+
+    .nav-btn:hover { background: var(--cell-hover); }
+    .nav-btn:active { background: #aaa; }
+
+    /* GRID */
+    .grid-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .weekdays-row {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        border-bottom: 1.5px solid var(--border);
+    }
+
+    .weekday-cell {
+        padding: 8px 4px;
+        text-align: center;
+        font-size: 9px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-right: 1px solid var(--border);
+    }
+
+    .weekday-cell:last-child { border-right: none; }
+    .weekday-cell.weekend { color: var(--weekend); }
+
+    .days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        flex: 1;
+    }
+
+    .day-cell {
+        background: var(--cell);
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        min-height: 54px;
+        padding: 6px 7px;
+        cursor: pointer;
+        transition: background 0.12s;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .day-cell:nth-child(7n) { border-right: none; }
+    .day-cell:nth-last-child(-n+7) { border-bottom: none; }
+    .day-cell:hover:not(.other-month) { background: var(--cell-hover); }
+    .day-cell.other-month { cursor: default; background: #c8c8c8; }
+
+    .day-num {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text);
+        font-family: 'DM Mono', monospace;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .day-cell.today .day-num {
+        background: var(--today-bg);
+        color: var(--today-text);
+        border-radius: 50%;
+        font-size: 10px;
+    }
+
+    .day-cell.weekend-day .day-num { color: var(--weekend); }
+    .day-cell.other-month .day-num { color: #bbb; }
+}
