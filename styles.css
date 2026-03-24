@@ -161,11 +161,11 @@ input {
 
                 button {
 
-                    width: 8rem;
+                    width: 4rem;
                     height: 2.5rem;
 
                     border: none;
-                    border-radius: 7px;
+                    border-radius: 10px;
 
                     color: black;
                     font-weight: bold;
@@ -406,7 +406,7 @@ input {
 
     font-family: system-ui;
     width: 260px;
-    background: #2c2c2c;
+    background: black;
     padding: 12px;
     border-radius: 10px;
     color: white;
@@ -417,8 +417,6 @@ input {
     }
 
     .task-list {
-        background: #bdbdbd;
-        border-radius: 12px;
         padding: 10px;
         max-height: 300px;
         overflow: auto;
@@ -427,7 +425,7 @@ input {
 
 .task {
     color: black;
-    background: white;
+    background: #cccccc;
     margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
@@ -449,6 +447,9 @@ input {
     }
 }
 
+.add-task:hover {
+    color: #696969;
+}
 
 /* ---------------- CALENDAR ---------------- */
 .calendar-wrap {
