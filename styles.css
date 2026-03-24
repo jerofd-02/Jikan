@@ -118,6 +118,19 @@ input {
             }
         }
 
+        .search-asside{
+            display: flex;
+            position: relative;
+
+            .fas.fa-search {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                filter: invert();
+            }
+        }
+
         .user-borads-asside {
             margin-left: 5px;
 
