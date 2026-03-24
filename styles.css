@@ -233,9 +233,7 @@ input {
 .user-profile {
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-template-columns: 350px 1fr;
+    display: flex;
     height: 100vh;
     overflow: hidden;
 
@@ -312,9 +310,29 @@ input {
         display: flex;
         justify-content: center;
         align-items: center;
+        max-width: 500px;
         height: 100%;
+        margin: auto;
         overflow-y: auto;
 
+        button {
+            background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 15px 15px;
+            border-radius: 20px;
+            margin: 20px auto 0;
+
+            transition: all 0.2s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+
+        }
 
         form {
             display: flex;
@@ -322,70 +340,36 @@ input {
             margin-bottom: 20px;
             width: 100%;
 
-            label {
-                padding-left: 20px;
-            }
-        }
-
-        .input-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        input {
-            background-color: #B3B3B3;
-
-            input {
-                border-radius: 15px;
-                padding: 15px;
-                display: block;
-                width: 400px;
-                max-width: 100%;
-                margin: 0 auto;
-                box-sizing: border-box;
-                background: white;
-                border: none;
-
-                &:focus {
-                    outline: none;
-                    box-shadow: 0 0 5px #9E3DF1FF;
-                }
-            }
-
-            button {
-                background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
-                border: none;
-                color: white;
-                font-weight: bold;
-                font-size: 1.2rem;
-                cursor: pointer;
-                padding: 15px 15px;
-                border-radius: 20px;
-                margin: 20px auto 0;
-
-                transition: all 0.2s ease;
-
-                &:hover {
-                    transform: scale(1.05);
-                }
-
-            }
-
-            .edit-btn {
-                all: revert;
-                width: 30px;
-                height: 30px;
+            .inputandbutton {
+                display: flex;
+                align-items: center;
                 position: relative;
-                left: -40px;
-                background: none;
-                border: none;
-                cursor: pointer;
 
-                img {
+                input {
+                    width: 100%;
+                    background-color: #B3B3B3;
+        
+                    &:focus {
+                        outline: none;
+                        box-shadow: 0 0 5px #9E3DF1FF;
+                    }
+                }
+
+                .edit-btn {
+                    all: revert;
                     width: 30px;
+                    height: 30px;
+                    position: absolute;
+                    right: 10px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+    
+                    img {
+                        width: 30px;
+                    }
                 }
             }
-
         }
     }
 
