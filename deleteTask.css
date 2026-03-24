@@ -1,0 +1,34 @@
+/* ===============================
+   TASK CONTAINER
+=============================== */
+
+.task {
+    position: relative; /* necesario para posicionar el botón */
+}
+.delete-task {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    /* mantener coherencia visual */
+    font-size: 16px;
+}
+
+
+/* Mostrar solo en hover */
+.task:hover .delete-task {
+    opacity: 1;
+}
+
+
+/* Opcional: hover del botón */
+.delete-task:hover {
+    transform: scale(1.2);
+}
