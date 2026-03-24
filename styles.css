@@ -240,14 +240,15 @@ input {
     overflow: hidden;
 
     .section {
-        display: none; 
-    }
-    .section.active { 
-        display: block; 
+        display: none;
     }
 
-    .nav-item.active { 
-        background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);    
+    .section.active {
+        display: block;
+    }
+
+    .nav-item.active {
+        background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
     }
 
     aside {
@@ -273,16 +274,18 @@ input {
             }
         }
 
-        nav{
+        nav {
             margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             border-top: 1px solid white;
-            ul{
+
+            ul {
                 list-style-type: none;
                 padding: 0;
-                button{
+
+                button {
                     background: #696969;
                     border: none;
                     border-radius: 10px;
@@ -293,52 +296,55 @@ input {
                     margin: 10px 0;
                     width: 100%;
                     text-align: left;
-                    
+
                     transition: all 0.2s ease;
+
                     &:hover {
                         transform: scale(1.05);
                     }
                 }
-            }            
+            }
         }
-        
+
     }
-    
-    main{
+
+    main {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100%;
         overflow-y: auto;
-        
 
-        form{
+
+        form {
             display: flex;
             flex-direction: column;
             margin-bottom: 20px;
             width: 100%;
-            
-            label{
+
+            label {
                 padding-left: 20px;
             }
+        }
 
-            .input-wrapper {
-                display: flex;
-                align-items: center;
-            }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+        }
 
-            input{
-                background-color: #B3B3B3;
-                input{
-                    border-radius: 15px;
-                    padding: 15px;
-                    display: block;
-                    width: 400px;
-                    max-width: 100%;
-                    margin: 0 auto;
-                    box-sizing: border-box;
-                    background: white;
-                    border: none;
+        input {
+            background-color: #B3B3B3;
+
+            input {
+                border-radius: 15px;
+                padding: 15px;
+                display: block;
+                width: 400px;
+                max-width: 100%;
+                margin: 0 auto;
+                box-sizing: border-box;
+                background: white;
+                border: none;
 
                 &:focus {
                     outline: none;
@@ -346,7 +352,7 @@ input {
                 }
             }
 
-            button{
+            button {
                 background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
                 border: none;
                 color: white;
@@ -356,7 +362,7 @@ input {
                 padding: 15px 15px;
                 border-radius: 20px;
                 margin: 20px auto 0;
-                
+
                 transition: all 0.2s ease;
 
                 &:hover {
@@ -365,7 +371,7 @@ input {
 
             }
 
-            .edit-btn{
+            .edit-btn {
                 all: revert;
                 width: 30px;
                 height: 30px;
@@ -375,14 +381,14 @@ input {
                 border: none;
                 cursor: pointer;
 
-                img{
+                img {
                     width: 30px;
                 }
             }
-            
+
         }
     }
-    
+
     .avatar-wrapper {
         width: 150px;
         height: 150px;
@@ -466,6 +472,7 @@ input {
     margin-top: 1rem;
 
     /* SIDEBAR */
+
     .sidebar {
         width: 100px;
         flex-shrink: 0;
@@ -531,10 +538,16 @@ input {
         border-right: 1.5px solid var(--border);
     }
 
-    .nav-btn:hover { background: var(--cell-hover); }
-    .nav-btn:active { background: #aaa; }
+    .nav-btn:hover {
+        background: var(--cell-hover);
+    }
+
+    .nav-btn:active {
+        background: #aaa;
+    }
 
     /* GRID */
+
     .grid-area {
         flex: 1;
         display: flex;
@@ -558,8 +571,13 @@ input {
         border-right: 1px solid var(--border);
     }
 
-    .weekday-cell:last-child { border-right: none; }
-    .weekday-cell.weekend { color: var(--weekend); }
+    .weekday-cell:last-child {
+        border-right: none;
+    }
+
+    .weekday-cell.weekend {
+        color: var(--weekend);
+    }
 
     .days-grid {
         display: grid;
@@ -581,10 +599,22 @@ input {
         align-items: flex-end;
     }
 
-    .day-cell:nth-child(7n) { border-right: none; }
-    .day-cell:nth-last-child(-n+7) { border-bottom: none; }
-    .day-cell:hover:not(.other-month) { background: var(--cell-hover); }
-    .day-cell.other-month { cursor: default; background: #c8c8c8; }
+    .day-cell:nth-child(7n) {
+        border-right: none;
+    }
+
+    .day-cell:nth-last-child(-n+7) {
+        border-bottom: none;
+    }
+
+    .day-cell:hover:not(.other-month) {
+        background: var(--cell-hover);
+    }
+
+    .day-cell.other-month {
+        cursor: default;
+        background: #c8c8c8;
+    }
 
     .day-num {
         font-size: 11px;
@@ -605,6 +635,11 @@ input {
         font-size: 10px;
     }
 
-    .day-cell.weekend-day .day-num { color: var(--weekend); }
-    .day-cell.other-month .day-num { color: #bbb; }
+    .day-cell.weekend-day .day-num {
+        color: var(--weekend);
+    }
+
+    .day-cell.other-month .day-num {
+        color: #bbb;
+    }
 }
