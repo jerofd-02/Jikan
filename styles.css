@@ -313,23 +313,51 @@ input {
             .input-wrapper {
                 display: flex;
                 align-items: center;
+            }
 
-                input{
-                    background-color: #B3B3B3;
+            input{
+                background-color: #B3B3B3;
 
-                    &:focus {
-                        outline: none;
-                        box-shadow: 0 0 5px #9E3DF1FF;
-                    }
-                }
-
-                button{
-                    width: 30px;
-                    height: 30px;
-                    position: relative;
-                    left: -40px;
+                &:focus {
+                    outline: none;
+                    box-shadow: 0 0 5px #9E3DF1FF;
                 }
             }
+
+            button{
+                background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
+                border: none;
+                color: white;
+                font-weight: bold;
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 15px 15px;
+                border-radius: 20px;
+                margin: 20px auto 0;
+                
+                transition: all 0.2s ease;
+                
+                &:hover {
+                    transform: scale(1.05);
+                }
+
+            }
+
+            .edit-btn{
+                all: revert;
+                width: 30px;
+                height: 30px;
+                position: relative;
+                left: -40px;
+                background: none;
+                border: none;
+                cursor: pointer;
+
+                img{
+                    width: 30px;
+                }
+            }
+            
         }
     }
     

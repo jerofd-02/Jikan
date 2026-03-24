@@ -30,21 +30,40 @@
                 <label for="username">Cambiar nombre de usuario:</label>
                 <div class="input-wrapper">
                     <input type="text" id="username" name="username" value="Nombre">
-                    <button type="submit"></button>
+                    <button class="edit-btn" type="submit"><img src="../img/edit.svg" alt="edit button"></button>
                 </div>
             </form>
             <form action="">
                 <label for="email">Cambiar correo electrónico:</label>
                 <div class="input-wrapper">
                     <input type="email" id="email" name="email" value="correo@ejemplo.com">
-                    <button type="submit"></button>
+                    <button class="edit-btn" type="submit"><img src="../img/edit.svg" alt="edit button"></button>
                 </div>
             </form>
         </section>
-        <section class="section" id="section-security"></section>
-        <section class="section" id="section-notifications"></section>
-        <section class="section" id="section-recommendations"></section>
-        <section class="section" id="section-account-management"></section>
+        <section class="section" id="section-security">
+            <form action="">
+                <h2>Cambiar contraseña</h2>
+                <label for="current-password">Contraseña actual:</label>
+                <input type="password" id="current-password" name="current-password">
+                <label for="new-password">Nueva contraseña:</label>
+                <input type="password" id="new-password" name="new-password">
+                <label for="confirm-password">Confirmar nueva contraseña:</label>
+                <input type="password" id="confirm-password" name="confirm-password">
+                <button type="submit">Cambiar contraseña</button>
+            </form>
+        </section>
+        <section class="section" id="section-notifications">
+
+        </section>
+        <section class="section" id="section-recommendations">
+            
+        </section>
+        <section class="section" id="section-account-management">
+            <h2>Gestión de la cuenta</h2>
+            <button class="logout">Cerrar sesión</button>
+            <button class="delete-account">Eliminar cuenta</button>
+        </section>
     </main>
     
 </body>
