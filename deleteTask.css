@@ -1,10 +1,10 @@
-/* ===============================
-   TASK CONTAINER
-=============================== */
-
 .task {
-    position: relative; /* necesario para posicionar el botón */
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 5px 35px 5px 5px;
 }
+
 .delete-task {
     position: absolute;
     top: 5px;
@@ -15,20 +15,21 @@
     cursor: pointer;
 
     opacity: 0;
-    transition: opacity 0.2s ease;
-
-    /* mantener coherencia visual */
-    font-size: 16px;
 }
 
-
-/* Mostrar solo en hover */
 .task:hover .delete-task {
     opacity: 1;
 }
 
-
-/* Opcional: hover del botón */
 .delete-task:hover {
     transform: scale(1.2);
+}
+
+.delete-task i {
+    color: black;
+    transition: color 0.2s ease;
+}
+
+.delete-task:hover i {
+    color: black;
 }

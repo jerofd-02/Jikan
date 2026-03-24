@@ -20,7 +20,7 @@ function addDeleteButtons() {
 
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete-task");
-        deleteBtn.textContent = "🗑️";
+        deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
 
         task.appendChild(deleteBtn);
     });
