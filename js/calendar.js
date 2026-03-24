@@ -2,11 +2,9 @@
 
 function waitForCalendar() {
     const container = document.querySelector('[data-template="calendar"]');
-    // si el div existe y tiene el calendario dentro, inicializamos
     if (container && container.querySelector('.calendar-wrap')) {
         initCalendar(container);
     } else {
-        // esperamos 50ms y probamos otra vez
         setTimeout(waitForCalendar, 50);
     }
 }
@@ -15,35 +13,44 @@ document.addEventListener('DOMContentLoaded', waitForCalendar);
 
 function initCalendar(container) {
     const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    const WEEKDAYS_FULL = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-    const WEEKDAYS_SHORT = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const WEEKDAYS_FULL = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+    const WEEKDAYS_SHORT = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 
     const today = new Date();
     let current = { year: today.getFullYear(), month: today.getMonth() };
+
+    // Convierte getDay() (0=Dom…6=Sáb) a índice lunes-primero (0=Lun…6=Dom)
+    function toMondayFirst(jsDay) {
+        return (jsDay + 6) % 7;
+    }
 
     function render() {
         const { year, month } = current;
 
         container.querySelector('#sidebar-month').textContent = MONTHS[month];
         container.querySelector('#sidebar-year').textContent = year;
-        const first = new Date(year, month, 1);
-        container.querySelector('#sidebar-weekday').textContent = WEEKDAYS_FULL[first.getDay()];
 
-        // Weekday headers
+        const first = new Date(year, month, 1);
+        // Usamos toMondayFirst para mostrar el día correcto en el sidebar
+        container.querySelector('#sidebar-weekday').textContent = WEEKDAYS_FULL[toMondayFirst(first.getDay())];
+
+        // Cabecera de días de la semana
         const wRow = container.querySelector('#weekdays-row');
         wRow.innerHTML = '';
         WEEKDAYS_SHORT.forEach((d, i) => {
             const c = document.createElement('div');
-            c.className = 'weekday-cell' + (i === 0 || i === 6 ? ' weekend' : '');
+            // Sábado=5, Domingo=6 en índice lunes-primero
+            c.className = 'weekday-cell' + (i === 5 || i === 6 ? ' weekend' : '');
             c.textContent = d;
             wRow.appendChild(c);
         });
 
-        // Days
+        // Cuadrícula de días
         const grid = container.querySelector('#days-grid');
         grid.innerHTML = '';
 
-        const startDay = first.getDay();
+        // startDay ahora es 0=Lun … 6=Dom
+        const startDay = toMondayFirst(first.getDay());
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const daysInPrev = new Date(year, month, 0).getDate();
 
@@ -51,23 +58,29 @@ function initCalendar(container) {
             const cell = document.createElement('div');
             cell.className = 'day-cell';
 
-            let dayNum, isOther = false, dayOfWeek;
+            let dayNum, isOther = false, jsDay;
 
             if (i < startDay) {
+                // Días del mes anterior
                 dayNum = daysInPrev - startDay + 1 + i;
                 isOther = true;
-                dayOfWeek = new Date(year, month - 1, dayNum).getDay();
+                jsDay = new Date(year, month - 1, dayNum).getDay();
             } else if (i >= startDay + daysInMonth) {
+                // Días del mes siguiente
                 dayNum = i - startDay - daysInMonth + 1;
                 isOther = true;
-                dayOfWeek = new Date(year, month + 1, dayNum).getDay();
+                jsDay = new Date(year, month + 1, dayNum).getDay();
             } else {
+                // Días del mes actual
                 dayNum = i - startDay + 1;
-                dayOfWeek = new Date(year, month, dayNum).getDay();
+                jsDay = new Date(year, month, dayNum).getDay();
             }
 
+            // Fin de semana: sábado (6) o domingo (0) en notación JS
+            const isWeekend = jsDay === 0 || jsDay === 6;
+
             if (isOther) cell.classList.add('other-month');
-            if (dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend-day');
+            if (isWeekend) cell.classList.add('weekend-day');
             if (!isOther && dayNum === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 cell.classList.add('today');
             }
