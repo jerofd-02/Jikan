@@ -1,6 +1,13 @@
+
+:root{
+    --background-color: #0d0f16;
+    --border-color: #2a2d3a;
+}
+
+
 body {
     font-family: Helvetica, sans-serif;
-    background: #2c2c2c;
+    background: #0f1117;
     color: white;
 }
 
@@ -96,7 +103,7 @@ input {
     gap: 1rem;
 
     .asside-left {
-        border-right: 1px solid white;
+        border-right: 1px solid #2a2d3a;
         margin-right: 10px;
         padding-right: 1rem;
 
@@ -110,7 +117,7 @@ input {
             align-items: center;
 
             margin-bottom: 1rem;
-            border-bottom: 1px solid white;;
+            border-bottom: 1px solid #2a2d3a;;
 
             .user-picture {
                 height: 90px;
@@ -403,7 +410,8 @@ input {
 
     font-family: system-ui;
     width: 260px;
-    background: black;
+    background: #161a24;
+    border: 1px solid #1e2028;
     padding: 12px;
     border-radius: 10px;
     color: white;
@@ -421,8 +429,9 @@ input {
 }
 
 .task {
-    color: black;
-    background: #cccccc;
+    color: white;
+    background: #1e2028;
+    border: 1px solid #1e2028;
     margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
