@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <script src="../js/sectionsNav.js" defer></script>
+    <script src="../js/togglePassword.js" defer></script>
 </head>
 <body class="user-profile">
     <aside>
@@ -45,26 +46,32 @@
         <section class="section" id="section-security">
             <form action="">
                 <h2>Cambiar contraseña</h2>
-                <label for="current-password">Contraseña actual:</label>
+                <label for="password">Contraseña actual:</label>
                 <div class="inputandbutton">
-                    <input type="password" id="current-password" name="current-password">
-                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                    <input type="password" id="password" name="current-password">
+                    <button class="input-btn" id="toggle-btn" type="button"><i class="far fa-eye-slash"></i></button>
                 </div>
                 <label for="new-password">Nueva contraseña:</label>
                 <div class="inputandbutton">
                     <input type="password" id="new-password" name="new-password">
-                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                    <button class="input-btn" id="toggle-btn2" type="button"><i class="far fa-eye-slash"></i></button>
                 </div>
                 <label for="confirm-password">Confirmar nueva contraseña:</label>
                 <div class="inputandbutton">
                     <input type="password" id="confirm-password" name="confirm-password">
-                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                    <button class="input-btn" id="toggle-btn3" type="button"><i class="far fa-eye-slash"></i></button>
                 </div>
                 <button type="submit">Cambiar contraseña</button>
             </form>
         </section>
         <section class="section" id="section-notifications">
-
+            <div>
+                <p>Recibir notificaciones por correo electrónico</p>
+                <div class="toggle">
+                    <input type="checkbox" id="email-notifications" name="email-notifications">
+                    <label for="email-notifications"></label>
+                </div>
+            </div>
         </section>
         <section class="section" id="section-recommendations">
             
