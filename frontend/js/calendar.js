@@ -12,12 +12,12 @@ function waitForCalendar() {
 document.addEventListener('DOMContentLoaded', waitForCalendar);
 
 function initCalendar(container) {
-    const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    const WEEKDAYS_FULL = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-    const WEEKDAYS_SHORT = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const WEEKDAYS_FULL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const WEEKDAYS_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
     const today = new Date();
-    let current = { year: today.getFullYear(), month: today.getMonth() };
+    let current = {year: today.getFullYear(), month: today.getMonth()};
 
     // Convierte getDay() (0=Dom…6=Sáb) a índice lunes-primero (0=Lun…6=Dom)
     function toMondayFirst(jsDay) {
@@ -25,7 +25,7 @@ function initCalendar(container) {
     }
 
     function render() {
-        const { year, month } = current;
+        const {year, month} = current;
 
         container.querySelector('#sidebar-month').textContent = MONTHS[month];
         container.querySelector('#sidebar-year').textContent = year;
@@ -95,13 +95,19 @@ function initCalendar(container) {
 
     container.querySelector('#prev-btn').addEventListener('click', () => {
         current.month--;
-        if (current.month < 0) { current.month = 11; current.year--; }
+        if (current.month < 0) {
+            current.month = 11;
+            current.year--;
+        }
         render();
     });
 
     container.querySelector('#next-btn').addEventListener('click', () => {
         current.month++;
-        if (current.month > 11) { current.month = 0; current.year++; }
+        if (current.month > 11) {
+            current.month = 0;
+            current.year++;
+        }
         render();
     });
 
