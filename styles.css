@@ -3,7 +3,7 @@
     --background-color: #0f1117;
     --background2-color: #131620;
     --background3-color: #1a1d2e;
-    --border-color: #2a2d3a;
+    --border-color: #343741;
     --font-color: #8a8fa0;
     --purple: #7c6af7;
     --dark-purple: #3b2f7a;
@@ -145,8 +145,8 @@ input {
                 }
 
                 &:focus {
-                    outline: none;
-                    box-shadow: 0 0 5px #9E3DF1FF;
+                    outline: 1px solid var(--purple);
+                    box-shadow: 0 0 5px var(--purple);
                 }
             }
 
@@ -297,7 +297,8 @@ input {
     }
 
     .nav-item.active {
-        background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
+        color: white;
+        background-color: var(--purple);
     }
 
     aside {
@@ -328,29 +329,33 @@ input {
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-top: 1px solid white;
+            border-top: 1px solid var(--border-color);
 
             ul {
                 list-style-type: none;
                 padding: 0;
 
                 button {
-                    background: #696969;
+                    background: none;
                     border: none;
                     border-radius: 10px;
-                    color: white;
+                    color: var(--font-color);
                     font-size: 1.3rem;
                     cursor: pointer;
                     padding: 10px 20px;
-                    margin: 10px 0;
                     width: 100%;
                     text-align: left;
 
                     transition: all 0.2s ease;
 
                     &:hover {
+                        background-color: var(--dark-purple);
                         transform: scale(1.05);
                     }
+                }
+
+                li + li {
+                    border-top: var(--border-color) 1px solid;
                 }
             }
         }
@@ -360,11 +365,16 @@ input {
     main {
         display: flex;
         justify-content: center;
+        flex-direction: column;
         align-items: center;
-        max-width: 500px;
-        height: 100%;
+        max-width: 350px;
+        width: 100%;
         margin: auto;
         overflow-y: auto;
+
+        section{
+            width: 100%;
+        }
 
         button {
             background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
@@ -391,20 +401,26 @@ input {
             margin-bottom: 20px;
             width: 100%;
 
+            input {
+                width: 100%;
+                background-color: var(--background3-color);
+                border: 1px solid var(--border-color);
+                margin: 0 2px;
+                color: white;
+                &::placeholder {
+                    color: white;
+                }
+
+                &:focus {
+                    outline: 1px solid var(--purple);
+                    box-shadow: 0 0 5px var(--purple);
+                }
+            }
+
             .inputandbutton {
                 display: flex;
                 align-items: center;
                 position: relative;
-
-                input {
-                    width: 100%;
-                    background-color: #B3B3B3;
-        
-                    &:focus {
-                        outline: none;
-                        box-shadow: 0 0 5px #9E3DF1FF;
-                    }
-                }
 
                 .edit-btn {
                     all: revert;
@@ -418,6 +434,7 @@ input {
     
                     img {
                         width: 30px;
+                        filter: invert(100%);
                     }
                 }
             }
