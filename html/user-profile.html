@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <script src="../js/sectionsNav.js" defer></script>
 </head>
 <body class="user-profile">
@@ -30,14 +31,14 @@
                 <label for="username">Cambiar nombre de usuario:</label>
                 <div class="inputandbutton">
                     <input type="text" id="username" name="username" value="Nombre">
-                    <button class="edit-btn" type="submit"><img src="../img/edit.svg" alt="edit button"></button>
+                    <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
                 </div>
             </form>
             <form action="">
                 <label for="email">Cambiar correo electrónico:</label>
                 <div class="inputandbutton">
                     <input type="email" id="email" name="email" value="correo@ejemplo.com">
-                    <button class="edit-btn" type="submit"><img src="../img/edit.svg" alt="edit button"></button>
+                    <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
                 </div>
             </form>
         </section>
@@ -45,11 +46,20 @@
             <form action="">
                 <h2>Cambiar contraseña</h2>
                 <label for="current-password">Contraseña actual:</label>
-                <input type="password" id="current-password" name="current-password">
+                <div class="inputandbutton">
+                    <input type="password" id="current-password" name="current-password">
+                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                </div>
                 <label for="new-password">Nueva contraseña:</label>
-                <input type="password" id="new-password" name="new-password">
+                <div class="inputandbutton">
+                    <input type="password" id="new-password" name="new-password">
+                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                </div>
                 <label for="confirm-password">Confirmar nueva contraseña:</label>
-                <input type="password" id="confirm-password" name="confirm-password">
+                <div class="inputandbutton">
+                    <input type="password" id="confirm-password" name="confirm-password">
+                    <button class="input-btn"><i class="far fa-eye"></i></button>
+                </div>
                 <button type="submit">Cambiar contraseña</button>
             </form>
         </section>
@@ -61,8 +71,14 @@
         </section>
         <section class="section" id="section-account-management">
             <h2>Gestión de la cuenta</h2>
-            <button class="logout">Cerrar sesión</button>
+            <div class="logout">
+                <p>Esta acción cerrará tu sesión actual.</p>
+                <button class="logout">Cerrar sesión</button>
+            </div>
+            <div class="delete-account">
+            <p>Esta acción eliminará tu cuenta permanentemente.</p>
             <button class="delete-account">Eliminar cuenta</button>
+            </div>
         </section>
     </main>
     

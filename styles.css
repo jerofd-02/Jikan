@@ -1,4 +1,8 @@
 
+*{
+    font-family: system-ui;
+}
+
 :root{
     --background-color: #0f1117;
     --background2-color: #131620;
@@ -10,6 +14,15 @@
     --light-purple: #8f7ef9;
 }
 
+/* Cambiar color del autocompletado del navegador */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--background3-color) inset;
+    -webkit-text-fill-color: white;
+    transition: background-color 5000s ease-in-out 0s;
+}
 
 body {
     font-family: Helvetica, sans-serif;
@@ -342,7 +355,7 @@ input {
                     color: var(--font-color);
                     font-size: 1.3rem;
                     cursor: pointer;
-                    padding: 10px 20px;
+                    padding: 15px 20px;
                     width: 100%;
                     text-align: left;
 
@@ -370,14 +383,20 @@ input {
         max-width: 350px;
         width: 100%;
         margin: auto;
-        overflow-y: auto;
+
 
         section{
             width: 100%;
+
+            h2{
+                text-align: center;
+                text-transform: uppercase;
+                font-weight: 800;
+            }
         }
 
         button {
-            background: linear-gradient(45deg, #9E3DF1FF 0%, #5B3FCEFF 100%);
+            background: linear-gradient(45deg, var(--light-purple) 0%, var(--purple) 100%);
             border: none;
             color: white;
             font-weight: bold;
@@ -401,6 +420,10 @@ input {
             margin-bottom: 20px;
             width: 100%;
 
+            label{
+                color: var(--font-color);
+            }
+
             input {
                 width: 100%;
                 background-color: var(--background3-color);
@@ -422,19 +445,19 @@ input {
                 align-items: center;
                 position: relative;
 
-                .edit-btn {
+                .input-btn {
                     all: revert;
                     width: 30px;
                     height: 30px;
                     position: absolute;
-                    right: 10px;
+                    right: 15px;
                     background: none;
                     border: none;
                     cursor: pointer;
     
-                    img {
-                        width: 30px;
-                        filter: invert(100%);
+                    i {
+                        font-size: 1.2rem;
+                        color: white;
                     }
                 }
             }
@@ -447,6 +470,49 @@ input {
         border-radius: 50%;
         background: #B3B3B3;
         margin: 0 auto 20px;
+    }
+
+    .logout{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 40px 0;
+        p {
+            text-align: center;
+            margin: 0 0 15px;
+            color: var(--font-color);
+        }
+        button {
+            
+            margin: 0;
+        }
+    }
+
+    .delete-account {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 40px 0;
+        padding: 10px;  
+        border: 1px solid red;
+        border-radius: 20px;
+
+        p {
+            text-align: center;
+            margin: 0 0 15px;
+            color: var(--font-color);
+        }
+
+        button {
+            
+            background: darkred;
+            border: none;
+            margin: 0;
+            padding: 15px;
+            
+        }
     }
 }
 
