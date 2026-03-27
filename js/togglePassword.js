@@ -10,14 +10,14 @@ function togglePassword(inputId, btnId) {
     }
 }
 
-document.getElementById('toggle-btn').addEventListener('click', function() {
+document.getElementById('toggle-btn').addEventListener('click', function () {
     togglePassword('password', 'toggle-btn');
 });
 
-document.getElementById('toggle-btn2').addEventListener('click', function() {
+document.getElementById('toggle-btn2').addEventListener('click', function () {
     togglePassword('new-password', 'toggle-btn2');
 });
 
-document.getElementById('toggle-btn3').addEventListener('click', function() {
+document.getElementById('toggle-btn3').addEventListener('click', function () {
     togglePassword('confirm-password', 'toggle-btn3');
 });
