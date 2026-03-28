@@ -10,12 +10,10 @@
 <h1 class="h1-register-login">INICIAR SESIÓN</h1>
 <div class="input-wrapper">
     <form action="#" method="post">
-        <label>Username
-            <input type="text" name="user" placeholder="@example">
-        </label>
-        <label>Contraseña
-            <input type="password" name="password" placeholder="Introduce la contraseña">
-        </label>
+        <label for="username">Nombre de usuario</label>
+        <input type="text" id="username" name="username" placeholder="@username" required>
+        <label for="passwd">Contraseña</label>
+        <input type="password" id="passwd" name="password" placeholder="Introduzca la contraseña" required>
         <button class="confirmation-button" type="submit">Entrar</button>
     </form>
 </div>
