@@ -31,14 +31,14 @@
             <form action="">
                 <label for="username">Cambiar nombre de usuario:</label>
                 <div class="inputandbutton">
-                    <input type="text" id="username" name="username" value="Nombre">
+                    <input type="text" id="username" name="username" placeholder="Nombre">
                     <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
                 </div>
             </form>
             <form action="">
                 <label for="email">Cambiar correo electrónico:</label>
                 <div class="inputandbutton">
-                    <input type="email" id="email" name="email" value="correo@ejemplo.com">
+                    <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
                     <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
                 </div>
             </form>
@@ -65,16 +65,40 @@
             </form>
         </section>
         <section class="section" id="section-notifications">
-            <div>
+            <div class="notification-setting">
                 <p>Recibir notificaciones por correo electrónico</p>
                 <div class="toggle">
                     <input type="checkbox" id="email-notifications" name="email-notifications">
                     <label for="email-notifications"></label>
                 </div>
             </div>
+            <div class="notification-setting">
+                <p>Recibir notificaciones de tus tableros</p>
+                <div class="toggle">
+                    <input type="checkbox" id="board-notifications" name="board-notifications">
+                    <label for="board-notifications"></label>
+                </div>
+            </div>
+            <div class="notification-setting">
+                <p>Recibir notificaciones de tableros compartidos</p>
+                <div class="toggle">
+                    <input type="checkbox" id="shared-board-notifications" name="shared-board-notifications">
+                    <label for="shared-board-notifications"></label>
+                </div>
+            </div>
         </section>
         <section class="section" id="section-recommendations">
-            
+            <h2>Recomendaciones</h2>
+            <p>¡Comparte tus sugerencias y recomendaciones para mejorar la aplicación!</p>
+            <form action="">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Anonimo">
+                <label for="asunto">Asunto:</label>
+                <input type="text" id="asunto" name="asunto" placeholder="Escribe el asunto aquí">
+                <label for="recommendations">Recomendaciones:</label>
+                <textarea id="recommendations" name="recommendations" rows="4" placeholder="Escribe tus recomendaciones aquí"></textarea>
+                <button type="submit">Enviar mensaje</button>
+            </form>
         </section>
         <section class="section" id="section-account-management">
             <h2>Gestión de la cuenta</h2>
