@@ -1,3 +1,15 @@
+:root {
+    --background-color: #0f1117;
+    --background2-color: #131620;
+    --background3-color: #1a1d2e;
+    --border-color: #343741;
+    --font-color: #8a8fa0;
+    --purple: #7c6af7;
+    --dark-purple: #3b2f7a;
+    --light-purple: #8f7ef9;
+    --weekend: #ff5050;
+}
+
 body {
     font-family: Helvetica, sans-serif;
     background: #2c2c2c;
@@ -431,8 +443,10 @@ input {
     margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
-    padding: 5px;
     gap: 5px;
+    position: relative;
+    align-items: center;
+    padding: 5px 35px 5px 5px;
 
 
     button {
@@ -449,6 +463,43 @@ input {
     }
 }
 
+.delete-task {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: darkred;
+    cursor: pointer;
+
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    .task:hover & {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    i {
+        color: white;
+        font-size: 1rem;
+    }
+}
 
 /* ---------------- CALENDAR ---------------- */
 .calendar-wrap {
@@ -645,12 +696,12 @@ input {
 }
 
 #popup {
-    position: fixed;       /* lo saca del flujo normal */
+    position: fixed; /* lo saca del flujo normal */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5); /* fondo semi-transparente */
+    background: rgba(0, 0, 0, 0.5); /* fondo semi-transparente */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -672,32 +723,44 @@ input {
 .task-list .new-task-input {
     margin-top: 8px;
     padding: 4px;
-    background: #e2e4e6;
     border-radius: 4px;
+    background-color: var(--background2-color);
 }
 
 .new-task-input input {
     width: 100%;
-    padding: 6px;
-    margin-bottom: 4px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.new-task-input button {
-    margin-right: 4px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-}
-
-.new-task-input button.add-btn {
-    background-color: #5aac44;
+    background-color: var(--background3-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin: 5px auto;
     color: white;
+
+    &::placeholder {
+        color: white;
+    }
+
+    &:focus {
+        outline: 1px solid var(--purple);
+        box-shadow: 0 0 5px var(--purple);
+    }
+}
+
+.new-task-input button.add-btn,
+.new-task-input button.cancel-btn {
+    background: var(--light-purple);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 10px 10px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    border: none;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 .new-task-input button.cancel-btn {
-    background-color: #999;
-    color: white;
+    background: darkred;
 }
