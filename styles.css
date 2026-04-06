@@ -179,7 +179,7 @@ input {
             }
 
             .create-new-column {
-                margin-left: 2rem;
+                margin: 0 2rem;
                 width: 260px;
                 height: 5rem;
 
@@ -563,6 +563,7 @@ input {
     color: var(--purple);
     cursor: pointer;
     transition: all 0.2s ease;
+    align-self: center;
 
 
     &:hover {
