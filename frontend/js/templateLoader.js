@@ -3,6 +3,8 @@ async function init() {
 
     const promises = Array.from(elements).map(async (el) => {
         const name = el.getAttribute("data-template");
+        const response = await fetch(`/templates/${name}.html`);
+        el.innerHTML = await response.text();
     });
 
     await Promise.all(promises);
