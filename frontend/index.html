@@ -7,11 +7,7 @@
     <!--link rel="icon" type="image/png" href=""-->
     <title>Jikan - Inicio</title>
     <script src="./js/templateLoader.js"></script>
-    <script src="./js/deleteTask.js"></script>
-    <script src="./js/modifyTask.js"></script>
-    <script src="./js/add_task.js"></script>
     <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
 <body>
@@ -21,9 +17,7 @@
     <asside class="asside-left">
 
         <div class="user-information-asside">
-            <a href="./html/user-profile.html">
-                <img class="user-picture" src="./img/dummy_user.png">
-            </a>
+            <img class="user-picture" src="./img/dummy_user.png">
 
             <div>
                 <h2 class="user-name-asside">User name</h2>
@@ -33,7 +27,7 @@
 
         <form role="search" class="search-asside">
             <input type="text" placeholder="Buscar tablero">
-            <i class="fas fa-search"></i>
+            <!--svg de lupa -->
         </form>
 
         <div class="user-borads-asside">
@@ -50,12 +44,18 @@
 
             <div class="header-buttons">
                 <button class="notifications-button">
-                    <i class="fas fa-bell"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-bell-ringing">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/>
+                        <path d="M9 17v1a3 3 0 0 0 6 0v-1"/>
+                        <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727"/>
+                        <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727"/>
+                    </svg>
                 </button>
 
-                <button class="share-button">
-                    <i class="fas fa-share-alt"></i>
-                </button>
+                <button class="share-button">Compartir</button>
             </div>
         </header>
 
@@ -64,7 +64,7 @@
             <div class="tasks-section" data-template="column"></div>
             <div class="tasks-section" data-template="column"></div>
 
-            <button class="create-new-column">Crear nuevo columna</button>
+            <button class="create-new-column">Crear nuevo tablero</button>
         </section>
 
         <div data-template="calendar"></div>
