@@ -359,7 +359,6 @@ input {
                 background-color: var(--background3-color);
                 border: 1px solid var(--border-color);
                 border-radius: 10px;
-                margin: 5px 2px;
                 color: white;
                 max-width: 350px;
                 
@@ -460,10 +459,6 @@ input {
                 }
             }
         }
-    }
-
-    .recommendation-text {
-        margin: 15px 0;
     }
 
     .logout{
