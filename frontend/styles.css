@@ -838,3 +838,107 @@ input {
         padding: 125px;
     }
 }
+
+#popup {
+    position: fixed; /* lo saca del flujo normal */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* fondo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#popup.oculto {
+    display: none;
+}
+
+.contenido-popup {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+    max-width: 90%;
+}
+
+.task-list .new-task-input {
+    margin-top: 8px;
+    padding: 4px;
+    border-radius: 4px;
+    background-color: var(--background2-color);
+}
+
+.new-task-input input,
+.edit-task-input input {
+    width: 100%;
+    background-color: var(--background3-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin: 5px auto;
+    color: white;
+
+    &::placeholder {
+        color: white;
+    }
+
+    &:focus {
+        outline: 1px solid var(--purple);
+        box-shadow: 0 0 5px var(--purple);
+    }
+}
+
+.modify-task {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    opacity: 0;
+}
+
+.task:hover .modify-task {
+    opacity: 1;
+}
+
+.modify-task:hover {
+    transform: scale(1.2);
+}
+
+.modify-task i {
+    color: black;
+    transition: color 0.2s ease;
+}
+
+.modify-task:hover i {
+    color: black;
+}
+
+.new-task-input button.add-btn,
+.new-task-input button.cancel-btn,
+.edit-task-input button.add-btn,
+.edit-task-input button.cancel-btn
+{
+    background: var(--light-purple);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 10px 10px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    border: none;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.new-task-input button.cancel-btn,
+.edit-task-input button.cancel-btn {
+    background: darkred;
+}
