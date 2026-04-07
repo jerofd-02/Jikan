@@ -536,9 +536,10 @@ input {
     margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
-    padding: 5px;
     gap: 5px;
-
+    position: relative;
+    align-items: center;
+    padding: 5px 35px 5px 5px;
 
     button {
         padding: 10px;
@@ -802,7 +803,6 @@ input {
         border: 1px solid var(--border-color);
         margin: 0 0 20px 0;
         color: white;
-
         &::placeholder {
             color: var(--font-color);
         }
@@ -917,6 +917,44 @@ input {
 
 .modify-task:hover i {
     color: black;
+}
+
+.delete-task {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: darkred;
+    cursor: pointer;
+
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    .task:hover & {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    &:hover {
+        transform: scale(1.2);
+    }
+
+    i {
+        color: white;
+        font-size: 1rem;
+    }
 }
 
 .new-task-input button.add-btn,
