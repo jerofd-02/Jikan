@@ -12,6 +12,7 @@
     <script src="./js/add_task.js"></script>
     <script src="./js/sectionsNav.js"></script>
     <script src="./js/modifyTask.js"></script>
+    <script type="module" src="./js/columnsLoader.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
@@ -60,13 +61,7 @@
             </div>
         </header>
 
-        <section class="boards-section">
-            <div class="tasks-section" data-template="column"></div>
-            <div class="tasks-section" data-template="column"></div>
-            <div class="tasks-section" data-template="column"></div>
-
-            <button class="create-new-column">Crear nuevo tablero</button>
-        </section>
+        <section class="boards-section"></section>
 
         <div data-template="calendar"></div>
 

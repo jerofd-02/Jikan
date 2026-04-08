@@ -82,7 +82,7 @@ CREATE TABLE board_column(
 
 -- Restricciones Semáticas Adicionales (RSA's)
 
--- RSA (user_board): todo board debe aparecer al menos una vez en users_board
+-- RSA (user_board)
 DELIMITER //
 
 CREATE TRIGGER trigger_ub_before_delete
@@ -102,3 +102,37 @@ BEGIN
 END //
 
 DELIMITER ;
+
+INSERT INTO board (name) VALUES ('Proyecto Backend');
+
+INSERT INTO columns_table (name) VALUES ('To Do');
+INSERT INTO columns_table (name) VALUES ('In Progress');
+INSERT INTO columns_table (name) VALUES ('Done');
+
+INSERT INTO board_column (id_board, id_column) VALUES (1, 1);
+INSERT INTO board_column (id_board, id_column) VALUES (1, 2);
+INSERT INTO board_column (id_board, id_column) VALUES (1, 3);
+
+-- Columna 1 (To Do)
+INSERT INTO column_task (id_column, name, description, date)
+VALUES
+    (1, 'Diseñar API', 'Definir endpoints', NOW()),
+    (1, 'Modelo BD', 'Diseñar tablas', NOW());
+
+-- Columna 2 (In Progress)
+INSERT INTO column_task (id_column, name, description, date)
+VALUES
+    (2, 'Implementar backend', 'Express + MySQL', NOW()),
+    (2, 'Autenticación', 'Login y registro', NOW());
+
+-- Columna 3 (Done)
+INSERT INTO column_task (id_column, name, description, date)
+VALUES
+    (3, 'Setup proyecto', 'Inicialización repo', NOW()),
+    (3, 'Docker listo', 'Contenedores funcionando', NOW());
+
+INSERT INTO users (name, mail, password)
+VALUES ('Juan', 'juan@mail.com', '1234');
+
+INSERT INTO users_board (user_mail, board_id)
+VALUES ('juan@mail.com', 1);
