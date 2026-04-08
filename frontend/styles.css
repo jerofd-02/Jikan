@@ -107,7 +107,7 @@ input {
 
                 &:hover {
                     border-radius: 8px;
-                    background-color: var(--purple);
+                    background-color: var(--dark-purple);
                     color: white;
                 }
             }
@@ -544,15 +544,26 @@ input {
 
     & > button {
         padding: 10px;
-        border-radius: 50%;
+        border-radius: 25%;
         height: 50%;
         align-self: center;
+        background-color: var(--background2-color);
+        border: 2px solid var(--border-color);
+
+        &[aria-checked="true"] {
+            background-color: var(--purple);
+        }
+
     }
 
     p {
         max-width: 260px;
         margin: 0;
         word-break: break-word;
+    }
+
+    &:hover {
+        border: 1px solid var(--purple);
     }
 }
 
@@ -970,4 +981,19 @@ input {
 .new-task-input button.cancel-btn,
 .edit-task-input button.cancel-btn {
     background: darkred;
+}
+
+::-webkit-scrollbar{
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-thumb{
+    background: var(--dark-purple);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background: var(--purple);
+}
+::-webkit-scrollbar-track{
+    background: var(--background-color)
 }
