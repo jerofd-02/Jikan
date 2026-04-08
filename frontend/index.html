@@ -23,7 +23,7 @@
     <asside class="asside-left">
 
         <div class="user-information-asside">
-            <img class="user-picture" src="./img/dummy_user.png">
+            <img class="user-picture" src="./img/dummy_user.png" alt="Foto de perfil">
 
             <div>
                 <h2 class="user-name-asside">User name</h2>
@@ -32,7 +32,8 @@
         </div>
 
         <form role="search" class="search-asside">
-            <input type="text" placeholder="Buscar tablero">
+            <label for="search"></label>
+            <input type="text" id="search" placeholder="Buscar tablero">
             <i class="fas fa-search"></i>
         </form>
 
@@ -78,6 +79,7 @@
         <h3>Nueva tarea</h3>
 
         <form id="form-tarea">
+            <label for="texto-tarea"></label>
             <input type="text" id="texto-tarea" placeholder="Escribe la tarea" required>
 
             <div>

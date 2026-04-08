@@ -542,7 +542,7 @@ input {
     padding: 5px 36px 5px 5px;
     min-height: 48px;
 
-    & > button {
+    button {
         padding: 10px;
         border-radius: 25%;
         height: 50%;
@@ -577,6 +577,20 @@ input {
     &:hover {
         color: var(--light-purple);
         transform: scale(1.1);
+    }
+
+    button {
+        background: none;
+        border: none;
+        color: var(--purple);
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 8px 12px;
+        font-weight: bold;
+
+        &:hover {
+            color: var(--light-purple);
+        }
     }
 }
 
