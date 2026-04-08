@@ -2,14 +2,14 @@ function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
     tasks.forEach(task => {
-
         if (task.querySelector(".modify-task")) return;
 
         const modifyBtn = document.createElement("button");
         modifyBtn.classList.add("modify-task");
         modifyBtn.innerHTML = `<i class="fa-solid fa-pen" aria-hidden="true"></i>`;
 
-        task.appendChild(modifyBtn);
+        const actionsDiv = task.querySelector(".task-actions");
+        actionsDiv.appendChild(modifyBtn);
     });
 }
 
@@ -32,7 +32,7 @@ function modifyTask(taskElement) {
                 </div>
             `;
 
-    taskElement.insertBefore(editDiv, taskElement.querySelector(".modify-task"));
+    taskElement.insertBefore(editDiv, taskElement.querySelector(".task-actions"));
     const input = editDiv.querySelector("input");
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);

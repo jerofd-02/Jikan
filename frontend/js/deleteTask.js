@@ -15,14 +15,17 @@ function addDeleteButtons() {
     const tasks = document.querySelectorAll(".task");
 
     tasks.forEach(task => {
+        if (task.querySelector(".task-actions")) return;
 
-        if (task.querySelector(".delete-task")) return;
+        const actionsDiv = document.createElement("div");
+        actionsDiv.classList.add("task-actions");
+        task.appendChild(actionsDiv);
 
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete-task");
         deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
 
-        task.appendChild(deleteBtn);
+        actionsDiv.appendChild(deleteBtn);
     });
 }
 

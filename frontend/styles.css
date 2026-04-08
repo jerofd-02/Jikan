@@ -539,9 +539,10 @@ input {
     gap: 5px;
     position: relative;
     align-items: center;
-    padding: 5px 35px 5px 5px;
+    padding: 5px 36px 5px 5px;
+    min-height: 48px;
 
-    button {
+    & > button {
         padding: 10px;
         border-radius: 50%;
         height: 50%;
@@ -890,71 +891,61 @@ input {
     }
 }
 
-.modify-task {
+.task-actions {
     position: absolute;
-    bottom: 2px;
-    right: 5px;
-
-    border: none;
-    background: none;
-    cursor: pointer;
-
-    opacity: 0;
-}
-
-.task:hover .modify-task {
-    opacity: 1;
-}
-
-.modify-task:hover {
-    transform: scale(1.2);
-}
-
-.modify-task i {
-    color: black;
-    transition: color 0.2s ease;
-}
-
-.modify-task:hover i {
-    color: black;
-}
-
-.delete-task {
-    position: absolute;
-    top: 5px;
+    top: 4px;
     right: 5px;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
-    border-radius: 50%;
-    border: none;
-    background: darkred;
-    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
 
     opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none; /* CLAVE: no intercepta clics cuando está oculto */
+    transition: opacity 0.2s ease;
 
     .task:hover & {
         opacity: 1;
+        pointer-events: all; /* se activa al hacer hover */
+    }
+}
+
+.delete-task, .modify-task {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    transform: scale(0.8);
+    transition: transform 0.2s ease;
+
+    .task:hover & {
         transform: scale(1);
     }
 
     &:hover {
         transform: scale(1.2);
     }
+}
 
-    i {
-        color: white;
-        font-size: 1rem;
-    }
+.delete-task {
+    background: darkred;
+
+    i { color: white; font-size: 0.8rem; }
+}
+
+.modify-task {
+    background: var(--dark-purple);
+
+    i { color: white; font-size: 0.75rem; }
+
+    &:hover { background: var(--purple); }
 }
 
 .new-task-input button.add-btn,
