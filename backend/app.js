@@ -4,10 +4,13 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.json()); // <-- necesario para leer req.body en POST/PUT/PATCH
 
 const boardRoutes = require('./endpoints/board');
-app.use('/boards', boardRoutes);
+const taskRoutes  = require('./endpoints/task');
 
+app.use('/boards', boardRoutes);
+app.use('/tasks',  taskRoutes);
 
 
 function createConnection() {

@@ -20,6 +20,7 @@ const cargarColumnas = (boards, tablero) => {
 
         let col = document.createElement("div");
         col.className = "column";
+        col.dataset.columnId = column.column_id; // <-- guardamos el id de la columna
 
         let title = document.createElement("h3");
         title.textContent = column.name;
@@ -31,19 +32,9 @@ const cargarColumnas = (boards, tablero) => {
         column.tasks.forEach((task) => {
             let taskContent = document.createElement("div");
             taskContent.className = "task";
-            taskContent.draggable = true;
+            taskContent.dataset.taskId = task.id_task; // <-- guardamos el id de la tarea
 
             let button = document.createElement("button");
-            button.role = "checkbox";
-            button.ariaChecked = false;
-            button.ariaLabel = "Marcar tarea como completada";
-
-            button.addEventListener('click', () => {
-                const checked = button.getAttribute('aria-checked') === 'true';
-                button.setAttribute('aria-checked', String(!checked));
-                button.closest('.task').classList.toggle('done', !checked);
-            });
-
             let taskName = document.createElement("p");
             taskName.textContent = task.name;
 
@@ -78,29 +69,6 @@ const init = async () => {
     let boards = await getData(API_URL);
     let tablero = document.querySelector(".boards-section");
     cargarColumnas(boards, tablero);
-
-    let tasks = document.getElementsByClassName('tasks');
-    let columns = document.getElementsByClassName('task-list');
-    let selected = null;
-
-    for (let task of tasks) {
-        task.addEventListener("dragstart", (e) => {
-            selected = e.target;
-        });
-    }
-
-    for (let column of columns) {
-        column.addEventListener("dragover", (e) => {
-            e.preventDefault();
-        });
-
-        column.addEventListener("drop", (e) => {
-            if (selected) {
-                column.appendChild(selected);
-                selected = null;
-            }
-        });
-    }
 };
 
 init();

@@ -1,3 +1,5 @@
+const TASK_API_URL = "http://localhost:3000/tasks";
+
 document.addEventListener("DOMContentLoaded", () => {
     let listaActual = null;
 
@@ -36,17 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN AÑADIR
         if (e.target.matches(".add-btn")) {
             const inputDiv = e.target.closest(".new-task-input");
-            const inputList = inputDiv.closest(".tasks-list");
             const input = inputDiv.querySelector("input");
             const texto = input.value.trim();
             if (!texto) return;
 
-            const nuevaTarea = document.createElement("div");
-            nuevaTarea.classList.add("task");
-            nuevaTarea.innerHTML = `<button></button><p>${texto}</p>`;
+            const column = inputDiv.closest(".column");
+            const columnId = column.dataset.columnId;
 
-            inputList.appendChild(nuevaTarea);
-            inputDiv.remove();
+            agregarTarea(texto, columnId, inputDiv);
         }
     });
 
@@ -56,17 +55,45 @@ document.addEventListener("DOMContentLoaded", () => {
             const inputDiv = e.target.closest(".new-task-input");
             if (!inputDiv) return;
 
-            const lista = inputDiv.closest(".tasks-list");
             const input = inputDiv.querySelector("input");
             const texto = input.value.trim();
             if (!texto) return;
 
-            const nuevaTarea = document.createElement("div");
-            nuevaTarea.classList.add("task");
-            nuevaTarea.innerHTML = `<button></button><p>${texto}</p>`;
+            const column = inputDiv.closest(".column");
+            const columnId = column.dataset.columnId;
 
-            lista.appendChild(nuevaTarea);
-            inputDiv.remove();
+            agregarTarea(texto, columnId, inputDiv);
         }
     });
 });
+
+async function agregarTarea(nombre, columnId, inputDiv) {
+    try {
+        const response = await fetch(TASK_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_column: columnId, name: nombre }),
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            console.error("Error al guardar la tarea:", err.message);
+            return;
+        }
+
+        const data = await response.json();
+
+        // Añadir la tarjeta al DOM solo si el servidor confirmó el guardado
+        const lista = inputDiv.closest(".tasks-list");
+        const nuevaTarea = document.createElement("div");
+        nuevaTarea.classList.add("task");
+        nuevaTarea.dataset.taskId = data.id_task; // guardamos el id devuelto por la BD
+        nuevaTarea.innerHTML = `<button></button><p>${nombre}</p>`;
+
+        lista.appendChild(nuevaTarea);
+        inputDiv.remove();
+
+    } catch (error) {
+        console.error("Error de red al crear la tarea:", error);
+    }
+}
