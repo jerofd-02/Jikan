@@ -550,7 +550,13 @@ input {
         width: 10px;
         scale: 0.6;
         background-color: var(--background2-color);
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
        
+        &:hover {
+            border: 2px solid var(--purple);
+        }
 
         &:checked {
             background-color: var(--purple);
