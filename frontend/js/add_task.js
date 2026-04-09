@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN "+ Añade otra tarea"
         if (e.target.matches(".add-task button")) {
             const column = e.target.closest(".column");
-            listaActual = column.querySelector(".task-list");
+            listaActual = column.querySelector(".tasks-list");
 
             // Evitar múltiples inputs
             if (column.querySelector(".new-task-input")) return;
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN AÑADIR
         if (e.target.matches(".add-btn")) {
             const inputDiv = e.target.closest(".new-task-input");
+            const inputList = inputDiv.closest(".tasks-list");
             const input = inputDiv.querySelector("input");
             const texto = input.value.trim();
             if (!texto) return;
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
             nuevaTarea.classList.add("task");
             nuevaTarea.innerHTML = `<button></button><p>${texto}</p>`;
 
-            listaActual.appendChild(nuevaTarea);
+            inputList.appendChild(nuevaTarea);
             inputDiv.remove();
         }
     });
@@ -55,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const inputDiv = e.target.closest(".new-task-input");
             if (!inputDiv) return;
 
+            const lista = inputDiv.closest(".tasks-list");
             const input = inputDiv.querySelector("input");
             const texto = input.value.trim();
             if (!texto) return;
@@ -63,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             nuevaTarea.classList.add("task");
             nuevaTarea.innerHTML = `<button></button><p>${texto}</p>`;
 
-            listaActual.appendChild(nuevaTarea);
+            lista.appendChild(nuevaTarea);
             inputDiv.remove();
         }
     });
