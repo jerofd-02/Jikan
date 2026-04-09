@@ -58,21 +58,21 @@ const cargarColumnas = (boards, tablero) => {
 
         let addSection = document.createElement("div");
         addSection.className = "add-task";
-        let addButton = document.createElement("button");
-        addButton.innerText = "+ Añade otra tarea";
+        let addcheckbox = document.createElement("checkbox");
+        addcheckbox.innerText = "+ Añade otra tarea";
 
-        addSection.appendChild(addButton);
+        addSection.appendChild(addcheckbox);
         col.appendChild(addSection);
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
     });
 
-    let newBoardButton = document.createElement("button");
-    newBoardButton.className = "create-new-column";
-    newBoardButton.textContent = "Crear nueva columna";
+    let newBoardcheckbox = document.createElement("checkbox");
+    newBoardcheckbox.className = "create-new-column";
+    newBoardcheckbox.textContent = "Crear nueva columna";
 
-    tablero.appendChild(newBoardButton);
+    tablero.appendChild(newBoardcheckbox);
 };
 
 const init = async () => {
