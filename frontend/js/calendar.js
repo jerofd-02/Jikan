@@ -32,7 +32,7 @@ function initCalendar(container) {
 
         const first = new Date(year, month, 1);
         // Usamos toMondayFirst para mostrar el día correcto en el sidebar
-        container.querySelector('#sidebar-weekday').textContent = WEEKDAYS_FULL[toMondayFirst(first.getDay())];
+        container.querySelector('#sidebar-weekday').textContent = `${WEEKDAYS_FULL[toMondayFirst(today.getDay())]} ${today.getDate()}`;
 
         // Cabecera de días de la semana
         const wRow = container.querySelector('#weekdays-row');
