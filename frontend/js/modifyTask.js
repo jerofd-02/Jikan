@@ -38,15 +38,31 @@ function modifyTask(taskElement) {
     input.setSelectionRange(input.value.length, input.value.length);
 }
 
-function saveTask(editDiv) {
+async function saveTask(editDiv) {
     const task = editDiv.closest(".task");
     const newText = editDiv.querySelector("input").value.trim();
     if (!newText) return;
 
-    const paragraph = task.querySelector("p");
-    paragraph.textContent = newText;
-    paragraph.style.display = "";
-    editDiv.remove();
+    const taskId = task.dataset.taskId;
+
+    try {
+        const response = await fetch(`${TASK_API_URL}/${taskId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: newText })
+        });
+
+        if (!response.ok) throw new Error("Error al guardar");
+
+        const paragraph = task.querySelector("p");
+        paragraph.textContent = newText;
+        paragraph.style.display = "";
+        editDiv.remove();
+
+    } catch (error) {
+        console.error("Error al actualizar la tarea:", error);
+        alert("No se pudo guardar el cambio");
+    }
 }
 
 function cancelEdit(editDiv) {

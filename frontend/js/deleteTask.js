@@ -38,13 +38,27 @@ document.addEventListener("click", (e) => {
     }
 });
 
-function deleteTask(taskElement) {
+async function deleteTask(taskElement) {
     if (!taskElement) return;
 
-    taskElement.style.opacity = "0";
-    taskElement.style.transition = "opacity 0.2s";
+    const taskId = taskElement.dataset.taskId;
 
-    setTimeout(() => {
-        taskElement.remove();
-    }, 200);
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            console.error("Error al eliminar la tarea.");
+            return;
+        }
+
+        taskElement.style.opacity = "0";
+        taskElement.style.transition = "opacity 0.2s";
+        setTimeout(() => {
+            taskElement.remove();
+        }, 200);
+    } catch (error) {
+        console.error("Error en la petición: ", error);
+    }
 }
