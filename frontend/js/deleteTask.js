@@ -1,13 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     addDeleteButtons();
-    
+
     const observer = new MutationObserver(() => {
         addDeleteButtons();
     });
 
     observer.observe(document.body, {
-        childList: true,
-        subtree: true
+        childList: true, subtree: true
     });
 });
 
