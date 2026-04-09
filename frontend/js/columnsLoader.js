@@ -33,21 +33,19 @@ const cargarColumnas = (boards, tablero) => {
             taskContent.className = "task";
             taskContent.draggable = true;
 
-            let button = document.createElement("button");
-            button.role = "checkbox";
-            button.ariaChecked = false;
-            button.ariaLabel = "Marcar tarea como completada";
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.ariaLabel = "Marcar tarea como completada";
 
-            button.addEventListener('click', () => {
-                const checked = button.getAttribute('aria-checked') === 'true';
-                button.setAttribute('aria-checked', String(!checked));
-                button.closest('.task').classList.toggle('done', !checked);
+            checkbox.addEventListener('click', () => {
+                const checked = checkbox.checked;
+                checkbox.closest('.task').classList.toggle('done', checked);
             });
 
             let taskName = document.createElement("p");
             taskName.textContent = task.name;
 
-            taskContent.appendChild(button);
+            taskContent.appendChild(checkbox);
             taskContent.appendChild(taskName);
 
             tasks.appendChild(taskContent);
@@ -57,21 +55,21 @@ const cargarColumnas = (boards, tablero) => {
 
         let addSection = document.createElement("div");
         addSection.className = "add-task";
-        let addButton = document.createElement("button");
-        addButton.innerText = "+ Añade otra tarea";
+        let addcheckbox = document.createElement("checkbox");
+        addcheckbox.innerText = "+ Añade otra tarea";
 
-        addSection.appendChild(addButton);
+        addSection.appendChild(addcheckbox);
         col.appendChild(addSection);
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
     });
 
-    let newBoardButton = document.createElement("button");
-    newBoardButton.className = "create-new-column";
-    newBoardButton.textContent = "Crear nueva columna";
+    let newBoardcheckbox = document.createElement("checkbox");
+    newBoardcheckbox.className = "create-new-column";
+    newBoardcheckbox.textContent = "Crear nueva columna";
 
-    tablero.appendChild(newBoardButton);
+    tablero.appendChild(newBoardcheckbox);
 };
 
 const init = async () => {
