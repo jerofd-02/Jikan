@@ -5,9 +5,9 @@
 :root {
     --background-color: #0f1117;
     --background2-color: #131620;
-    --background3-color: #1a1d2e;
+    --background3-color: #1e1e35;
     --border-color: #343741;
-    --font-color: #8a8fa0;
+    --font-color: #e8e8f5;
     --purple: #7c6af7;
     --dark-purple: #3b2f7a;
     --light-purple: #8f7ef9;
@@ -42,6 +42,7 @@ input {
 /* Homepage styles */
 .homepage {
     display: flex;
+    width: 100%;
     gap: 1rem;
 
     .asside-left {
@@ -49,7 +50,8 @@ input {
         margin-right: 10px;
         padding-right: 1rem;
 
-        width: 300px;
+        width: 250px;
+        flex-shrink: 0;
 
         .user-information-asside {
 
@@ -120,7 +122,8 @@ input {
 
     .main-content {
 
-        width: 100%;
+        flex: 1;
+        min-width: 0;
         margin: 0;
 
         header {
@@ -165,21 +168,13 @@ input {
 
         .boards-section {
             display: flex;
-            gap: 1rem;
+            gap: 2rem;
 
             margin-top: 2rem;
 
             overflow: auto;
 
-            .tasks-section {
-                margin-left: 2rem;
-
-                border-right: 1px solid var(--border-color);
-                padding-right: 3rem;
-            }
-
             .create-new-column {
-                margin: 0 2rem;
                 width: 260px;
                 height: 5rem;
 
@@ -510,7 +505,8 @@ input {
     flex-direction: column;
 
     font-family: system-ui;
-    width: 260px;
+    width: 250px;
+    max-height: 400px;
     background: var(--background2-color);
     border: 1px solid var(--border-color);
     padding: 12px;
@@ -600,7 +596,6 @@ input {
     border: 1px solid var(--border-color);
     display: flex;
     width: 100%;
-    box-shadow: 4px 4px 0 #999;
     font-family: 'DM Mono', monospace;
     margin-top: 1rem;
     flex-wrap: wrap;
