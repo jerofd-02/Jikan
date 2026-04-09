@@ -6,7 +6,6 @@ const getData = async (link) => {
         .then(response => response.json());
 }
 
-let boards = await getData(API_URL);
 let tablero = document.querySelector(".boards-section");
 
 console.log(tablero);
@@ -48,8 +47,9 @@ const cargarColumnas = (boards, tablero) => {
         let addSection = document.createElement("div");
         addSection.className = "add-task";
         let addButton = document.createElement("button");
-        addButton.innerText = "Añade otra tarea";
+        addButton.innerText = "+ Añade otra tarea";
 
+        addSection.appendChild(addButton);
         col.appendChild(addSection);
 
         taskSection.appendChild(col);
