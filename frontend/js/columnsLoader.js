@@ -20,25 +20,35 @@ const cargarColumnas = (boards, tablero) => {
 
         let col = document.createElement("div");
         col.className = "column";
-        col.dataset.columnId = column.column_id; // <-- guardamos el id de la columna
+        col.dataset.columnId = column.column_id;
 
         let title = document.createElement("h3");
         title.textContent = column.name;
         col.appendChild(title);
 
         let tasks = document.createElement("div");
-        tasks.className = "tasks-list";
+        tasks.className = "task-list";
+        tasks.dataset.columnId = column.column_id;
 
         column.tasks.forEach((task) => {
             let taskContent = document.createElement("div");
             taskContent.className = "task";
-            taskContent.dataset.taskId = task.id_task; // <-- guardamos el id de la tarea
+            taskContent.dataset.taskId = task.id_task;
+            taskContent.draggable = true;
 
-            let button = document.createElement("button");
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.ariaLabel = "Marcar tarea como completada";
+
+            checkbox.addEventListener('click', () => {
+                const checked = checkbox.checked;
+                checkbox.closest('.task').classList.toggle('done', checked);
+            });
+
             let taskName = document.createElement("p");
             taskName.textContent = task.name;
 
-            taskContent.appendChild(button);
+            taskContent.appendChild(checkbox);
             taskContent.appendChild(taskName);
 
             tasks.appendChild(taskContent);
@@ -69,6 +79,37 @@ const init = async () => {
     let boards = await getData(API_URL);
     let tablero = document.querySelector(".boards-section");
     cargarColumnas(boards, tablero);
+
+    let selected = null;
+
+    tablero.addEventListener("dragstart", (e) => {
+        if (e.target.classList.contains("task")) {
+            selected = e.target;
+        }
+    });
+
+    tablero.addEventListener("dragover", (e) => {
+        if (e.target.closest(".task-list")) {
+            e.preventDefault();
+        }
+    });
+
+    tablero.addEventListener("drop", async (e) => {
+        const targetList = e.target.closest(".task-list");
+        if (selected && targetList) {
+            const taskId = selected.dataset.taskId;
+            const columnId = targetList.dataset.columnId;
+
+            await fetch(`http://localhost:3000/tasks/${taskId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id_column: columnId }),
+            }).catch(err => console.error("Error actualizando tarea:", err));
+
+            targetList.appendChild(selected);
+            selected = null;
+        }
+    });
 };
 
 init();

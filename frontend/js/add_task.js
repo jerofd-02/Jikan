@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN "+ Añade otra tarea"
         if (e.target.matches(".add-task button")) {
             const column = e.target.closest(".column");
-            listaActual = column.querySelector(".tasks-list");
+            listaActual = column.querySelector(".task-list");
+            console.log(listaActual);
 
             // Evitar múltiples inputs
             if (column.querySelector(".new-task-input")) return;
@@ -84,11 +85,17 @@ async function agregarTarea(nombre, columnId, inputDiv) {
         const data = await response.json();
 
         // Añadir la tarjeta al DOM solo si el servidor confirmó el guardado
-        const lista = inputDiv.closest(".tasks-list");
+        const lista = inputDiv.closest(".task-list");
         const nuevaTarea = document.createElement("div");
         nuevaTarea.classList.add("task");
         nuevaTarea.dataset.taskId = data.id_task; // guardamos el id devuelto por la BD
-        nuevaTarea.innerHTML = `<button></button><p>${nombre}</p>`;
+        nuevaTarea.innerHTML = `<input type="checkbox"></input><p>${nombre}</p>`;
+
+        const checkbox = nuevaTarea.querySelector('input')
+        checkbox?.addEventListener('click', () => {
+            const checked = checkbox.checked;
+            checkbox.closest('.task').classList.toggle('done', checked);
+        });
 
         lista.appendChild(nuevaTarea);
         inputDiv.remove();
