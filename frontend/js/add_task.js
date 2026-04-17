@@ -39,14 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN AÑADIR
         if (e.target.matches(".add-btn")) {
             const inputDiv = e.target.closest(".new-task-input");
-            const input = inputDiv.querySelector("input");
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            const column = inputDiv.closest(".column");
-            const columnId = column.dataset.columnId;
-
-            agregarTarea(texto, columnId, inputDiv);
+            procesarTarea(inputDiv);
         }
     });
 
@@ -54,16 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             const inputDiv = e.target.closest(".new-task-input");
-            if (!inputDiv) return;
-
-            const input = inputDiv.querySelector("input");
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            const column = inputDiv.closest(".column");
-            const columnId = column.dataset.columnId;
-
-            agregarTarea(texto, columnId, inputDiv);
+            procesarTarea(inputDiv);
         }
     });
 });
@@ -103,4 +87,15 @@ async function agregarTarea(nombre, columnId, inputDiv) {
     } catch (error) {
         console.error("Error de red al crear la tarea:", error);
     }
+}
+
+async function procesarTarea(inputDiv) {
+    const input = inputDiv.querySelector("input");
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    const column = inputDiv.closest(".column");
+    const columnId = column.dataset.columnId;
+
+    agregarTarea(texto, columnId, inputDiv);
 }
