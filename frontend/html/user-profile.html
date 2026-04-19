@@ -10,104 +10,115 @@
     <script src="../js/togglePassword.js" defer></script>
 </head>
 <body class="user-profile">
-    <aside>
-        <div>
-            <a href="../index.html">
-                <div class="user-img"></div>
-            </a>
-            <h3>Nombre de Usuario</h3>
+<aside>
+    <div>
+        <a href="../index.html">
+            <div class="user-img"></div>
+        </a>
+        <h3>Nombre de Usuario</h3>
+    </div>
+    <nav id="nav">
+        <ul>
+            <li><button class="nav-item active" data-section="account-info">Información de la cuenta</button></li>
+            <li><button class="nav-item" data-section="security">Seguridad</button></li>
+            <li><button class="nav-item" data-section="notifications">Notificaciones</button></li>
+            <li><button class="nav-item" data-section="themes">Temas</button></li>
+            <li><button class="nav-item" data-section="recommendations">Recomendaciones</button></li>
+            <li><button class="nav-item" data-section="account-management">Gestionar cuenta</button></li>
+        </ul>
+    </nav>
+</aside>
+<main>
+    <section class="section active" id="section-account-info">
+        <div class="avatar-wrapper"></div>
+        <form action="">
+            <label for="username">Cambiar nombre de usuario:</label>
+            <div class="inputandbutton">
+                <input type="text" id="username" name="username" placeholder="Nombre">
+                <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+            </div>
+        </form>
+        <form action="">
+            <label for="email">Cambiar correo electrónico:</label>
+            <div class="inputandbutton">
+                <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
+                <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+            </div>
+        </form>
+    </section>
+    <section class="section" id="section-security">
+        <form action="">
+            <h2>Cambiar contraseña</h2>
+            <label for="password">Contraseña actual:</label>
+            <div class="inputandbutton">
+                <input type="password" id="password" name="current-password">
+                <button class="input-btn" id="toggle-btn" type="button"><i class="far fa-eye-slash"></i></button>
+            </div>
+            <label for="new-password">Nueva contraseña:</label>
+            <div class="inputandbutton">
+                <input type="password" id="new-password" name="new-password">
+                <button class="input-btn" id="toggle-btn2" type="button"><i class="far fa-eye-slash"></i></button>
+            </div>
+            <label for="confirm-password">Confirmar nueva contraseña:</label>
+            <div class="inputandbutton">
+                <input type="password" id="confirm-password" name="confirm-password">
+                <button class="input-btn" id="toggle-btn3" type="button"><i class="far fa-eye-slash"></i></button>
+            </div>
+            <button type="submit">Cambiar contraseña</button>
+        </form>
+    </section>
+    <section class="section" id="section-notifications">
+        <div class="notification-setting">
+            <p>Recibir notificaciones por correo electrónico</p>
+            <div class="toggle">
+                <input type="checkbox" id="email-notifications" name="email-notifications">
+                <label for="email-notifications"></label>
+            </div>
         </div>
-        <nav id="nav">
-            <ul>
-                <li><button class="nav-item active" data-section="account-info">Información de la cuenta</button></li>
-                <li><button class="nav-item" data-section="security">Seguridad</button></li>
-                <li><button class="nav-item" data-section="notifications">Notificaciones</button></li>
-                <li><button class="nav-item" data-section="recommendations">Recomendaciones</button></li>
-                <li><button class="nav-item" data-section="account-management">Gestionar cuenta</button></li>
-            </ul>
-        </nav>
-    </aside>
-    <main>
-        <section class="section active" id="section-account-info">
-            <div class="avatar-wrapper"></div>
-            <form action="">
-                <label for="username">Cambiar nombre de usuario:</label>
-                <div class="inputandbutton">
-                    <input type="text" id="username" name="username" placeholder="Nombre">
-                    <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
-                </div>
-            </form>
-            <form action="">
-                <label for="email">Cambiar correo electrónico:</label>
-                <div class="inputandbutton">
-                    <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
-                    <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
-                </div>
-            </form>
-        </section>
-        <section class="section" id="section-security">
-            <form action="">
-                <h2>Cambiar contraseña</h2>
-                <label for="password">Contraseña actual:</label>
-                <div class="inputandbutton">
-                    <input type="password" id="password" name="current-password">
-                    <button class="input-btn" id="toggle-btn" type="button"><i class="far fa-eye-slash"></i></button>
-                </div>
-                <label for="new-password">Nueva contraseña:</label>
-                <div class="inputandbutton">
-                    <input type="password" id="new-password" name="new-password">
-                    <button class="input-btn" id="toggle-btn2" type="button"><i class="far fa-eye-slash"></i></button>
-                </div>
-                <label for="confirm-password">Confirmar nueva contraseña:</label>
-                <div class="inputandbutton">
-                    <input type="password" id="confirm-password" name="confirm-password">
-                    <button class="input-btn" id="toggle-btn3" type="button"><i class="far fa-eye-slash"></i></button>
-                </div>
-                <button type="submit">Cambiar contraseña</button>
-            </form>
-        </section>
-        <section class="section" id="section-notifications">
-            <div class="notification-setting">
-                <p>Recibir notificaciones por correo electrónico</p>
-                <div class="toggle">
-                    <input type="checkbox" id="email-notifications" name="email-notifications">
-                    <label for="email-notifications"></label>
-                </div>
+        <div class="notification-setting">
+            <p>Recibir notificaciones de tus tableros</p>
+            <div class="toggle">
+                <input type="checkbox" id="board-notifications" name="board-notifications">
+                <label for="board-notifications"></label>
             </div>
-            <div class="notification-setting">
-                <p>Recibir notificaciones de tus tableros</p>
-                <div class="toggle">
-                    <input type="checkbox" id="board-notifications" name="board-notifications">
-                    <label for="board-notifications"></label>
-                </div>
+        </div>
+        <div class="notification-setting">
+            <p>Recibir notificaciones de tableros compartidos</p>
+            <div class="toggle">
+                <input type="checkbox" id="shared-board-notifications" name="shared-board-notifications">
+                <label for="shared-board-notifications"></label>
             </div>
-            <div class="notification-setting">
-                <p>Recibir notificaciones de tableros compartidos</p>
-                <div class="toggle">
-                    <input type="checkbox" id="shared-board-notifications" name="shared-board-notifications">
-                    <label for="shared-board-notifications"></label>
-                </div>
-            </div>
-        </section>
-        <section class="section" id="section-recommendations">
-            <h2>Recomendaciones</h2>
-            <form action="">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Anonimo">
-                <label for="asunto">Asunto:</label>
-                <input type="text" id="asunto" name="asunto" placeholder="Escribe el asunto aquí">
-                <label for="recommendations">Recomendaciones:</label>
-                <textarea id="recommendations" name="recommendations" rows="4" placeholder="Escribe tus recomendaciones aquí"></textarea>
-                <button type="submit">Enviar mensaje</button>
-            </form>
-        </section>
-        <section class="section" id="section-account-management">
-            <h2>Gestión de la cuenta</h2>
-            <div class="logout">
-                <p>Esta acción cerrará tu sesión actual.</p>
-                <button class="logout">Cerrar sesión</button>
-            </div>
-            <div class="delete-account">
+        </div>
+    </section>
+    <section class="section" id="section-themes">
+        <h2>Seleccionar tema</h2>
+
+        <div class="theme-selector">
+            <button class="theme-btn" data-theme="dark"><span>Oscuro</span></button>
+            <button class="theme-btn" data-theme="light"><span>Claro</span></button>
+            <button class="theme-btn" data-theme="ocean"><span>Ocean</span></button>
+            <button class="theme-btn" data-theme="vulcan"><span>Vulcan</span></button>
+        </div>
+    </section>
+    <section class="section" id="section-recommendations">
+        <h2>Recomendaciones</h2>
+        <form action="">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Anonimo">
+            <label for="asunto">Asunto:</label>
+            <input type="text" id="asunto" name="asunto" placeholder="Escribe el asunto aquí">
+            <label for="recommendations">Recomendaciones:</label>
+            <textarea id="recommendations" name="recommendations" rows="4" placeholder="Escribe tus recomendaciones aquí"></textarea>
+            <button type="submit">Enviar mensaje</button>
+        </form>
+    </section>
+    <section class="section" id="section-account-management">
+        <h2>Gestión de la cuenta</h2>
+        <div class="logout">
+            <p>Esta acción cerrará tu sesión actual.</p>
+            <button class="logout">Cerrar sesión</button>
+        </div>
+        <div class="delete-account">
             <p>Esta acción eliminará tu cuenta permanentemente.</p>
             <button class="delete-account">Eliminar cuenta</button>
         </div>
@@ -115,4 +126,7 @@
 </main>
 
 </body>
+
+<script src="../js/themeSelector.js"></script>
+
 </html>

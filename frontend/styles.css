@@ -29,10 +29,42 @@
     --weekend: #ff4d4d;
 }
 
+[data-theme="ocean"] {
+    --background-color: #0a192f;
+    --background2-color: #112240;
+    --background3-color: #1b2a49;
+    --border-color: #233554;
+    --font-color: #e6f1ff;
+    --font-color2: #8892b0;
+
+    --purple: #64ffda;
+    --dark-purple: #2a8f7c;
+    --light-purple: #52e0c4;
+
+    --weekend: #ff6b6b;
+}
+
 body {
     font-family: Helvetica, sans-serif;
     background: var(--background-color);
     color: var(--font-color);
+}
+
+[data-theme="vulcan"] {
+    --background-color: #0b0b10;
+    --background2-color: #141420;
+    --background3-color: #1c1c2c;
+    --border-color: #2a2a3a;
+
+    --font-color: #f3f3f7;
+    --font-color2: #a0a0b3;
+
+    /* acento lava */
+    --purple: #ff4d2e;
+    --dark-purple: #b3261e;
+    --light-purple: #ff7a59;
+
+    --weekend: #ff3b3b;
 }
 
 /* Cambiar color del autocompletado del navegador */
@@ -374,7 +406,7 @@ input {
                 border-radius: 10px;
                 color: var(--font-color);
                 max-width: 350px;
-                
+
                 &::placeholder {
                     color: var(--font-color2);
                 }
@@ -1028,4 +1060,93 @@ input {
 }
 ::-webkit-scrollbar-track{
     background: var(--background-color)
+}
+
+.theme-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 160px);
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+/* SECCIÓN TEMAS */
+#themes {
+    padding: 2rem;
+}
+
+#themes h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* BOTONES COMO TARJETAS (PREVIEW REAL DEL TEMA) */
+.theme-btn {
+    width: 160px;
+    flex: 0 0 160px;
+    position: relative;
+    height: 120px;
+    border-radius: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    font-weight: bold;
+    font-size: 1rem;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1rem;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* FONDO (background-color del tema) */
+.theme-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--btn-bg);
+}
+
+/* FRANJA (purple del tema) */
+.theme-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    background: var(--btn-purple);
+}
+
+/* TEXTO */
+.theme-btn span {
+    position: relative;
+    z-index: 2;
+    color: var(--btn-text);
+}
+
+/* DARK (tus valores por defecto :root) */
+.theme-btn[data-theme="dark"] {
+    --btn-bg: #0f1117;      /* --background-color */
+    --btn-purple: #7c6af7;  /* --purple */
+    --btn-text: #e8e8f5;    /* --font-color */
+}
+
+/* LIGHT */
+.theme-btn[data-theme="light"] {
+    --btn-bg: #f5f7fb;
+    --btn-purple: #6a5cff;
+    --btn-text: #1a1a2e;
+}
+
+/* OCEAN */
+.theme-btn[data-theme="ocean"] {
+    --btn-bg: #0a192f;
+    --btn-purple: #64ffda;
+    --btn-text: #e6f1ff;
+}
+
+.theme-btn[data-theme="vulcan"] {
+    --btn-bg: #0b0b10;
+    --btn-purple: #ff4d2e;
+    --btn-text: #f3f3f7;
 }
