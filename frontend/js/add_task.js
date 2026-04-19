@@ -73,6 +73,7 @@ async function agregarTarea(nombre, columnId, inputDiv) {
         nuevaTarea.classList.add("task");
         nuevaTarea.dataset.taskId = data.id_task; // guardamos el id devuelto por la BD
         nuevaTarea.innerHTML = `<input type="checkbox"></input><p>${nombre}</p>`;
+        nuevaTarea.draggable = true;
 
         const checkbox = nuevaTarea.querySelector('input')
         checkbox?.addEventListener('click', () => {
