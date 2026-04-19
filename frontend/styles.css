@@ -9,9 +9,9 @@
     --border-color: #343741;
     --font-color: #e8e8f5;
     --font-color2: #9090b8;
-    --purple: #7c6af7;
-    --dark-purple: #3b2f7a;
-    --light-purple: #8f7ef9;
+    --principal: #7c6af7;
+    --dark-accent: #3b2f7a;
+    --light-accent: #8f7ef9;
 }
 
 [data-theme="light"] {
@@ -22,9 +22,9 @@
     --font-color: #1a1a2e;
     --font-color2: #6b6b8f;
 
-    --purple: #6a5cff;
-    --dark-purple: #4b3fc4;
-    --light-purple: #8c7fff;
+    --principal: #6a5cff;
+    --dark-accent: #4b3fc4;
+    --light-accent: #8c7fff;
 
     --weekend: #ff4d4d;
 }
@@ -37,9 +37,9 @@
     --font-color: #e6f1ff;
     --font-color2: #8892b0;
 
-    --purple: #64ffda;
-    --dark-purple: #2a8f7c;
-    --light-purple: #52e0c4;
+    --principal: #64ffda;
+    --dark-accent: #2a8f7c;
+    --light-accent: #52e0c4;
 
     --weekend: #ff6b6b;
 }
@@ -60,9 +60,9 @@ body {
     --font-color2: #a0a0b3;
 
     /* acento lava */
-    --purple: #ff4d2e;
-    --dark-purple: #b3261e;
-    --light-purple: #ff7a59;
+    --principal: #ff4d2e;
+    --dark-accent: #b3261e;
+    --light-accent: #ff7a59;
 
     --weekend: #ff3b3b;
 }
@@ -97,7 +97,7 @@ input {
         margin-right: 10px;
         padding-right: 1rem;
 
-        width: 250px;
+        width: 275px;
         flex-shrink: 0;
 
         .user-information-asside {
@@ -131,8 +131,8 @@ input {
                 }
 
                 &:focus {
-                    outline: 1px solid var(--purple);
-                    box-shadow: 0 0 5px var(--purple);
+                    outline: 1px solid var(--principal);
+                    box-shadow: 0 0 5px var(--principal);
                 }
             }
 
@@ -156,7 +156,7 @@ input {
 
                 &:hover {
                     border-radius: 8px;
-                    background-color: var(--dark-purple);
+                    background-color: var(--dark-accent);
                     color: var(--font-color);
                 }
             }
@@ -209,8 +209,8 @@ input {
                     background: none;
 
                     &:hover {
-                        color: var(--dark-purple);
-                        background: var(--purple);
+                        color: var(--dark-accent);
+                        background: var(--principal);
                     }
                 }
             }
@@ -240,7 +240,7 @@ input {
 
                 &:hover {
                     transform: scale(1.05);
-                    background-color: var(--purple);
+                    background-color: var(--principal);
                 }
             }
         }
@@ -279,7 +279,7 @@ input {
 
     .nav-item.active {
         color: white;
-        background-color: var(--purple);
+        background-color: var(--principal);
     }
 
     aside {
@@ -330,7 +330,7 @@ input {
                     transition: all 0.2s ease;
 
                     &:hover {
-                        background-color: var(--dark-purple);
+                        background-color: var(--dark-accent);
                         transform: scale(1.05);
                     }
                 }
@@ -370,7 +370,7 @@ input {
         }
 
         button {
-            background: linear-gradient(45deg, var(--light-purple) 0%, var(--purple) 100%);
+            background: linear-gradient(45deg, var(--light-accent) 0%, var(--principal) 100%);
             border: none;
             color: white;
             font-weight: bold;
@@ -412,8 +412,8 @@ input {
                 }
 
                 &:focus {
-                    outline: 1px solid var(--purple);
-                    box-shadow: 0 0 5px var(--purple);
+                    outline: 1px solid var(--principal);
+                    box-shadow: 0 0 5px var(--principal);
                 }
             }
 
@@ -473,7 +473,7 @@ input {
                 height: 0;
 
                 &:checked + label {
-                    background-color: var(--purple);
+                    background-color: var(--principal);
                 }
 
                 &:checked + label::before {
@@ -506,7 +506,7 @@ input {
         }
     }
 
-    .logout{
+    .logout {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -601,12 +601,12 @@ input {
         transition: all 0.2s ease;
 
         &:hover {
-            border: 2px solid var(--purple);
+            border: 2px solid var(--principal);
         }
 
         &:checked {
-            background-color: var(--purple);
-            accent-color: var(--purple);
+            background-color: var(--principal);
+            accent-color: var(--principal);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -632,7 +632,7 @@ input {
     }
 
     &:hover {
-        border: 1px solid var(--purple);
+        border: 1px solid var(--principal);
     }
 
     &.done p {
@@ -642,28 +642,28 @@ input {
 }
 
 .add-task {
-    color: var(--purple);
+    color: var(--principal);
     cursor: pointer;
     transition: all 0.2s ease;
     align-self: center;
 
 
     &:hover {
-        color: var(--light-purple);
+        color: var(--light-accent);
         transform: scale(1.1);
     }
 
     button {
         background: none;
         border: none;
-        color: var(--purple);
+        color: var(--principal);
         font-size: 1rem;
         cursor: pointer;
         padding: 8px 12px;
         font-weight: bold;
 
         &:hover {
-            color: var(--light-purple);
+            color: var(--light-accent);
         }
     }
 }
@@ -675,11 +675,9 @@ input {
     display: flex;
     width: 100%;
     font-family: 'DM Mono', monospace;
-    margin-top: 1rem;
     flex-wrap: wrap;
     justify-content: space-between;
     margin-top: auto;
-
 
     /* SIDEBAR */
 
@@ -749,7 +747,7 @@ input {
     }
 
     .nav-btn:hover {
-        background: var(--dark-purple);
+        background: var(--dark-accent);
     }
 
     .nav-btn:active {
@@ -786,7 +784,7 @@ input {
     }
 
     .weekday-cell.weekend {
-        color: var(--light-purple);
+        color: var(--light-accent);
     }
 
     .days-grid {
@@ -818,7 +816,7 @@ input {
     }
 
     .day-cell:hover:not(.other-month) {
-        background: var(--dark-purple);
+        background: var(--dark-accent);
     }
 
     .day-cell.other-month {
@@ -840,14 +838,14 @@ input {
     }
 
     .day-cell.today .day-num {
-        background: var(--dark-purple   );
+        background: var(--dark-accent);
         color: white;
         border-radius: 50%;
         font-size: 10px;
     }
 
     .day-cell.weekend-day .day-num {
-        color: var(--light-purple);
+        color: var(--light-accent);
     }
 
     .day-cell.other-month .day-num {
@@ -869,7 +867,7 @@ input {
         margin: 125px 10px 125px 5px;
         font-size: 64px;
         text-align: center;
-        background: linear-gradient(45deg, var(--light-purple) 0%, var(--purple) 100%);
+        background: linear-gradient(45deg, var(--light-accent) 0%, var(--principal) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -904,19 +902,20 @@ input {
         border: 1px solid var(--border-color);
         margin: 0 0 20px 0;
         color: var(--font-color);
+
         &::placeholder {
             color: var(--font-color2);
         }
 
         &:focus {
-            outline: 1px solid var(--purple);
-            box-shadow: 1px solid var(--purple);
+            outline: 1px solid var(--principal);
+            box-shadow: 1px solid var(--principal);
         }
     }
 
     .confirmation-button {
         display: block;
-        background: linear-gradient(45deg, var(--light-purple) 0%, var(--purple) 100%);
+        background: linear-gradient(45deg, var(--light-accent) 0%, var(--principal) 100%);
         border: none;
         color: var(--font-color);
         font-weight: bold;
@@ -961,8 +960,8 @@ input {
     }
 
     &:focus {
-        outline: 1px solid var(--purple);
-        box-shadow: 0 0 5px var(--purple);
+        outline: 1px solid var(--principal);
+        box-shadow: 0 0 5px var(--principal);
     }
 }
 
@@ -1012,23 +1011,30 @@ input {
 .delete-task {
     background: darkred;
 
-    i { color: white; font-size: 0.8rem; }
+    i {
+        color: white;
+        font-size: 0.8rem;
+    }
 }
 
 .modify-task {
-    background: var(--dark-purple);
+    background: var(--dark-accent);
 
-    i { color: white; font-size: 0.75rem; }
+    i {
+        color: white;
+        font-size: 0.75rem;
+    }
 
-    &:hover { background: var(--purple); }
+    &:hover {
+        background: var(--principal);
+    }
 }
 
 .new-task-input button.add-btn,
 .new-task-input button.cancel-btn,
 .edit-task-input button.add-btn,
-.edit-task-input button.cancel-btn
-{
-    background: var(--light-purple);
+.edit-task-input button.cancel-btn {
+    background: var(--light-accent);
     color: var(--font-color);
     font-size: 1rem;
     cursor: pointer;
@@ -1047,18 +1053,21 @@ input {
     background: darkred;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
-::-webkit-scrollbar-thumb{
-    background: var(--dark-purple);
+
+::-webkit-scrollbar-thumb {
+    background: var(--dark-accent);
     border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover{
-    background: var(--purple);
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--principal);
 }
-::-webkit-scrollbar-track{
+
+::-webkit-scrollbar-track {
     background: var(--background-color)
 }
 
@@ -1114,7 +1123,7 @@ input {
     bottom: 0;
     width: 100%;
     height: 40%;
-    background: var(--btn-purple);
+    background: var(--btn-principal);
 }
 
 /* TEXTO */
@@ -1126,27 +1135,226 @@ input {
 
 /* DARK (tus valores por defecto :root) */
 .theme-btn[data-theme="dark"] {
-    --btn-bg: #0f1117;      /* --background-color */
-    --btn-purple: #7c6af7;  /* --purple */
-    --btn-text: #e8e8f5;    /* --font-color */
+    --btn-bg: #0f1117; /* --background-color */
+    --btn-principal: #7c6af7; /* --principal */
+    --btn-text: #e8e8f5; /* --font-color */
 }
 
 /* LIGHT */
 .theme-btn[data-theme="light"] {
     --btn-bg: #f5f7fb;
-    --btn-purple: #6a5cff;
+    --btn-principal: #6a5cff;
     --btn-text: #1a1a2e;
 }
 
 /* OCEAN */
 .theme-btn[data-theme="ocean"] {
     --btn-bg: #0a192f;
-    --btn-purple: #64ffda;
+    --btn-principal: #64ffda;
     --btn-text: #e6f1ff;
 }
 
 .theme-btn[data-theme="vulcan"] {
     --btn-bg: #0b0b10;
-    --btn-purple: #ff4d2e;
+    --btn-principal: #ff4d2e;
     --btn-text: #f3f3f7;
+}
+
+/* RESPONSIVE */
+
+.homepage .asside-left {
+    min-height: 160px;
+    overflow: hidden;
+}
+
+.homepage .main-content {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.homepage .boards-section {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 1024px) {
+    .homepage .asside-left {
+        width: 160px;
+        padding-right: 0.5rem;
+    }
+
+    .homepage .asside-left .user-information-asside {
+        overflow: hidden;
+    }
+
+    .homepage .asside-left .user-information-asside div {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .homepage .asside-left .user-information-asside p {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+    }
+
+    .homepage .asside-left .user-information-asside h2 {
+        width: 100%;
+    }
+
+    .homepage .asside-left .user-information-asside .user-profile {
+        height: 60px;
+        width: 60px;
+    }
+
+    .homepage .asside-left .user-information-asside .user-name-asside {
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .homepage .asside-left .user-information-asside .user-email-asside {
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .homepage .main-content header h1 {
+        font-size: 22px;
+    }
+
+    .calendar-wrap .label-year {
+        font-size: 1.1rem;
+    }
+
+    .calendar-wrap .day-cell {
+        min-height: 40px;
+        padding: 4px;
+    }
+
+    .calendar-wrap .day-num {
+        font-size: 10px;
+        width: 16px;
+        height: 16px;
+    }
+
+    .calendar-wrap .weekday-cell {
+        font-size: 7px;
+        padding: 6px 2px;
+    }
+}
+
+@media (max-width: 768px) {
+    .homepage {
+        flex-direction: column;
+    }
+
+    .homepage .asside-left {
+        width: 100%;
+        border-right: none;
+        border-bottom-color: 1px solid var(--border-color);
+        margin-right: 0;
+        padding-right: 0;
+        padding-bottom: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .homepage .asside-left .user-information-asside {
+        margin-bottom: 0;
+        border-bottom: none;
+        flex-shrink: 0;
+    }
+
+    .homepage .asside-left .search-asside {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .homepage .asside-left .search-asside input {
+        width: 100%;
+        padding-right: 35px;
+    }
+
+    .homepage .asside-left .search-asside .fas.fa-search {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .homepage .asside-left .user-borads-asside {
+        display: none;
+    }
+
+    .homepage .main-content header h1 {
+        font-size: 20px;
+    }
+
+    .homepage .main-content header .header-buttons button {
+        width: 3rem;
+        height: 2rem;
+        font-size: large;
+    }
+
+    .calendar-wrap {
+        flex-direction: column;
+    }
+
+    .calendar-wrap .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        border-right: none;
+    }
+
+    .calendar-wrap .sidebar-info {
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 12px;
+        flex: 1;
+        min-width: 0;
+        flex-wrap: wrap;
+        row-gap: 2px;
+        column-gap: 6px;
+    }
+
+    .calendar-wrap .sidebar-nav {
+        border-top: none;
+        border-left: 1px solid var(--border-color);
+        flex-shrink: 0;
+    }
+
+    .calendar-wrap .nav-btn {
+        height: 52px;
+        width: 44px;
+    }
+
+    .calendar-wrap .day-cell {
+        min-width: 42px;
+    }
+
+    .calendar-wrap .label-year {
+        font-size: 1.2rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .calendar-wrap .label-month {
+        font-size: 12px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .calendar-wrap .label-weekday {
+        font-size: 10px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
 }
