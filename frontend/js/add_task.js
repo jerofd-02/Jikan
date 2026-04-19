@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let listaActual = null;
 
     document.addEventListener("click", (e) => {
-
         // CLICK EN "+ Añade otra tarea"
         if (e.target.matches(".add-task button")) {
             const column = e.target.closest(".column");

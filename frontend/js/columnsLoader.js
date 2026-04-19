@@ -1,9 +1,16 @@
-const API_URL = "http://localhost:3000/boards/1/full";
+const BASE_URL = "http://localhost:3000";
 
 const getData = async (link) => {
-    return await fetch(link)
-        .catch(error => console.error('Error fetching data:', error))
-        .then(response => response.json());
+    try {
+        const response = await fetch(link);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
 }
 
 let tablero = document.querySelector(".boards-section");
@@ -58,25 +65,25 @@ const cargarColumnas = (boards, tablero) => {
 
         let addSection = document.createElement("div");
         addSection.className = "add-task";
-        let addcheckbox = document.createElement("checkbox");
-        addcheckbox.innerText = "+ Añade otra tarea";
+        let addbutton = document.createElement("button");
+        addbutton.innerText = "+ Añade otra tarea";
 
-        addSection.appendChild(addcheckbox);
+        addSection.appendChild(addbutton);
         col.appendChild(addSection);
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
     });
 
-    let newBoardcheckbox = document.createElement("checkbox");
-    newBoardcheckbox.className = "create-new-column";
-    newBoardcheckbox.textContent = "Crear nueva columna";
+    let newBoardbutton = document.createElement("button");
+    newBoardbutton.className = "create-new-column";
+    newBoardbutton.textContent = "Crear nueva columna";
 
-    tablero.appendChild(newBoardcheckbox);
+    tablero.appendChild(newBoardbutton);
 };
 
 const init = async () => {
-    let boards = await getData(API_URL);
+    let boards = await getData(BASE_URL + "/boards/1/full");
     let tablero = document.querySelector(".boards-section");
     cargarColumnas(boards, tablero);
 
@@ -100,7 +107,7 @@ const init = async () => {
             const taskId = selected.dataset.taskId;
             const columnId = targetList.dataset.columnId;
 
-            await fetch(`http://localhost:3000/tasks/${taskId}`, {
+            await fetch(`${BASE_URL}/tasks/${taskId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id_column: columnId }),

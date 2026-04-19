@@ -557,17 +557,40 @@ input {
     padding: 5px 36px 5px 5px;
     min-height: 48px;
 
-    & > button {
-        padding: 10px;
-        border-radius: 25%;
-        height: 50%;
-        align-self: center;
+    & > input[type="checkbox"] {
+        appearance: none;
+        border-radius: 5px;
+        margin: 0;
+        height: 10px;
+        width: 10px;
+        scale: 0.6;
         background-color: var(--background2-color);
-        border: 2px solid var(--border-color);
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
 
-        &[aria-checked="true"] {
-            background-color: var(--purple);
+        &:hover {
+            border: 2px solid var(--purple);
         }
+
+        &:checked {
+            background-color: var(--purple);
+            accent-color: var(--purple);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:after {
+                content: "✓";
+                display: block;
+                color: white;
+                font-size: 20px;
+                font-weight: bold;
+                text-align: center;
+                line-height: 16px;
+            }
+        }
+
 
     }
 
@@ -579,6 +602,11 @@ input {
 
     &:hover {
         border: 1px solid var(--purple);
+    }
+
+    &.done p {
+        text-decoration: line-through;
+        color: var(--font-color2);
     }
 }
 
