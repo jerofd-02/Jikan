@@ -1243,7 +1243,72 @@ input {
         font-size: 7px;
         padding: 6px 2px;
     }
+
+    .register-login h1,
+    .register-login .h1-register-login {
+        margin: 2rem 1rem;
+        font-size: 2.5rem;
+    }
+
+    .register-login .input-wrapper {
+        padding: 0 1.5rem;
+    }
+
+    .register-login .confirmation-button {
+        width: 100%;
+    }
+
+    .register-login .column-login {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .user-profile {
+        aside {
+            max-width: 260px;
+        }
+
+        main {
+            max-width: 320px;
+        }
+
+        .notification-setting {
+            width: 100%;
+            padding: 30px 15px;
+        }
+    }
 }
+
+@media (max-width: 1024px) and (orientation: landscape) {
+    .register-login h1,
+    .register-login .h1-register-login {
+        font-size: 3rem;
+    }
+
+    .register-login .input-wrapper {
+        width: 600px;
+        max-width: 90%;
+    }
+
+    .register-login input {
+        font-size: 1.1rem;
+        padding: 18px;
+    }
+
+    .register-login label {
+        font-size: 1.2rem;
+    }
+
+    .register-login .confirmation-button {
+        font-size: 1.3rem;
+        padding: 18px;
+        width: 100%;
+    }
+}
+
 
 @media (max-width: 768px) {
     .homepage {
