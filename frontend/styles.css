@@ -175,6 +175,10 @@ input {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        padding-bottom: var(--sheet-min);
 
         header {
             display: flex;
@@ -223,6 +227,7 @@ input {
             margin: 2rem 0;
 
             overflow: auto;
+            min-height: 0;
 
             .create-new-column {
                 min-width: 260px;
@@ -257,6 +262,139 @@ input {
                 width: 100%;
                 height: auto;
             }
+        }
+
+        /* ─── Bottom Sheet ─── */
+        :root {
+            --sheet-min: 52px;
+            --sheet-mid: 280px;
+            --sheet-max: 70vh;
+            --sheet-radius: 16px;
+            --sheet-transition: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .panel.bottom-sheet {
+            position: relative;
+            bottom: 0;
+            left: 0;         /* o left: var(--sidebar-width) si quieres que respete el sidebar */
+            right: 0;
+            z-index: 200;
+            height: var(--sheet-min);
+            border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
+            transition: height 0.38s var(--sheet-transition);
+            will-change: height;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .panel.bottom-sheet.expanded {
+            height: var(--sheet-mid);
+        }
+
+        .panel.bottom-sheet.dragging {
+            transition: none;
+        }
+
+        /* Zona de arrastre (el summary convertido) */
+        .sheet-handle-zone {
+            flex-shrink: 0;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 16px;
+            cursor: ns-resize;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+            position: relative;
+        }
+
+        .panel.bottom-sheet.expanded .sheet-handle-zone {
+            border-color: var(--border-color);
+        }
+
+        /* Pastilla de arrastre visual */
+        .handle-pill {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 3px;
+            background: var(--border-color);
+            border-radius: 2px;
+            pointer-events: none;
+            transition: background 0.2s, width 0.2s;
+        }
+
+        .sheet-handle-zone:hover .handle-pill {
+            background: var(--principal);
+            width: 42px;
+        }
+
+        /* Ocultar el triángulo nativo del <details> */
+        .acordeon summary {
+            list-style: none;
+            pointer-events: none;  /* el clic lo maneja el chevron */
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--font-color2);
+        }
+
+        .acordeon summary::-webkit-details-marker { display: none; }
+
+        /* Botón chevron */
+        .sheet-chevron {
+            margin-left: auto;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--principal);
+            transition: transform 0.35s var(--sheet-transition),
+            background 0.2s,
+            border-color 0.2s;
+        }
+
+        .sheet-chevron:hover {
+            background: var(--principal);
+            border-color: transparent;
+        }
+
+        .panel.bottom-sheet.expanded .sheet-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Contenido con scroll */
+        .sheet-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+
+        .sheet-content .contenido {
+            /* tus estilos de .contenido se mantienen intactos */
+        }
+
+        /* Empujar el contenido principal para que el sheet cerrado no lo tape */
+        .main-content {
+            padding-bottom: var(--sheet-min);
         }
     }
 }
