@@ -1,3 +1,5 @@
+const undoManager = new UndoManager();
+
 document.addEventListener("DOMContentLoaded", () => {
     addDeleteButtons();
 
@@ -37,10 +39,24 @@ document.addEventListener("click", (e) => {
     }
 });
 
+document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "z") {
+        e.preventDefault();
+        undoManager.undo();
+    }
+
+    if (e.ctrlKey && e.key === "y") {
+        e.preventDefault();
+        undoManager.redo();
+    }
+})
+
 async function deleteTask(taskElement) {
     if (!taskElement) return;
 
     const taskId = taskElement.dataset.taskId;
+    const parent = taskElement.parentNode;
+    const nextSibling = taskElement.nextSibling;
 
     try {
         const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -56,6 +72,21 @@ async function deleteTask(taskElement) {
         taskElement.style.transition = "opacity 0.2s";
         setTimeout(() => {
             taskElement.remove();
+
+            undoManager.add({
+                undo: async () => {
+                    await fetch(`http://localhost:3000/tasks/`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({id: taskId})
+                    });
+                    parent.insertBefore(taskElement, nextSibling);
+                    taskElement.style.opacity = "1";
+                }, redo: async () => {
+                    await fetch(`http://localhost:3000/tasks/${taskId}`, {method: "DELETE"});
+                    taskElement.remove();
+                }
+            })
         }, 200);
     } catch (error) {
         console.error("Error en la petición: ", error);
