@@ -15,8 +15,6 @@ const getData = async (link) => {
 
 let tablero = document.querySelector(".boards-section");
 
-console.log(tablero);
-
 // la función eventualmente tendrá un parámetro que será el id del tablero
 const cargarColumnas = (boards, tablero) => {
 

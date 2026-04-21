@@ -147,7 +147,19 @@ input {
         .user-borads-asside {
             margin: 10px 5px;
 
-            h2 {
+            button {
+                appearance: none;
+                background: none;
+                border: none;
+                font: system-ui;
+                cursor: pointer;
+                text-align: left;
+                width: 100%;
+
+                font-weight: 500;
+                font-size: 1.2rem;
+
+                /* Estilos originales */
                 margin: 0;
                 padding: 15px;
                 color: var(--font-color);
@@ -161,8 +173,35 @@ input {
                 }
             }
 
-            h2 + h2 {
+            button + button {
                 border-top: 1px solid var(--border-color);
+            }
+
+            #crearTablero {
+                background: none;
+                border: none;
+                border-top: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 15px;
+                width: 100%;
+                transition: all 0.2s ease;
+
+                text-align: center;
+
+                &:hover {
+                    background-color: var(--dark-accent);
+
+                    i {
+                        color: var(--light-accent);
+                        transform: scale(1.2);
+                    }
+                }
+
+                i {
+                    color: var(--principal);
+                    font-size: 1.5rem;
+                    transition: all 0.2s ease;
+                }
             }
         }
     }
