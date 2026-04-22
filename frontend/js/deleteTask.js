@@ -95,14 +95,31 @@ async function deleteTask(taskElement) {
                     taskId = data.id_task;
                     parent.insertBefore(taskElement, nextSibling);
                     taskElement.style.opacity = "1";
+                    hideUndoPopup();
                 },
                 redo: async () => {
                     await fetch(`http://localhost:3000/tasks/${taskId}`, {method: "DELETE"});
                     taskElement.remove();
+                    showUndoPopup();
                 }
             });
+            showUndoPopup();
         }, 200);
     } catch (error) {
         console.error("Error en la petición: ", error);
     }
+}
+
+let undoPopupTimer = null;
+
+function showUndoPopup() {
+    const popup = document.getElementById('undo-popup');
+    popup.style.display = 'flex';
+    clearTimeout(undoPopupTimer);
+    undoPopupTimer = setTimeout(() => hideUndoPopup(), 5000);
+}
+
+function hideUndoPopup() {
+    document.getElementById('undo-popup').style.display = 'none';
+    clearTimeout(undoPopupTimer);
 }

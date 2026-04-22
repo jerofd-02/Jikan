@@ -304,6 +304,7 @@ input {
         }
 
         /* ─── Bottom Sheet ─── */
+
         :root {
             --sheet-min: 52px;
             --sheet-mid: 280px;
@@ -315,7 +316,7 @@ input {
         .panel.bottom-sheet {
             position: relative;
             bottom: 0;
-            left: 0;         /* o left: var(--sidebar-width) si quieres que respete el sidebar */
+            left: 0; /* o left: var(--sidebar-width) si quieres que respete el sidebar */
             right: 0;
             z-index: 200;
             height: var(--sheet-min);
@@ -341,6 +342,7 @@ input {
         }
 
         /* Zona de arrastre (el summary convertido) */
+
         .sheet-handle-zone {
             flex-shrink: 0;
             height: 52px;
@@ -360,6 +362,7 @@ input {
         }
 
         /* Pastilla de arrastre visual */
+
         .handle-pill {
             position: absolute;
             top: 8px;
@@ -379,9 +382,10 @@ input {
         }
 
         /* Ocultar el triángulo nativo del <details> */
+
         .acordeon summary {
             list-style: none;
-            pointer-events: none;  /* el clic lo maneja el chevron */
+            pointer-events: none; /* el clic lo maneja el chevron */
             font-size: 0.8rem;
             font-weight: 600;
             letter-spacing: 0.06em;
@@ -389,9 +393,12 @@ input {
             color: var(--font-color2);
         }
 
-        .acordeon summary::-webkit-details-marker { display: none; }
+        .acordeon summary::-webkit-details-marker {
+            display: none;
+        }
 
         /* Botón chevron */
+
         .sheet-chevron {
             margin-left: auto;
             width: 24px;
@@ -419,6 +426,7 @@ input {
         }
 
         /* Contenido con scroll */
+
         .sheet-content {
             flex: 1;
             overflow-y: auto;
@@ -432,6 +440,7 @@ input {
         }
 
         /* Empujar el contenido principal para que el sheet cerrado no lo tape */
+
         .main-content {
             padding-bottom: var(--sheet-min);
         }
@@ -1253,6 +1262,45 @@ input {
     grid-template-columns: repeat(2, 160px);
     gap: 1.5rem;
     justify-content: center;
+}
+
+.undo-popup {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: var(--background3-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    gap: 16px;
+    z-index: 9999;
+
+    span {
+        font-size: 0.95rem;
+        color: var(--font-color2)
+    }
+
+    button {
+        background: none;
+        border: none;
+        color: var(--principal);
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.95rem;
+        padding: 0;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--light-accent);
+        }
+    }
+
+    &.visible {
+        display: flex;
+    }
 }
 
 /* SECCIÓN TEMAS */
