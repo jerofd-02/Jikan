@@ -1,4 +1,6 @@
-const undoManager = new UndoManager();
+import { undoManager } from './undoManager.js';
+
+window.hideUndoPopup = hideUndoPopup;
 
 document.addEventListener("DOMContentLoaded", () => {
     addDeleteButtons();

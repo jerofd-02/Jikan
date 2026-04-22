@@ -1,3 +1,5 @@
+import { undoManager } from './undoManager.js';
+
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
@@ -15,7 +17,6 @@ function addModifyButton() {
 
 function modifyTask(taskElement) {
     if (!taskElement) return;
-    
     if (taskElement.querySelector(".edit-task-input")) return;
 
     const parrafo = taskElement.querySelector("p");
@@ -36,6 +37,13 @@ function modifyTask(taskElement) {
     const input = editDiv.querySelector("input");
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            saveTask(editDiv);
+        }
+    });
 }
 
 async function saveTask(editDiv) {
@@ -44,20 +52,42 @@ async function saveTask(editDiv) {
     if (!newText) return;
 
     const taskId = task.dataset.taskId;
+    const paragraph = task.querySelector("p");
+    const previousText = paragraph.textContent;
 
     try {
         const response = await fetch(`${TASK_API_URL}/${taskId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newText })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name: newText})
         });
 
         if (!response.ok) throw new Error("Error al guardar");
 
-        const paragraph = task.querySelector("p");
         paragraph.textContent = newText;
         paragraph.style.display = "";
         editDiv.remove();
+
+        undoManager.add({
+            undo: async () => {
+                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name: previousText})
+                });
+                if (!res.ok) throw new Error("Error al deshacer");
+                paragraph.textContent = previousText;
+            },
+            redo: async () => {
+                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name: newText})
+                });
+                if (!res.ok) throw new Error("Error al rehacer");
+                paragraph.textContent = newText;
+            }
+        });
 
     } catch (error) {
         console.error("Error al actualizar la tarea:", error);
@@ -98,4 +128,3 @@ document.addEventListener("DOMContentLoaded", () => {
         subtree: true
     });
 });
-

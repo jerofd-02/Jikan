@@ -445,6 +445,72 @@ input {
             padding-bottom: var(--sheet-min);
         }
     }
+    
+    .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        /* Centrar el popup dentro del overlay */
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Clase que activa la visibilidad */
+    .overlay.activo {
+        display: flex;
+    }
+
+    .popup {
+        background: var(--background3-color);
+        color: var(--principal);
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+    }
+
+    .btn-cerrar {
+        position: absolute;
+        color: var(--dark-accent);
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .create-board-buttons{
+
+        margin-top: 15px;
+        display: flex;
+        gap: 2rem;
+
+        button {
+            background: var(--background-color);
+            color: var(--principal);
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            width: 50;
+            transition: all 0.2s ease;
+
+            text-align: center;
+
+            font-size: 1.2rem;
+            font-weight: 800px;
+
+            &:hover {
+                background-color: var(--principal);
+                color: var(--background3-color);
+            }
+        }
+
+    }
 }
 
 /* User profile */

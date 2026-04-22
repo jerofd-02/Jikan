@@ -8,16 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--link rel="icon" type="image/png" href=""-->
     <title>Jikan - Inicio</title>
-    <script src="./js/undomanager.js"></script>
+    <script src="/node_modules/undo-manager/lib/undomanager.js"></script>
     <script src="./js/templateLoader.js"></script>
     <script src="./js/calendar.js"></script>
-    <script src="./js/deleteTask.js"></script>
+    <script src="./js/deleteTask.js" type="module"></script>
     <script src="./js/add_task.js"></script>
+    <script src="./js/modifyTask.js" type="module"></script>
     <script src="./js/add_column.js"></script>
-    <script src="./js/modifyTask.js"></script>
     <script type="module" src="./js/columnsLoader.js"></script>
     <script type="module" src="./js/loadAsideButton.js"></script>
     <script type="module" src="./js/draggable-bar.js"></script>
+    <script type="module" src="./js/createBoard.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
@@ -88,9 +89,26 @@
 
     </div>
 
+    <!--SECCIÓN DE POPUPS-->
+
+    <!--popup de "deshacer"-->
     <div class="undo-popup" id="undo-popup">
         <span id="undo-popup-text">Tarea eliminada</span>
         <button onclick="undoManager.undo(); hideUndoPopup();">Deshacer</button>
+    </div>
+
+    <!--popup de "crear tablero"-->
+    <div id="create-board-popup" class="overlay">
+        <div class="popup">
+            <button id="cerrarPopup" class="btn-cerrar">&times;</button>
+            <h1>Organiza tus ideas</h1>
+            <h2>¿Cómo deseas crear un nuevo tablero?</h2>
+
+            <div class="create-board-buttons">
+                <button>Creación rápida</button>
+                <button>Creación personalizada</button>
+            </div>
+        </div>
     </div>
 
 </main>
