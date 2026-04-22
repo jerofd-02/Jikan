@@ -15,20 +15,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /boards/:id
-router.get('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [rows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
-
-        if (rows.length === 0) return sendNotFound(res, 'Board', id);
-
-        res.status(200).json(rows[0]);
-    } catch (error) {
-        handleError(res, error, 'obtener board por id');
-    }
-});
-
 // GET /boards/:id/full
 router.get('/:id/full', async (req, res) => {
     try {
@@ -59,5 +45,44 @@ router.get('/:id/full', async (req, res) => {
         handleError(res, error, 'obtener board completo');
     }
 });
+
+// POST /boards/:id/columns
+router.post('/:id/columns', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        const [boardRows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        if (boardRows.length === 0) return sendNotFound(res, 'Board', id);
+
+        if (!name) return res.status(400).json({ message: 'El nombre de la columna es obligatorio' });
+
+        const [result] = await pool.query(`INSERT INTO columns_table (name) VALUES (?)`, [name]);
+        const newColumnId = result.insertId;
+
+        await pool.query(`INSERT INTO board_column (id_board, id_column) VALUES (?, ?)`, [id, newColumnId]);
+
+        res.status(201).json({ column_id: newColumnId, name });
+
+    } catch (error) {
+        handleError(res, error, 'crear columna');
+    }
+});
+
+// GET /boards/:id
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+
+        if (rows.length === 0) return sendNotFound(res, 'Board', id);
+
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        handleError(res, error, 'obtener board por id');
+    }
+});
+
+
 
 module.exports = router;

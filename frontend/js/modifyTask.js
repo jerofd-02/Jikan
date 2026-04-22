@@ -27,8 +27,8 @@ function modifyTask(taskElement) {
     editDiv.innerHTML = `
                 <input type="text" value="${currentText}">
                 <div>
-                    <button class="add-btn">Guardar Cambios</button>
-                    <button class="cancel-btn">Cancelar</button>
+                    <button class="save-btn">Guardar Cambios</button>
+                    <button class="cancel-btn-modify">Cancelar</button>
                 </div>
             `;
 
@@ -77,11 +77,11 @@ document.addEventListener("click", (e) => {
         modifyTask(task);
     }
 
-    if (e.target.matches(".add-btn")) {
+    if (e.target.matches(".save-btn")) {
         saveTask(e.target.closest(".edit-task-input"));
     }
 
-    if (e.target.matches(".cancel-btn")) {
+    if (e.target.matches(".cancel-btn-modify")) {
         cancelEdit(e.target.closest(".edit-task-input"));
     }
 });

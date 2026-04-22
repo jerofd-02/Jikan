@@ -17,7 +17,7 @@ let tablero = document.querySelector(".boards-section");
 
 // la función eventualmente tendrá un parámetro que será el id del tablero
 const cargarColumnas = (boards, tablero) => {
-
+    tablero.dataset.boardId = boards.board_id;
     boards.columns.forEach((column) => {
 
         let taskSection = document.createElement("div");

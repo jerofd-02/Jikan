@@ -90,6 +90,8 @@ async function agregarTarea(nombre, columnId, inputDiv) {
 }
 
 async function procesarTarea(inputDiv) {
+    if (!inputDiv) return;
+
     const input = inputDiv.querySelector("input");
     const texto = input.value.trim();
     if (!texto) return;

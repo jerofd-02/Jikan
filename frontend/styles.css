@@ -1218,8 +1218,8 @@ input {
 
 .new-task-input button.add-btn,
 .new-task-input button.cancel-btn,
-.edit-task-input button.add-btn,
-.edit-task-input button.cancel-btn {
+.edit-task-input button.save-btn,
+.edit-task-input button.cancel-btn-modify {
     background: var(--light-accent);
     color: var(--font-color);
     font-size: 1rem;
@@ -1235,7 +1235,7 @@ input {
 }
 
 .new-task-input button.cancel-btn,
-.edit-task-input button.cancel-btn {
+.edit-task-input button.cancel-btn-modify {
     background: darkred;
 }
 
