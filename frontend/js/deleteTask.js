@@ -54,9 +54,11 @@ document.addEventListener("keydown", (e) => {
 async function deleteTask(taskElement) {
     if (!taskElement) return;
 
-    const taskId = taskElement.dataset.taskId;
+    let taskId = taskElement.dataset.taskId;
     const parent = taskElement.parentNode;
     const nextSibling = taskElement.nextSibling;
+
+    const taskData = await fetch(`http://localhost:3000/tasks/${taskId}`).then(r => r.json());
 
     try {
         const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -75,18 +77,30 @@ async function deleteTask(taskElement) {
 
             undoManager.add({
                 undo: async () => {
-                    await fetch(`http://localhost:3000/tasks/`, {
+                    const date = taskData.date ? taskData.date.split('T')[0] : null;
+
+                    const res = await fetch(`http://localhost:3000/tasks/`, {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({id: taskId})
+                        body: JSON.stringify({
+                            id_column: taskData.id_column,
+                            name: taskData.name,
+                            description: taskData.description,
+                            date: date,
+                            labels: taskData.labels
+                        })
                     });
+                    const data = await res.json();
+                    taskElement.dataset.taskId = data.id_task
+                    taskId = data.id_task;
                     parent.insertBefore(taskElement, nextSibling);
                     taskElement.style.opacity = "1";
-                }, redo: async () => {
+                },
+                redo: async () => {
                     await fetch(`http://localhost:3000/tasks/${taskId}`, {method: "DELETE"});
                     taskElement.remove();
                 }
-            })
+            });
         }, 200);
     } catch (error) {
         console.error("Error en la petición: ", error);
