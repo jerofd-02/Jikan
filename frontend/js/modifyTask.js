@@ -1,3 +1,5 @@
+import { undoManager } from './undoManager.js';
+
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
@@ -56,8 +58,8 @@ async function saveTask(editDiv) {
     try {
         const response = await fetch(`${TASK_API_URL}/${taskId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newText })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name: newText})
         });
 
         if (!response.ok) throw new Error("Error al guardar");
@@ -70,8 +72,8 @@ async function saveTask(editDiv) {
             undo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name: previousText })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name: previousText})
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousText;
@@ -79,8 +81,8 @@ async function saveTask(editDiv) {
             redo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name: newText })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name: newText})
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
                 paragraph.textContent = newText;
