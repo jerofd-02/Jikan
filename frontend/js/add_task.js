@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             const inputDiv = e.target.closest(".new-task-input");
+            if (!inputDiv) return;
             procesarTarea(inputDiv);
         }
     });

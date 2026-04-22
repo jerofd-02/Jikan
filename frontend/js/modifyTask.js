@@ -35,6 +35,13 @@ function modifyTask(taskElement) {
     const input = editDiv.querySelector("input");
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            saveTask(editDiv);
+        }
+    });
 }
 
 async function saveTask(editDiv) {
