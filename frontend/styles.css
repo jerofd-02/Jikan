@@ -1341,6 +1341,8 @@ input {
     color: white;
     padding: 12px 20px;
     border-radius: 8px;
+    border: 1px solid var(--principal);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     gap: 16px;
     z-index: 9999;
 

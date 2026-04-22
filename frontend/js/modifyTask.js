@@ -77,6 +77,7 @@ async function saveTask(editDiv) {
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousText;
+                hideUndoPopup();
             },
             redo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
@@ -86,8 +87,11 @@ async function saveTask(editDiv) {
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
                 paragraph.textContent = newText;
+                showUndoPopup();
             }
         });
+
+        showUndoPopup();
 
     } catch (error) {
         console.error("Error al actualizar la tarea:", error);
@@ -99,6 +103,21 @@ function cancelEdit(editDiv) {
     const task = editDiv.closest(".task");
     task.querySelector("p").style.display = "";
     editDiv.remove();
+}
+
+let undoPopupTimer = null;
+
+function showUndoPopup() {
+    const popup = document.getElementById('undo-popup');
+    document.getElementById('undo-popup-text').textContent = 'Tarea modificada';
+    popup.style.display = 'flex';
+    clearTimeout(undoPopupTimer);
+    undoPopupTimer = setTimeout(() => hideUndoPopup(), 5000);
+}
+
+function hideUndoPopup() {
+    document.getElementById('undo-popup').style.display = 'none';
+    clearTimeout(undoPopupTimer);
 }
 
 document.addEventListener("click", (e) => {
