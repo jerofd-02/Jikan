@@ -1,3 +1,5 @@
+window.undoManager = new UndoManager();
+
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
@@ -132,6 +134,18 @@ document.addEventListener("click", (e) => {
         cancelEdit(e.target.closest(".edit-task-input"));
     }
 });
+
+document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "z") {
+        e.preventDefault();
+        undoManager.undo();
+    }
+
+    if (e.ctrlKey && e.key === "y") {
+        e.preventDefault();
+        undoManager.redo();
+    }
+})
 
 document.addEventListener("DOMContentLoaded", () => {
     addModifyButton();
