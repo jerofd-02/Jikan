@@ -25,8 +25,6 @@
     --principal: #6a5cff;
     --dark-accent: #4b3fc4;
     --light-accent: #8c7fff;
-
-    --weekend: #ff4d4d;
 }
 
 [data-theme="ocean"] {
@@ -40,8 +38,6 @@
     --principal: #64ffda;
     --dark-accent: #2a8f7c;
     --light-accent: #52e0c4;
-
-    --weekend: #ff6b6b;
 }
 
 body {
@@ -63,8 +59,6 @@ body {
     --principal: #ff4d2e;
     --dark-accent: #b3261e;
     --light-accent: #ff7a59;
-
-    --weekend: #ff3b3b;
 }
 
 /* Cambiar color del autocompletado del navegador */
@@ -1449,7 +1443,7 @@ input {
 
 .theme-btn[data-theme="vulcan"] {
     --btn-bg: #0b0b10;
-    --btn-principal: #ff4d2e;
+    --btn-princsipal: #ff4d2e;
     --btn-text: #f3f3f7;
 }
 

@@ -1,5 +1,6 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 
+window.undoManager = new UndoManager();
 window.hideUndoPopup = hideUndoPopup;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -44,19 +45,19 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "z") {
         e.preventDefault();
-        UndoManager.undo();
+        undoManager.undo();
     }
 
     if (e.ctrlKey && e.key === "y") {
         e.preventDefault();
-        UndoManager.redo();
+        undoManager.redo();
     }
 })
 
 async function deleteTask(taskElement) {
     if (!taskElement) return;
 
-    const taskName = taskElement.querySelector(".task-name")?.textContent.trim();
+    const taskName = taskElement.querySelector("p")?.textContent.trim();
 
     const {isConfirmed} = await Swal.fire({
         title: "¿Eliminar tarea?",
@@ -65,8 +66,12 @@ async function deleteTask(taskElement) {
         showCancelButton: true,
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+
+        confirmButtonColor: "#B0000F",
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
     });
 
     if (!isConfirmed) return;
