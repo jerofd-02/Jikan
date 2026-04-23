@@ -25,8 +25,6 @@
     --principal: #6a5cff;
     --dark-accent: #4b3fc4;
     --light-accent: #8c7fff;
-
-    --weekend: #ff4d4d;
 }
 
 [data-theme="ocean"] {
@@ -40,8 +38,6 @@
     --principal: #64ffda;
     --dark-accent: #2a8f7c;
     --light-accent: #52e0c4;
-
-    --weekend: #ff6b6b;
 }
 
 body {
@@ -63,8 +59,6 @@ body {
     --principal: #ff4d2e;
     --dark-accent: #b3261e;
     --light-accent: #ff7a59;
-
-    --weekend: #ff3b3b;
 }
 
 /* Cambiar color del autocompletado del navegador */
@@ -151,7 +145,7 @@ input {
                 appearance: none;
                 background: none;
                 border: none;
-                font: system-ui;
+                font-family: system-ui;
                 cursor: pointer;
                 text-align: left;
                 width: 100%;
@@ -496,13 +490,12 @@ input {
             border: none;
             border-radius: 10px;
             padding: 15px;
-            width: 50;
+            width: 50px;
             transition: all 0.2s ease;
 
             text-align: center;
 
             font-size: 1.2rem;
-            font-weight: 800px;
 
             &:hover {
                 background-color: var(--principal);
