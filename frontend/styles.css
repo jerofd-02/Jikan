@@ -145,7 +145,7 @@ input {
                 appearance: none;
                 background: none;
                 border: none;
-                font: system-ui;
+                font-family: system-ui;
                 cursor: pointer;
                 text-align: left;
                 width: 100%;
@@ -490,13 +490,12 @@ input {
             border: none;
             border-radius: 10px;
             padding: 15px;
-            width: 50;
+            width: 50px;
             transition: all 0.2s ease;
 
             text-align: center;
 
             font-size: 1.2rem;
-            font-weight: 800px;
 
             &:hover {
                 background-color: var(--principal);
@@ -1443,7 +1442,7 @@ input {
 
 .theme-btn[data-theme="vulcan"] {
     --btn-bg: #0b0b10;
-    --btn-princsipal: #ff4d2e;
+    --btn-principal: #ff4d2e;
     --btn-text: #f3f3f7;
 }
 
