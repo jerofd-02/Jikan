@@ -1,3 +1,4 @@
+import { tituloEditable } from './add_column.js';
 const BASE_URL = "http://localhost:3000";
 
 const getData = async (link) => {
@@ -29,6 +30,8 @@ const cargarColumnas = (boards, tablero) => {
 
         let title = document.createElement("h3");
         title.textContent = column.name;
+        title.classList.add("editable-title");
+        tituloEditable(title, column.column_id);
         col.appendChild(title);
 
         let tasks = document.createElement("div");

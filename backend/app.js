@@ -9,9 +9,11 @@ app.use(express.json());
 
 const boardRoutes = require('./endpoints/board');
 const taskRoutes  = require('./endpoints/task');
+const columnRoutes = require('./endpoints/column');
 
 app.use('/boards', boardRoutes);
 app.use('/tasks',  taskRoutes);
+app.use('/columns', columnRoutes);
 
 async function testConnection() {
   try {

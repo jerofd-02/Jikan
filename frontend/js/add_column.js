@@ -1,12 +1,11 @@
 const añadirColumna = async (boardId, tablero) => {
-    const nombre = prompt("Nombre de la nueva columna:");
-    if (!nombre) return;
+    const nombreGenerico = "Nueva Columna";
 
     try {
         const response = await fetch(`http://localhost:3000/boards/${boardId}/columns`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: nombre })
+            body: JSON.stringify({ name: nombreGenerico })
         });
 
         if (!response.ok) throw new Error("Error al crear la columna");
@@ -24,6 +23,8 @@ const añadirColumna = async (boardId, tablero) => {
 
         let title = document.createElement("h3");
         title.textContent = data.name;
+        title.classList.add("editable-title");
+        tituloEditable(title, data.column_id);
         col.appendChild(title);
 
         let tasks = document.createElement("div");
@@ -45,6 +46,50 @@ const añadirColumna = async (boardId, tablero) => {
         console.error("Error al crear la columna:", error);
     }
 };
+
+export const tituloEditable = (titleElement, columnId) => {
+    titleElement.addEventListener("click", () => {
+        if (titleElement.querySelector("input")) return;
+
+        const currentText = titleElement.textContent;
+        titleElement.textContent = "";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = currentText;
+        input.maxLength = 18;
+        input.classList.add("edit-title-input");
+        titleElement.appendChild(input);
+        input.focus();
+        input.select();
+
+        const guardar = async () => {
+            const nuevoNombre = input.value.trim() || currentText;
+
+            try {
+                await fetch(`http://localhost:3000/columns/${columnId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: nuevoNombre })
+                });
+            } catch (error) {
+                console.error("Error al renombrar columna:", error);
+            }
+
+            titleElement.textContent = nuevoNombre;
+        };
+
+        input.addEventListener("blur", guardar);
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") input.blur();
+            if (e.key === "Escape") {
+                input.removeEventListener("blur", guardar);
+                titleElement.textContent = currentText;
+            }
+        });
+    });
+};
+
 
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("create-new-column")) {
