@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "undo-manager": "1.1.1"
+    "undo-manager": "^1.1.1",
+    "sweetalert2": "^11.26.24"
   }
 }

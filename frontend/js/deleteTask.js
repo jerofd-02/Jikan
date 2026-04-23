@@ -1,4 +1,4 @@
-import { undoManager } from './undoManager.js';
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 
 window.hideUndoPopup = hideUndoPopup;
 
@@ -44,17 +44,32 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "z") {
         e.preventDefault();
-        undoManager.undo();
+        UndoManager.undo();
     }
 
     if (e.ctrlKey && e.key === "y") {
         e.preventDefault();
-        undoManager.redo();
+        UndoManager.redo();
     }
 })
 
 async function deleteTask(taskElement) {
     if (!taskElement) return;
+
+    const taskName = taskElement.querySelector(".task-name")?.textContent.trim();
+
+    const {isConfirmed} = await Swal.fire({
+        title: "¿Eliminar tarea?",
+        text: `"${taskName}" se eliminará permanentemente.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+    });
+
+    if (!isConfirmed) return;
 
     let taskId = taskElement.dataset.taskId;
     const parent = taskElement.parentNode;
@@ -82,9 +97,7 @@ async function deleteTask(taskElement) {
                     const date = taskData.date ? taskData.date.split('T')[0] : null;
 
                     const res = await fetch(`http://localhost:3000/tasks/`, {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({
+                        method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({
                             id_column: taskData.id_column,
                             name: taskData.name,
                             description: taskData.description,
@@ -98,8 +111,7 @@ async function deleteTask(taskElement) {
                     parent.insertBefore(taskElement, nextSibling);
                     taskElement.style.opacity = "1";
                     hideUndoPopup();
-                },
-                redo: async () => {
+                }, redo: async () => {
                     await fetch(`http://localhost:3000/tasks/${taskId}`, {method: "DELETE"});
                     taskElement.remove();
                     showUndoPopup();

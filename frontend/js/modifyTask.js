@@ -1,5 +1,3 @@
-import { undoManager } from './undoManager.js';
-
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
