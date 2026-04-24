@@ -25,8 +25,15 @@ function modifyTask(taskElement) {
 
     Swal.fire({
         title: 'Modificar tarea',
-        input: 'text',
-        inputValue: currentText,
+        html: `
+            <div class="edit-task-input">
+                <input type="text" id="name" autocomplete="off">
+                <textarea id="description"></textarea>
+                <select name="category" id="category"></select>
+                <input type="date" id="date" autocomplete="off">
+                <input type="date" id="deadline" autocomplete="off">
+            </div>
+        `,
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
