@@ -46,6 +46,30 @@ router.get('/:id/full', async (req, res) => {
     }
 });
 
+// POST /boards
+router.post('/', async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ message: 'El nombre del board es obligatorio' });
+        }
+
+        const [result] = await pool.query(
+            `INSERT INTO board (name) VALUES (?)`,
+            [name]
+        );
+
+        res.status(201).json({
+            board_id: result.insertId,
+            name
+        });
+
+    } catch (error) {
+        handleError(res, error, 'crear board');
+    }
+});
+
 // POST /boards/:id/columns
 router.post('/:id/columns', async (req, res) => {
     try {

@@ -102,14 +102,30 @@
     <!--popup de "crear tablero"-->
     <div id="create-board-popup" class="overlay">
         <div class="popup">
-            <button id="cerrarPopup" class="btn-cerrar">&times;</button>
+            <button class="btn-cerrar">&times;</button>
             <h1>Organiza tus ideas</h1>
             <h2>¿Cómo deseas crear un nuevo tablero?</h2>
 
             <div class="create-board-buttons">
-                <button>Creación rápida</button>
-                <button>Creación personalizada</button>
+                <button id="fast-board-button">Creación rápida</button>
+                <button id="custom-board-button">Creación personalizada</button>
             </div>
+        </div>
+    </div>
+
+    <!--popup de creacion rapida de tablero-->
+    <div id="fast-creation-popup" class="overlay">
+        <div class="popup">
+            <button class="btn-cerrar">&times;</button>
+            <h1>Creación rápida de tablero</h1>
+            <h3>Introduce el nombre del tablero</h3>
+            
+            <form role="input" class="popup-form">
+                <label for="input"></label>
+                <input type="text" class="new-board-name" placeholder="Mi nuevo tablero...">
+            </form>
+
+            <button class="create-board-button" id="create-board">Crear tablero</button>
         </div>
     </div>
 
