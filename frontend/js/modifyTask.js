@@ -32,7 +32,13 @@ function modifyTask(taskElement) {
         cancelButtonText: 'Cancelar',
         inputAttributes: {
             autocomplete: 'off'
-        }
+        },
+
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
+        cancelButtonColor: "#B0000F",
     }).then((result) => {
         if (result.isConfirmed && result.value.trim()) {
             saveSwalTask(taskElement, result.value.trim());
@@ -83,7 +89,13 @@ async function saveSwalTask(taskElement, newText) {
 
     } catch (error) {
         console.error("Error al actualizar la tarea:", error);
-        Swal.fire('Error', 'No se pudo guardar el cambio', 'error');
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo guardar el cambio',
+            icon: 'error',
+            background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+            color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+        });
     }
 }
 
