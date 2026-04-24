@@ -1,3 +1,5 @@
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+
 window.undoManager = new UndoManager();
 
 function addModifyButton() {
@@ -17,42 +19,30 @@ function addModifyButton() {
 
 function modifyTask(taskElement) {
     if (!taskElement) return;
-    if (taskElement.querySelector(".edit-task-input")) return;
 
     const parrafo = taskElement.querySelector("p");
     const currentText = parrafo.textContent;
-    parrafo.style.display = "none";
 
-    const editDiv = document.createElement("div");
-    editDiv.classList.add("edit-task-input");
-    editDiv.innerHTML = `
-                <input type="text" value="${currentText}">
-                <div>
-                    <button class="save-btn">Guardar Cambios</button>
-                    <button class="cancel-btn-modify">Cancelar</button>
-                </div>
-            `;
-
-    taskElement.insertBefore(editDiv, taskElement.querySelector(".task-actions"));
-    const input = editDiv.querySelector("input");
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
-
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            saveTask(editDiv);
+    Swal.fire({
+        title: 'Modificar tarea',
+        input: 'text',
+        inputValue: currentText,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        inputAttributes: {
+            autocomplete: 'off'
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value.trim()) {
+            saveSwalTask(taskElement, result.value.trim());
         }
     });
 }
 
-async function saveTask(editDiv) {
-    const task = editDiv.closest(".task");
-    const newText = editDiv.querySelector("input").value.trim();
-    if (!newText) return;
-
-    const taskId = task.dataset.taskId;
-    const paragraph = task.querySelector("p");
+async function saveSwalTask(taskElement, newText) {
+    const taskId = taskElement.dataset.taskId;
+    const paragraph = taskElement.querySelector("p");
     const previousText = paragraph.textContent;
 
     try {
@@ -65,8 +55,6 @@ async function saveTask(editDiv) {
         if (!response.ok) throw new Error("Error al guardar");
 
         paragraph.textContent = newText;
-        paragraph.style.display = "";
-        editDiv.remove();
 
         undoManager.add({
             undo: async () => {
@@ -95,14 +83,8 @@ async function saveTask(editDiv) {
 
     } catch (error) {
         console.error("Error al actualizar la tarea:", error);
-        alert("No se pudo guardar el cambio");
+        Swal.fire('Error', 'No se pudo guardar el cambio', 'error');
     }
-}
-
-function cancelEdit(editDiv) {
-    const task = editDiv.closest(".task");
-    task.querySelector("p").style.display = "";
-    editDiv.remove();
 }
 
 let undoPopupTimer = null;
@@ -125,14 +107,6 @@ document.addEventListener("click", (e) => {
         const task = e.target.closest(".task");
         modifyTask(task);
     }
-
-    if (e.target.matches(".save-btn")) {
-        saveTask(e.target.closest(".edit-task-input"));
-    }
-
-    if (e.target.matches(".cancel-btn-modify")) {
-        cancelEdit(e.target.closest(".edit-task-input"));
-    }
 });
 
 document.addEventListener("keydown", (e) => {
@@ -145,7 +119,7 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         undoManager.redo();
     }
-})
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     addModifyButton();
