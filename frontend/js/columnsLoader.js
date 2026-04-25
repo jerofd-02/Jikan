@@ -17,9 +17,9 @@ const getData = async (link) => {
 let tablero = document.querySelector(".boards-section");
 
 // la función eventualmente tendrá un parámetro que será el id del tablero
-const cargarColumnas = (boards, tablero) => {
+const cargarColumnas = async(boards, tablero) => {
     tablero.dataset.boardId = boards.board_id;
-    boards.columns.forEach((column) => {
+    for (const column of boards.columns) {
 
         let taskSection = document.createElement("div");
         taskSection.className = "tasks-section";
@@ -28,11 +28,25 @@ const cargarColumnas = (boards, tablero) => {
         col.className = "column";
         col.dataset.columnId = column.column_id;
 
+        let colHeader = document.createElement("div");
+        colHeader.className = "column-header";
+
         let title = document.createElement("h3");
         title.textContent = column.name;
         title.classList.add("editable-title");
         tituloEditable(title, column.column_id);
-        col.appendChild(title);
+
+        let menuBtn = document.createElement("button");
+        menuBtn.className = "column-menu-btn";
+        menuBtn.textContent = "⋯";
+
+        const dropdown = await loadTemplate("dropdown-column");
+        dropdown.querySelector(".delete-column-btn").dataset.columnId = column.column_id;
+
+        colHeader.appendChild(title);
+        colHeader.appendChild(menuBtn);
+        colHeader.appendChild(dropdown);
+        col.appendChild(colHeader);
 
         let tasks = document.createElement("div");
         tasks.className = "task-list";
@@ -74,7 +88,7 @@ const cargarColumnas = (boards, tablero) => {
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
-    });
+    };
 
     let newBoardbutton = document.createElement("button");
     newBoardbutton.className = "create-new-column";
@@ -86,7 +100,7 @@ const cargarColumnas = (boards, tablero) => {
 const init = async () => {
     let boards = await getData(BASE_URL + "/boards/1/full");
     let tablero = document.querySelector(".boards-section");
-    cargarColumnas(boards, tablero);
+    await cargarColumnas(boards, tablero);
 
     let selected = null;
 

@@ -27,4 +27,22 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
+// DELETE /columns/:id
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [result] = await pool.query(
+            `DELETE FROM columns_table WHERE column_id = ?`, [id]
+        );
+
+        if (result.affectedRows === 0) return sendNotFound(res, 'Columna', id);
+
+        res.status(200).json({ message: 'Columna eliminada correctamente' });
+
+    } catch (error) {
+        handleError(res, error, 'eliminar columna');
+    }
+});
+
 module.exports = router;
