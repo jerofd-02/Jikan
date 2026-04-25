@@ -255,9 +255,10 @@ input {
 
         .boards-section {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
 
-            margin: 2rem 0;
+            padding: 2rem 0;
+            margin-bottom: 1rem;
 
             overflow: auto;
             min-height: 0;
@@ -300,7 +301,7 @@ input {
         /* ─── Bottom Sheet ─── */
 
         :root {
-            --sheet-min: 52px;
+            --sheet-min: 54px;
             --sheet-mid: 280px;
             --sheet-max: 70vh;
             --sheet-radius: 16px;
@@ -316,9 +317,7 @@ input {
             height: var(--sheet-min);
             border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
             background: var(--background-color);
-            border: 1px solid var(--border-color);
             border-bottom: none;
-            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
             transition: height 0.38s var(--sheet-transition);
             will-change: height;
             overflow: hidden;
@@ -331,9 +330,6 @@ input {
             height: var(--sheet-mid);
         }
 
-        .panel.bottom-sheet.dragging {
-            transition: none;
-        }
 
         /* Zona de arrastre (el summary convertido) */
 
@@ -346,36 +342,11 @@ input {
             padding: 0 16px;
             cursor: ns-resize;
             user-select: none;
-            border-bottom: 1px solid transparent;
+            border: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             transition: border-color 0.2s;
             position: relative;
         }
-
-        .panel.bottom-sheet.expanded .sheet-handle-zone {
-            border-color: var(--border-color);
-        }
-
-        /* Pastilla de arrastre visual */
-
-        .handle-pill {
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 3px;
-            background: var(--border-color);
-            border-radius: 2px;
-            pointer-events: none;
-            transition: background 0.2s, width 0.2s;
-        }
-
-        .sheet-handle-zone:hover .handle-pill {
-            background: var(--principal);
-            width: 42px;
-        }
-
-        /* Ocultar el triángulo nativo del <details> */
 
         .acordeon summary {
             list-style: none;
@@ -427,10 +398,8 @@ input {
             padding: 16px;
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) transparent;
-        }
-
-        .sheet-content .contenido {
-            /* tus estilos de .contenido se mantienen intactos */
+            border: 1px solid var(--border-color);
+            border-top: none;
         }
 
         /* Empujar el contenido principal para que el sheet cerrado no lo tape */
@@ -476,6 +445,56 @@ input {
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .popup-form {
+        
+        margin: 0 auto;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+        input {
+            width: 100%;
+            padding: 15px;
+
+            background: var(--background-color);
+            border: 1px solid var(--principal);
+            border-radius: 10px;
+            outline: none;
+
+            color: white;
+            transition: all 0.3s;
+
+            font-size: 1.2rem;
+            font-width: 400px;
+
+            &::placeholder {
+                color: var(--dark-accent);
+            }
+        }
+    }
+
+    .create-board-button {
+        margin-top: 1rem;
+
+        color: var(--light-accent);
+        background-color: var(--background3-color);
+
+        top: 10px;
+        right: 15px;
+
+        border: 1px solid var(--light-accent);
+        border-radius: 10px;
+        
+        padding: 15px;
+
+        font-size: 1.5rem;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--dark-accent);
+            border: none;
+            background-color: var(--principal);
+        }
     }
 
     .create-board-buttons{
@@ -800,7 +819,7 @@ input {
     flex-direction: column;
 
     font-family: system-ui;
-    width: 250px;
+    width: 230px;
     max-height: 400px;
     background: var(--background2-color);
     border: 1px solid var(--border-color);
@@ -809,6 +828,7 @@ input {
     color: var(--font-color);
 
     h3 {
+        font-size: 1rem;
         align-self: flex-start;
         margin-left: 5px;
         cursor: pointer;
@@ -915,7 +935,7 @@ input {
     }
 
     .task-list {
-        padding: 10px;
+        padding: 0;
         max-height: 300px;
         overflow: auto;
     }
@@ -931,7 +951,7 @@ input {
     gap: 5px;
     position: relative;
     align-items: center;
-    padding: 5px 36px 5px 5px;
+    padding: 5px 36px 4px 5px;
     min-height: 48px;
 
     & > input[type="checkbox"] {
@@ -975,6 +995,7 @@ input {
         max-width: 260px;
         margin: 0;
         word-break: break-word;
+        font-size: 0.85rem;
     }
 
     &:hover {
@@ -1281,7 +1302,7 @@ input {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 125px;
+        padding: 110px;
     }
 }
 
@@ -1355,19 +1376,21 @@ input {
 }
 
 .delete-task {
-    background: darkred;
 
     i {
-        color: white;
+        color: darkred;
         font-size: 0.8rem;
+    }
+
+    &:hover {
+        background: var(--principal);
     }
 }
 
 .modify-task {
-    background: var(--dark-accent);
 
     i {
-        color: white;
+        color: var(--dark-accent);
         font-size: 0.75rem;
     }
 
@@ -1711,7 +1734,7 @@ input {
         padding-bottom: 0.75rem;
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
+        align-items: flex-start;
         gap: 0.75rem;
     }
 
@@ -1725,6 +1748,7 @@ input {
         position: relative;
         display: flex;
         align-items: center;
+        width: 100%;
     }
 
     .homepage .asside-left .search-asside input {
@@ -1741,7 +1765,8 @@ input {
     }
 
     .homepage .asside-left .user-borads-asside {
-        display: none;
+        display: block;
+        width: 100%;
     }
 
     .homepage .main-content header h1 {
