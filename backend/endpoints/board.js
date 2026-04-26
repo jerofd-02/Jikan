@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const pool = require("../config/database");
-const { handleError } = require("../utils/errors");
-const { sendNotFound } = require("../utils/validations");
+const {handleError} = require("../utils/errors");
+const {sendNotFound} = require("../utils/validations");
 
 // GET /boards
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pool.query(`SELECT * FROM board`);
+        const [rows] = await pool.query(`SELECT *
+                                         FROM board`);
         res.status(200).json(rows);
     } catch (error) {
         handleError(res, error, 'obtener todos los boards');
@@ -18,9 +19,11 @@ router.get('/', async (req, res) => {
 // GET /boards/:id/full
 router.get('/:id/full', async (req, res) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
-        const [boardRows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        const [boardRows] = await pool.query(`SELECT *
+                                              FROM board
+                                              WHERE board_id = ?`, [id]);
         if (boardRows.length === 0) return sendNotFound(res, 'Board', id);
 
         const [columnRows] = await pool.query(`
@@ -37,10 +40,10 @@ router.get('/:id/full', async (req, res) => {
                 WHERE t.id_column = ?
             `, [column.column_id]);
 
-            return { ...column, tasks: taskRows };
+            return {...column, tasks: taskRows};
         }));
 
-        res.status(200).json({ ...boardRows[0], columns: columnsWithTasks });
+        res.status(200).json({...boardRows[0], columns: columnsWithTasks});
     } catch (error) {
         handleError(res, error, 'obtener board completo');
     }
@@ -49,20 +52,24 @@ router.get('/:id/full', async (req, res) => {
 // POST /boards/:id/columns
 router.post('/:id/columns', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { name } = req.body;
+        const {id} = req.params;
+        const {name} = req.body;
 
-        const [boardRows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        const [boardRows] = await pool.query(`SELECT *
+                                              FROM board
+                                              WHERE board_id = ?`, [id]);
         if (boardRows.length === 0) return sendNotFound(res, 'Board', id);
 
-        if (!name) return res.status(400).json({ message: 'El nombre de la columna es obligatorio' });
+        if (!name) return res.status(400).json({message: 'El nombre de la columna es obligatorio'});
 
-        const [result] = await pool.query(`INSERT INTO columns_table (name) VALUES (?)`, [name]);
+        const [result] = await pool.query(`INSERT INTO columns_table (name)
+                                           VALUES (?)`, [name]);
         const newColumnId = result.insertId;
 
-        await pool.query(`INSERT INTO board_column (id_board, id_column) VALUES (?, ?)`, [id, newColumnId]);
+        await pool.query(`INSERT INTO board_column (id_board, id_column)
+                          VALUES (?, ?)`, [id, newColumnId]);
 
-        res.status(201).json({ column_id: newColumnId, name });
+        res.status(201).json({column_id: newColumnId, name});
 
     } catch (error) {
         handleError(res, error, 'crear columna');
@@ -72,8 +79,10 @@ router.post('/:id/columns', async (req, res) => {
 // GET /boards/:id
 router.get('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const [rows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        const {id} = req.params;
+        const [rows] = await pool.query(`SELECT *
+                                         FROM board
+                                         WHERE board_id = ?`, [id]);
 
         if (rows.length === 0) return sendNotFound(res, 'Board', id);
 
@@ -82,7 +91,6 @@ router.get('/:id', async (req, res) => {
         handleError(res, error, 'obtener board por id');
     }
 });
-
 
 
 module.exports = router;

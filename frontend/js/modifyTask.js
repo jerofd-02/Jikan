@@ -17,8 +17,16 @@ function addModifyButton() {
     });
 }
 
-function modifyTask(taskElement) {
+async function modifyTask(taskElement) {
     if (!taskElement) return;
+    const taskId = taskElement.dataset.id;
+
+    const [taskRes, catsRes] = await Promise.all([
+        fetch(`/tasks/${taskId}`),
+        fetch(`/categories?boardId=${boardId}`),
+    ]);
+    const task = await taskRes.json();
+    const categories = await catsRes.json();
 
     const parrafo = taskElement.querySelector("p");
     const currentText = parrafo.textContent;
@@ -27,10 +35,18 @@ function modifyTask(taskElement) {
         title: 'Modificar tarea',
         html: `
             <div class="edit-task-input">
+                <label for="name">Nombre de la tarea</label>
                 <input type="text" id="name" autocomplete="off">
+                <label for="description">Descripción de la tarea</label>
                 <textarea id="description"></textarea>
-                <select name="category" id="category"></select>
+                <label for="category">Categoría</label>
+                <div class="category-row">
+                    <select name="category" id="category"></select>
+                    <button type="button" id="add-category-btn" title="Nueva categoría">+</button>
+                </div>
+                <label for="date">Fecha de la tarea</label>
                 <input type="date" id="date" autocomplete="off">
+                <label for="deadline">Fecha límite de la tarea</label>
                 <input type="date" id="deadline" autocomplete="off">
             </div>
         `,

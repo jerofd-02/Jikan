@@ -1213,7 +1213,9 @@ input {
 }
 
 .new-task-input input,
-.edit-task-input input {
+.edit-task-input input,
+.edit-task-input select,
+.edit-task-input textarea {
     width: 100%;
     background-color: var(--background3-color);
     border: 1px solid var(--border-color);
@@ -1229,6 +1231,16 @@ input {
         outline: 1px solid var(--principal);
         box-shadow: 0 0 5px var(--principal);
     }
+}
+
+.edit-task-input select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.edit-task-input textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 .task-actions {
@@ -1383,6 +1395,32 @@ input {
     &.visible {
         display: flex;
     }
+}
+
+.category-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.category-row select {
+    flex: 1;
+}
+
+#add-category-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--principal);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+#add-category-btn:hover {
+    opacity: 0.85;
 }
 
 /* SECCIÓN TEMAS */
