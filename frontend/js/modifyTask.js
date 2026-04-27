@@ -17,54 +17,60 @@ function addModifyButton() {
     });
 }
 
-async function modifyTask(taskElement) {
+function modifyTask(taskElement) {
     if (!taskElement) return;
-    const taskId = taskElement.dataset.id;
-
-    const [taskRes, catsRes] = await Promise.all([
-        fetch(`/tasks/${taskId}`),
-        fetch(`/categories?boardId=${boardId}`),
-    ]);
-    const task = await taskRes.json();
-    const categories = await catsRes.json();
 
     const parrafo = taskElement.querySelector("p");
     const currentText = parrafo.textContent;
 
     Swal.fire({
+        width: '700px',
+        customClass: {
+            popup: 'swal-custom-popup'
+        },
         title: 'Modificar tarea',
         html: `
             <div class="edit-task-input">
-                <label for="name">Nombre de la tarea</label>
-                <input type="text" id="name" autocomplete="off">
-                <label for="description">Descripción de la tarea</label>
-                <textarea id="description"></textarea>
-                <label for="category">Categoría</label>
-                <div class="category-row">
-                    <select name="category" id="category"></select>
-                    <button type="button" id="add-category-btn" title="Nueva categoría">+</button>
+                <div class="edit-task-left">
+                    <label for="name">Nombre de la tarea</label>
+                    <input type="text" id="name" autocomplete="off">
+                    <label for="description">Descripción de la tarea</label>
+                    <textarea id="description"></textarea>
                 </div>
-                <label for="date">Fecha de la tarea</label>
-                <input type="date" id="date" autocomplete="off">
-                <label for="deadline">Fecha límite de la tarea</label>
-                <input type="date" id="deadline" autocomplete="off">
+                <div class="edit-task-right">
+                    <label for="category">Categoría</label>
+                    <div class="category-row">
+                        <select name="category" id="category"></select>
+                        <button type="button" id="add-category-btn" title="Nueva categoría">+</button>
+                    </div>
+                    <label for="date">Fecha de la tarea</label>
+                    <input type="date" id="date" autocomplete="off">
+                    <label for="deadline">Fecha límite de la tarea</label>
+                    <input type="date" id="deadline" autocomplete="off">
+                </div>
             </div>
         `,
+        didOpen: () => {
+            document.getElementById('name').value = currentText;
+        },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
-        inputAttributes: {
-            autocomplete: 'off'
-        },
-
         background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
         color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
-
         confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonColor: "#B0000F",
+        preConfirm: () => {
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                Swal.showValidationMessage('El nombre no puede estar vacío');
+                return false;
+            }
+            return { name };
+        }
     }).then((result) => {
-        if (result.isConfirmed && result.value.trim()) {
-            saveSwalTask(taskElement, result.value.trim());
+        if (result.isConfirmed) {
+            saveSwalTask(taskElement, result.value.name);
         }
     });
 }

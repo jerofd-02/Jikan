@@ -439,7 +439,7 @@ input {
             padding-bottom: var(--sheet-min);
         }
     }
-    
+
     .overlay {
         display: none;
         position: fixed;
@@ -1233,6 +1233,26 @@ input {
     }
 }
 
+.edit-task-input {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0 24px;
+    text-align: left;
+    width: 100%;
+}
+
+.edit-task-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-task-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .edit-task-input select {
     appearance: none;
     cursor: pointer;
@@ -1241,6 +1261,12 @@ input {
 .edit-task-input textarea {
     resize: vertical;
     min-height: 80px;
+}
+
+.swal-custom-popup {
+    border-radius: 8px;
+    border: 1px solid var(--principal);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .task-actions {
