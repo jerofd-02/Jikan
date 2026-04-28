@@ -1258,7 +1258,8 @@ input {
 
     .column-login {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        gap: 30rem;
         align-items: center;
         padding: 75px;
     }
