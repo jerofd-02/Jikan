@@ -107,6 +107,20 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// GET /boards/name/nombre
+router.get('/name/:nombre', async (req, res) => {
+    try {
+        const { nombre } = req.params;
+        const [rows] = await pool.query(`SELECT * FROM board WHERE name = ?`, [nombre]);
+
+        if (rows.length === 0) return sendNotFound(res, 'Board', nombre);
+
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        handleError(res, error, 'obtener board por nombre');
+    }
+});
+
 
 
 module.exports = router;

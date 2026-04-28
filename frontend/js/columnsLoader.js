@@ -17,7 +17,11 @@ const getData = async (link) => {
 let tablero = document.querySelector(".boards-section");
 
 // la función eventualmente tendrá un parámetro que será el id del tablero
-const cargarColumnas = async(boards, tablero) => {
+
+export const cargarColumnas = async(boards, tablero, titulo) => {
+
+    titulo.textContent = boards.name;
+
     tablero.dataset.boardId = boards.board_id;
     for (const column of boards.columns) {
 
@@ -100,7 +104,8 @@ const cargarColumnas = async(boards, tablero) => {
 const init = async () => {
     let boards = await getData(BASE_URL + "/boards/1/full");
     let tablero = document.querySelector(".boards-section");
-    await cargarColumnas(boards, tablero);
+    let titulo = document.getElementById('board-title');
+    await cargarColumnas(boards, tablero, titulo);
 
     let selected = null;
 

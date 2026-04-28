@@ -21,6 +21,7 @@
     <script type="module" src="./js/loadAsideButton.js"></script>
     <script type="module" src="./js/draggable-bar.js"></script>
     <script type="module" src="./js/createBoard.js"></script>
+    <script type="module" src="./js/navigationBetweenBoards.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
@@ -56,7 +57,7 @@
     <div class="main-content">
 
         <header class="main-header">
-            <h1 class="board-name">Nombre tablero</h1>
+            <h1 class="board-name" id="board-title"></h1>
             <div class="header-buttons">
                 <button class="notifications-button">
                     <i class="fas fa-bell"></i>

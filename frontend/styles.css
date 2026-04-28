@@ -946,6 +946,7 @@ input {
     .task-list {
         padding: 0;
         max-height: 300px;
+        min-height: 30px;
         overflow: auto;
     }
 }
