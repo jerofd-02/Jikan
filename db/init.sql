@@ -48,6 +48,7 @@ CREATE TABLE column_task
     name        VARCHAR(100) NOT NULL,
     description VARCHAR(255),
     date        DATETIME,
+    deadline    DATETIME,
 
     CONSTRAINT pk_task PRIMARY KEY (id_task),
     CONSTRAINT fk_ct_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
@@ -87,30 +88,6 @@ CREATE TABLE board_column
     CONSTRAINT fk_bc_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
     CONSTRAINT fk_bc_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
 );
-
-CREATE TABLE categories
-(
-    id_category INT AUTO_INCREMENT NOT NULL,
-    id_board    INT          NOT NULL,
-    name        VARCHAR(100) NOT NULL,
-
-    CONSTRAINT pk_category PRIMARY KEY (id_category),
-    CONSTRAINT fk_cat_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
-    CONSTRAINT uq_category_per_board UNIQUE (id_board, name)
-);
-
-CREATE TABLE task_categories
-(
-    task_id     INT NOT NULL,
-    id_category INT NOT NULL,
-
-    CONSTRAINT pk_task_categories PRIMARY KEY (task_id, id_category),
-    CONSTRAINT fk_tc_task FOREIGN KEY (task_id) REFERENCES column_task (id_task) ON DELETE CASCADE,
-    CONSTRAINT fk_tc_category FOREIGN KEY (id_category) REFERENCES categories (id_category) ON DELETE CASCADE
-);
-
-ALTER TABLE column_task
-    ADD COLUMN deadline DATETIME DEFAULT NULL;
 
 -- Restricciones Semáticas Adicionales (RSA's)
 
@@ -175,8 +152,3 @@ VALUES ('Juan', 'juan@mail.com', '1234');
 
 INSERT INTO users_board (user_mail, board_id)
 VALUES ('juan@mail.com', 1);
-
-INSERT INTO categories (id_board, name)
-VALUES (1, 'Frontend'),
-       (1, 'Backend'),
-       (1, 'Testing');
