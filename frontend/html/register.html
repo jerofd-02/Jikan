@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script type="module" src="../js/verifyTheme.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Page</title>
     <link rel="stylesheet" href="../styles.css">
+    <script type="module" src="../js/verifyTheme.js"></script>
 </head>
-<body class="register-login">
-<h1 class="h1-register-login">REGISTRARSE</h1>
-<div class="input-wrapper">
-    <form class="register" action="" method="POST">
-        <label for="username">Nombre de usuario</label>
-        <input type="text" id="username" name="username" placeholder="@username" required>
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email" placeholder="email@example.com" required>
-        <label for="passwd">Contraseña</label>
-        <input type="password" id="passwd" name="password" placeholder="Introduzca la contraseña" required>
-        <label for="repeat-password">Confirmar contraseña</label>
-        <input type="password" id="repeat-password" name="confirm-password" placeholder="Repita la contraseña" required>
-        <button class="confirmation-button" type="submit">Regístrate</button>
-    </form>
-</div>
-</body>
+    <body class="register-login">
+        <h1 class="h1-register-login">REGISTRARSE</h1>
+        <div class="input-wrapper">
+            <form class="register" action="" method="POST">
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" name="username" placeholder="Nombre de usuario" required>
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" placeholder="email@example.com" required>
+                <label for="passwd">Contraseña</label>
+                <input type="password" id="passwd" name="password" placeholder="Introduzca la contraseña" required>
+                <label for="repeat-password">Confirmar contraseña</label>
+                <input type="password" id="repeat-password" name="confirm-password" placeholder="Repita la contraseña" required>
+                <button class="confirmation-button" type="submit">Regístrate</button>
+            </form>
+        </div>
+    </body>
 </html>
