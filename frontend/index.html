@@ -16,10 +16,12 @@
     <script src="./js/add_task.js"></script>
     <script src="./js/modifyTask.js" type="module"></script>
     <script src="./js/add_column.js"></script>
+    <script src="./js/delete_column.js" type="module"></script>
     <script type="module" src="./js/columnsLoader.js"></script>
     <script type="module" src="./js/loadAsideButton.js"></script>
     <script type="module" src="./js/draggable-bar.js"></script>
     <script type="module" src="./js/createBoard.js"></script>
+    <script type="module" src="./js/navigationBetweenBoards.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
@@ -55,7 +57,7 @@
     <div class="main-content">
 
         <header class="main-header">
-            <h1 class="board-name">Nombre tablero</h1>
+            <h1 class="board-name" id="board-title"></h1>
             <div class="header-buttons">
                 <button class="notifications-button">
                     <i class="fas fa-bell"></i>
@@ -66,27 +68,28 @@
                 </button>
             </div>
         </header>
+        <div class="main-panel">
+            <section class="boards-section"></section>
 
-        <section class="boards-section"></section>
-
-        <div class="panel bottom-sheet" id="bottomSheet">
-            <div class="sheet-handle-zone" id="sheetHandle">
-                <div class="handle-pill"></div>
-                <details class="acordeon" id="sheetDetails">
-                    <summary>Calendario</summary>
-                </details>
-                <div class="sheet-chevron" id="sheetToggle">
-                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                         width="10" height="10">
-                        <polyline points="2,8 6,4 10,8"/>
-                    </svg>
+            <section class="panel bottom-sheet" id="bottomSheet">
+                <div class="sheet-handle-zone" id="sheetHandle">
+                    <div class="handle-pill"></div>
+                    <details class="acordeon" id="sheetDetails">
+                        <summary>Calendario</summary>
+                    </details>
+                    <div class="sheet-chevron" id="sheetToggle">
+                        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            width="10" height="10">
+                            <polyline points="2,8 6,4 10,8"/>
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            <div class="sheet-content">
-                <div class="contenido">
-                    <div data-template="calendar"></div>
+                <div class="sheet-content">
+                    <div class="contenido">
+                        <div data-template="calendar"></div>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
 
     </div>

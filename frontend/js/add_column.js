@@ -21,11 +21,25 @@ const añadirColumna = async (boardId, tablero) => {
         col.className = "column";
         col.dataset.columnId = data.column_id; 
 
+        let colHeader = document.createElement("div");
+        colHeader.className = "column-header";
+
         let title = document.createElement("h3");
         title.textContent = data.name;
         title.classList.add("editable-title");
         tituloEditable(title, data.column_id);
-        col.appendChild(title);
+
+        let menuBtn = document.createElement("button");
+        menuBtn.className = "column-menu-btn";
+        menuBtn.textContent = "⋯";
+
+        const dropdown = await loadTemplate("dropdown-column");
+        dropdown.querySelector(".delete-column-btn").dataset.columnId = data.column_id;
+
+        colHeader.appendChild(title);
+        colHeader.appendChild(menuBtn);
+        colHeader.appendChild(dropdown);
+        col.appendChild(colHeader);
 
         let tasks = document.createElement("div");
         tasks.className = "task-list";
@@ -57,7 +71,7 @@ export const tituloEditable = (titleElement, columnId) => {
         const input = document.createElement("input");
         input.type = "text";
         input.value = currentText;
-        input.maxLength = 18;
+        input.maxLength = 50;
         input.classList.add("edit-title-input");
         titleElement.appendChild(input);
         input.focus();
