@@ -1143,15 +1143,11 @@ input {
 .register-login {
     font-family: Helvetica, sans-serif;
     color: var(--font-color);
-
-    h1 {
-        margin: 125px 10px 125px 5px;
-        font-size: 64px;
-        text-align: center;
-    }
+    max-height: 100vh;
+    overflow: hidden;
 
     .h1-register-login {
-        margin: 125px 10px 125px 5px;
+        margin: 75px 10px 75px 10px;
         font-size: 64px;
         text-align: center;
         background: linear-gradient(45deg, var(--light-accent) 0%, var(--principal) 100%);
@@ -1161,15 +1157,20 @@ input {
 
     .a-login {
         color: var(--font-color);
+        font-weight: bold;
         text-decoration: none;
+
+        &:hover {
+            color: var(--principal);
+            text-decoration: underline;
+        }
     }
 
     .column-login {
-        margin: 0 auto 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 125px;
+        padding: 75px;
     }
 
     label {
@@ -1220,7 +1221,8 @@ input {
 
     .column {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        gap: 25rem;
         align-items: center;
         padding: 110px;
     }
@@ -1282,6 +1284,7 @@ input {
     border-radius: 50%;
     border: none;
     cursor: pointer;
+    background-color: transparent;
 
     transform: scale(0.8);
     transition: transform 0.2s ease;
