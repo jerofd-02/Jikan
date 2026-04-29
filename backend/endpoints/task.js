@@ -24,6 +24,19 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /tasks/labels/all — obtener todos los labels únicos
+router.get('/labels/all', async (req, res) => {
+    try {
+        const [rows] = await pool.query(`SELECT DISTINCT label
+                                         FROM task_labels
+                                         ORDER BY label`);
+        res.status(200).json(rows.map(r => r.label));
+    } catch (error) {
+        console.error("Error al obtener los labels:", error);
+        res.status(500).json({message: "Error interno del servidor"});
+    }
+});
+
 // GET /tasks/:id — obtener una tarea por id
 router.get('/:id', async (req, res) => {
     try {

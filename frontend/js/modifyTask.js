@@ -17,6 +17,65 @@ function addModifyButton() {
     });
 }
 
+function renderLabels(container, labels = []) {
+    container.innerHTML = '';
+    labels.forEach((label, index) => {
+        const chip = document.createElement('div');
+        chip.classList.add('label-chip');
+        chip.innerHTML = `
+            <span>${label}</span>
+            <button type="button" data-index="${index}" class="remove-label-btn" title="Eliminar">x</button>
+        `;
+        container.appendChild(chip);
+    });
+}
+
+function setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsContainer) {
+    function refreshDataList() {
+        datalist.innerHTML = '';
+        allLabels
+            .filter(l => !currentLabels.includes(l))
+            .forEach(l => {
+                const opt = document.createElement('option');
+                opt.value = l;
+                datalist.appendChild(opt);
+            });
+    }
+
+    function addLabel() {
+        const value = input.value.trim();
+        if (!value || currentLabels.includes(value)) {
+            input.value = '';
+            return;
+        }
+        currentLabels.push(value);
+        renderLabels(chipsContainer, currentLabels);
+        refreshDataList();
+        input.value = '';
+        input.focus();
+    }
+
+    refreshDataList();
+
+    document.getElementById('add-label-btn').addEventListener('click', addLabel);
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addLabel();
+        }
+    });
+
+    chipsContainer.onclick = (e) => {
+        const removeBtn = e.target.closest('.remove-label-btn');
+        if (!removeBtn) return;
+        const index = parseInt(removeBtn.dataset.index);
+        currentLabels.splice(index, 1);
+        renderLabels(chipsContainer, currentLabels);
+        refreshDataList();
+    };
+}
+
 async function modifyTask(taskElement) {
     if (!taskElement) return;
 
@@ -38,9 +97,11 @@ async function modifyTask(taskElement) {
         return;
     }
 
+    let currentLabels = [...(taskData.labels || [])];
+
     Swal.fire({
         width: '700px',
-        customClass: { popup: 'swal-custom-popup' },
+        customClass: {popup: 'swal-custom-popup'},
         title: 'Modificar tarea',
         html: `
             <div class="edit-task-input">
@@ -51,10 +112,18 @@ async function modifyTask(taskElement) {
                     <textarea id="description"></textarea>
                 </div>
                 <div class="edit-task-right">
-                    <label for="category">Categoría</label>
-                    <div class="category-row">
-                        <select name="category" id="category"></select>
-                        <button type="button" id="add-category-btn" title="Nueva categoría">+</button>
+                    <label for="label-chips">Categorías</label>
+                    <div class="label-chips-container" id="label-chips"></div>
+                        <div class="label-row">
+                        <input 
+                            type="text" 
+                            id="new-label-input" 
+                            list="labels-datalist" 
+                            placeholder="Selecciona o escibe..." 
+                            autocomplete="off"
+                        >
+                        <datalist id="labels-datalist"></datalist>
+                        <button type="button" class="add-label-btn" id="add-label-btn" title="Nueva categoría">+</button>
                     </div>
                     <label for="date">Fecha de la tarea</label>
                     <input type="date" id="date" autocomplete="off">
@@ -63,11 +132,25 @@ async function modifyTask(taskElement) {
                 </div>
             </div>
         `,
-        didOpen: () => {
+        didOpen: async () => {
             document.getElementById('name').value = taskData.name || '';
             document.getElementById('description').value = taskData.description || '';
             document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 10) : '';
             document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
+
+            const chipsContainer = document.getElementById('label-chips');
+            renderLabels(chipsContainer, currentLabels);
+
+            let allLabels = [];
+            try {
+                const res = await fetch(`${TASK_API_URL}/labels/all`);
+                if (res.ok) allLabels = await res.json();
+            } catch {
+            }
+
+            const input = document.getElementById('new-label-input');
+            const datalist = document.getElementById('labels-datalist');
+            setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsContainer);
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -83,6 +166,7 @@ async function modifyTask(taskElement) {
                 description: document.getElementById('description').value.trim() || null,
                 date: document.getElementById('date').value || null,
                 deadline: document.getElementById('deadline').value || null,
+                labels: currentLabels,
             };
         }
     }).then((result) => {
@@ -99,7 +183,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
     try {
         const response = await fetch(`${TASK_API_URL}/${taskId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newData)
         });
 
@@ -111,12 +195,13 @@ async function saveSwalTask(taskElement, newData, previousData) {
             undo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
-                        name:        previousData.name,
+                        name: previousData.name,
                         description: previousData.description,
-                        date:        previousData.date,
-                        deadline:    previousData.deadline,
+                        date: previousData.date,
+                        deadline: previousData.deadline,
+                        labels: previousData.labels || [],
                     })
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
@@ -126,7 +211,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
             redo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(newData)
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
