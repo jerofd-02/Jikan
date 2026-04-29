@@ -72,10 +72,6 @@ async function modifyTask(taskElement) {
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
-        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
-        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
-        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
-        cancelButtonColor: "#B0000F",
         preConfirm: () => {
             const name = document.getElementById('name').value.trim();
             if (!name) {

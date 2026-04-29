@@ -60,18 +60,13 @@ async function deleteTask(taskElement) {
     const taskName = taskElement.querySelector("p")?.textContent.trim();
 
     const {isConfirmed} = await Swal.fire({
+        customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
         title: "¿Eliminar tarea?",
         text: `"${taskName}" se eliminará permanentemente.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-
-        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
-        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
-
-        confirmButtonColor: "#B0000F",
-        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
     });
 
     if (!isConfirmed) return;

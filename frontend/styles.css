@@ -1264,9 +1264,27 @@ input {
 }
 
 .swal-custom-popup {
+    background: var(--background3-color) !important;
+    color: var(--font-color) !important;
     border-radius: 8px;
     border: 1px solid var(--principal);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.swal-custom-popup .swal2-confirm {
+    background-color: var(--swal2-confirm-button-background-color) !important;
+}
+
+.swal-custom-popup-inverse .swal2-confirm {
+    --swal2-confirm-button-background-color: #B0000F !important;
+}
+
+.swal-custom-popup .swal2-cancel {
+    --swal2-cancel-button-background-color: #B0000F !important;
+}
+
+.swal-custom-popup-inverse .swal2-cancel {
+    --swal2-cancel-button-background-color: var(--principal) !important;
 }
 
 .task-actions {
