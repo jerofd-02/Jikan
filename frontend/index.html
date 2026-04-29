@@ -126,10 +126,55 @@
             
             <form role="input" class="popup-form">
                 <label for="input"></label>
-                <input type="text" class="new-board-name" placeholder="Mi nuevo tablero...">
+                <input type="text" class="fast-board-name" placeholder="Mi nuevo tablero...">
             </form>
 
-            <button class="create-board-button" id="create-board">Crear tablero</button>
+            <div class="creation-popups-options">
+                <button class="cancel-creation-button">Cancelar</button>
+                <button class="create-board-button">Crear tablero</button>
+            </div>
+        </div>
+    </div>
+
+    <!--popup de creacion personalizada de tablero PARTE 1-->
+    <div id="custom-creation-popup" class="overlay">
+        <div class="popup">
+            <button class="btn-cerrar">&times;</button>
+            <h1>Creación personalizada de tablero</h1>
+            <h3>Introduce el nombre del tablero</h3>
+            
+            <form role="input" class="popup-form">
+                <label for="input"></label>
+                <input type="text" class="custom-board-name" placeholder="Mi nuevo tablero...">
+            </form>
+
+            <h3 class="how-many-columns">¿Cuantas columnas deseas?</h3>
+
+            <div class="number-stepper">
+                <button type="button" class="number-stepper__btn" onclick="numberFLD.stepDown()">−</button>
+                <input id="numberFLD" class="number-stepper__input" type="number" step="1" min="2" max="5" value="3" readonly />
+                <button type="button" class="number-stepper__btn" onclick="numberFLD.stepUp()">+</button>
+            </div>
+
+            <div class="creation-popups-options">
+                <button class="cancel-creation-button">Cancelar</button>
+                <button class="continue-board-button">Continuar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!--popup de creacion personalizada de tablero PARTE 2-->
+    <div id="custom-creation-confiramtion" class="overlay">
+        <div class="popup">
+            <button class="btn-cerrar">&times;</button>
+            <h1>Creación personalizada de tablero</h1>
+            
+            <div id="column-names-div"></div>
+
+            <div class="creation-popups-options">
+                <button class="back-creation-button">Atrás</button>
+                <button class="create-board-button">Crear tablero</button>
+            </div>
         </div>
     </div>
 

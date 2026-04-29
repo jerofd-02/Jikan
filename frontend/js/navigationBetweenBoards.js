@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const titulo = document.getElementById('board-title');
 
     botonesTableros.addEventListener('click', async (e) => {
+
         let button = e.target.closest("button");
+
+        if (button.id == 'crearTablero') return;
 
         let name = button.textContent;
 
@@ -32,6 +35,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
         cargarColumnas(boards, tablero, titulo);
     });
-
-    console.log("listo rey");
 });

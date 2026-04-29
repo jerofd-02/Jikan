@@ -29,7 +29,7 @@ const insertarTableroEnHTML = (nombre) => {
     seccionBotones.insertBefore(nuevoTablero, botones[botones.length - 1]);
 };
 
-const insertarTableroEnDB = async (name) => {
+const insertarTableroBasicoEnDB = async (name, columnsNames) => {
     try {
 
         const boardres = await fetch(`${BASE_URL}/boards`, {
@@ -47,10 +47,14 @@ const insertarTableroEnDB = async (name) => {
         const board = await boardres.json();
         const boardId = board.board_id;
 
-        // 2. Columnas por defecto
-        const defaultColumns = ['Por hacer', 'En progreso', 'Terminado'];
+        let defaultColumns = [];
 
-        // 3. Crear columnas en paralelo (más eficiente)
+        if (columnsNames.length == 0) {
+            defaultColumns = ['Por hacer', 'En progreso', 'Terminado'];
+        } else {
+            defaultColumns = columnsNames;
+        }
+
         await Promise.all(defaultColumns.map(colName => 
             fetch(`${BASE_URL}/boards/${boardId}/columns`, {
                 method: 'POST',
@@ -71,14 +75,12 @@ const insertarTableroEnDB = async (name) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById('create-board-popup');
-    const creacionPersonalizada = document.getElementById('fast-creation-popup');
-
-    const btnsCerrar = document.getElementsByClassName('btn-cerrar');
+    const creacionRapida = document.getElementById('fast-creation-popup');
+    const creacionPersonalizada = document.getElementById('custom-creation-popup');
+    const confirmarCustom = document.getElementById('custom-creation-confiramtion');
 
     const btnCreacionRapida = document.getElementById('fast-board-button');
     const btnCreacionPersonalizada = document.getElementById('custom-board-button');
-
-    const btnCrearTablero = document.getElementById('create-board');
 
     document.addEventListener('click', async (e) => {
 
@@ -89,36 +91,113 @@ document.addEventListener("DOMContentLoaded", () => {
         // cerrar popups
         } else if (e.target.closest('.btn-cerrar')) {
             overlay.classList.remove('activo');
+            creacionRapida.classList.remove('activo');
             creacionPersonalizada.classList.remove('activo');
+            confirmarCustom.classList.remove('activo');
+        
+        } else if (e.target.closest('.cancel-creation-button')) {
+            overlay.classList.remove('activo');
+            creacionRapida.classList.remove('activo');
+            creacionPersonalizada.classList.remove('activo');
+            confirmarCustom.classList.remove('activo');
+        
 
+        // segundo modal para creación personalizada de tableros
+        } else if (e.target.closest('.continue-board-button')) {
+            let numColumns = document.getElementById('numberFLD').value;
+            const formSection = document.getElementById('column-names-div');
+
+            creacionPersonalizada.classList.remove('activo');
+            confirmarCustom.classList.add('activo');
+            
+            for(let i = 0; i < numColumns; i++) {
+                const container = document.createElement('div');
+
+                container.innerHTML = `
+                    <h3>Introduce el nombre de la ${i + 1}ª columna</h3>
+                    <form role="input" class="popup-form">
+                        <label></label>
+                        <input type="text" class="new-board-name" placeholder="Mi columna...">
+                    </form>
+                `;
+
+                formSection.appendChild(container);
+            }
+        
+        // boton para volver atrás en creación personalizada de tablero
+        } else if (e.target.closest('.back-creation-button')) {
+            confirmarCustom.classList.remove('activo');
+            creacionPersonalizada.classList.add('activo');
+
+            document.getElementById('column-names-div').innerHTML = '';
+            
+        
         } else if (e.target === overlay) {
             overlay.classList.remove('activo');
         
+        } else if (e.target === creacionRapida) {
+            creacionRapida.classList.remove('activo');
+
         } else if (e.target === creacionPersonalizada) {
             creacionPersonalizada.classList.remove('activo');
         
-        } else if (e.target.closest('#create-board')) {
+        } else if (e.target === confirmarCustom) {
+            confirmarCustom.classList.remove('activo');
+            document.getElementById('column-names-div').innerHTML = '';
+        
+        } else if (e.target.closest('.create-board-button')) {
 
-            let form = document.querySelector(".new-board-name");
-            let nombre = form.value.trim();
+            if (creacionRapida.classList.contains('activo')) {
+                let form = document.querySelector(".fast-board-name");
+                let nombre = form.value.trim();
 
-            const tablero = await insertarTableroEnDB(nombre);
+                const tablero = await insertarTableroBasicoEnDB(nombre, []);
 
-            if (!tablero) console.error("no se ha podido crear el tablero");
-            else insertarTableroEnHTML(nombre);
+                if (!tablero) console.error("no se ha podido crear el tablero");
+                else insertarTableroEnHTML(nombre);
+                form.value = '';
 
+            } else {
+                let form = document.querySelector(".custom-board-name");
+                let nombre = form.value.trim();
+
+                let nombresColumnas = Array.from(document.querySelectorAll('.new-board-name'))
+                    .map(col => col.value.trim())
+                    .filter(val => val !== "");
+
+                const tablero = await insertarTableroBasicoEnDB(nombre, nombresColumnas);
+
+                if (!tablero) console.error("no se ha podido crear el tablero");
+                else insertarTableroEnHTML(nombre);
+
+                form.value = '';
+                document.getElementById('column-names-div').innerHTML = '';
+            }
+
+            creacionRapida.classList.remove('activo');
             creacionPersonalizada.classList.remove('activo');
-            form.value = '';
+            confirmarCustom.classList.remove('activo');
         }
     });
 
     btnCreacionRapida.addEventListener('click', () => {
         overlay.classList.remove('activo');
+        creacionPersonalizada.classList.remove('activo');
+        confirmarCustom.classList.remove('activo');
+        creacionRapida.classList.add('activo');
+    });
+
+    btnCreacionPersonalizada.addEventListener('click', () => {
+        overlay.classList.remove('activo');
+        creacionRapida.classList.remove('activo');
+        confirmarCustom.classList.remove('activo');
         creacionPersonalizada.classList.add('activo');
     });
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') overlay.classList.remove('activo');
+        if (e.key === 'Escape') creacionRapida.classList.remove('activo');
         if (e.key === 'Escape') creacionPersonalizada.classList.remove('activo');
+        if (e.key === 'Escape') confirmarCustom.classList.remove('activo');
     });
 });
