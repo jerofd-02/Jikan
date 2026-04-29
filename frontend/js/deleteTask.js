@@ -80,10 +80,10 @@ async function deleteTask(taskElement) {
     const parent = taskElement.parentNode;
     const nextSibling = taskElement.nextSibling;
 
-    const taskData = await fetch(`http://localhost:3000/tasks/${taskId}`).then(r => r.json());
+    const taskData = await fetch(`/api/tasks/${taskId}`).then(r => r.json());
 
     try {
-        const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        const response = await fetch(`/api/tasks/${taskId}`, {
             method: "DELETE",
         });
 
@@ -101,7 +101,7 @@ async function deleteTask(taskElement) {
                 undo: async () => {
                     const date = taskData.date ? taskData.date.split('T')[0] : null;
 
-                    const res = await fetch(`http://localhost:3000/tasks/`, {
+                    const res = await fetch(`/api/tasks/`, {
                         method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({
                             id_column: taskData.id_column,
                             name: taskData.name,
@@ -117,7 +117,7 @@ async function deleteTask(taskElement) {
                     taskElement.style.opacity = "1";
                     hideUndoPopup();
                 }, redo: async () => {
-                    await fetch(`http://localhost:3000/tasks/${taskId}`, {method: "DELETE"});
+                    await fetch(`/api/tasks/${taskId}`, {method: "DELETE"});
                     taskElement.remove();
                     showUndoPopup();
                 }

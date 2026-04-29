@@ -2,7 +2,7 @@ const añadirColumna = async (boardId, tablero) => {
     const nombreGenerico = "Nueva Columna";
 
     try {
-        const response = await fetch(`http://localhost:3000/boards/${boardId}/columns`, {
+        const response = await fetch(`/api/boards/${boardId}/columns`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: nombreGenerico })
@@ -81,7 +81,7 @@ export const tituloEditable = (titleElement, columnId) => {
             const nuevoNombre = input.value.trim() || currentText;
 
             try {
-                await fetch(`http://localhost:3000/columns/${columnId}`, {
+                await fetch(`/api/columns/${columnId}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name: nuevoNombre })

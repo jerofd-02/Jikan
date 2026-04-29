@@ -15,6 +15,24 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /boards/user/:mail
+router.get('/user/:mail', async (req, res) => {
+    try {
+        const { mail } = req.params;
+
+        const [rows] = await pool.query(`
+            SELECT b.board_id, b.name
+            FROM board b
+            INNER JOIN users_board ub ON b.board_id = ub.board_id
+            WHERE ub.user_mail = ?
+        `, [mail]);
+
+        res.status(200).json(rows);
+    } catch (error) {
+        handleError(res, error, 'obtener tableros del usuario');
+    }
+});
+
 // GET /boards/:id/full
 router.get('/:id/full', async (req, res) => {
     try {
@@ -107,7 +125,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// GET /boards/name/nombre
+// GET /boards/name/:nombre
 router.get('/name/:nombre', async (req, res) => {
     try {
         const { nombre } = req.params;

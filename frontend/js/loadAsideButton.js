@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "/api";
 
 const getData = async (link) => {
     try {
@@ -27,13 +27,21 @@ const cargarBotonesLaterales = (boards, buttonSection) => {
 };
 
 const init = async () => {
-
     const buttonSection = document.getElementById("boards-buttons");
+    const userMail = localStorage.getItem("userMail");
 
-    let boards = await getData(BASE_URL + '/boards');
-    console.log(boards);
+    let boards = await getData(`${BASE_URL}/boards/user/${userMail}`);
+    cargarBotonesLaterales(boards, buttonSection);
 
-    cargarBotonesLaterales(boards, buttonSection)
-}
+    //Tambien modificar nombre y email
+    const userName = localStorage.getItem("userName");
+
+    if (userMail) {
+        document.querySelector(".user-name-asside").textContent = userName;
+        document.querySelector(".user-email-asside").textContent = userMail;
+        document.querySelector(".user-picture").parentElement.href = "./html/user-profile.html";
+        console.log("Usuario autenticado:", userMail);
+    }
+};
 
 document.addEventListener("DOMContentLoaded", init);

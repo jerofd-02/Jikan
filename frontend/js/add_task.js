@@ -1,4 +1,4 @@
-const TASK_API_URL = "http://localhost:3000/tasks";
+const TASK_API_URL = "/api/tasks";
 
 document.addEventListener("DOMContentLoaded", () => {
     let listaActual = null;

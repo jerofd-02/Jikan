@@ -1,5 +1,5 @@
 import { tituloEditable } from './add_column.js';
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "/api";
 
 const getData = async (link) => {
     try {
@@ -102,7 +102,9 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 };
 
 const init = async () => {
-    let boards = await getData(BASE_URL + "/boards/1/full");
+    const boardId = localStorage.getItem("boardId");
+    let boards = await getData(BASE_URL + `/boards/${boardId}/full`);
+
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
     await cargarColumnas(boards, tablero, titulo);

@@ -31,7 +31,7 @@ const eliminarColumna = async (columnId) => {
     if (!confirm("¿Seguro que quieres eliminar esta columna?")) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/columns/${columnId}`, {
+        const response = await fetch(`/api/columns/${columnId}`, {
             method: "DELETE"
         });
 
