@@ -136,7 +136,7 @@ router.put('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     try {
         const {id} = req.params;
-        const {id_column, name, description, date, labels} = req.body;
+        const {id_column, name, description, date, deadline, labels} = req.body;
 
         const [check] = await pool.query(`SELECT id_task
                                           FROM column_task
@@ -164,6 +164,11 @@ router.patch('/:id', async (req, res) => {
         if (date !== undefined) {
             fields.push('date = ?');
             values.push(date);
+        }
+
+        if (deadline !== undefined) {
+            fields.push('deadline = ?');
+            values.push(deadline);
         }
 
         if (fields.length > 0) {

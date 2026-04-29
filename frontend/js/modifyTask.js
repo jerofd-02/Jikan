@@ -64,10 +64,10 @@ async function modifyTask(taskElement) {
             </div>
         `,
         didOpen: () => {
-            document.getElementById('name').value        = taskData.name        || '';
+            document.getElementById('name').value = taskData.name || '';
             document.getElementById('description').value = taskData.description || '';
-            document.getElementById('date').value        = taskData.date?.slice(0, 10)     || '';
-            document.getElementById('deadline').value    = taskData.deadline?.slice(0, 10) || '';
+            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 10) : '';
+            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -85,8 +85,8 @@ async function modifyTask(taskElement) {
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
-                date:        document.getElementById('date').value     || null,
-                deadline:    document.getElementById('deadline').value || null,
+                date: document.getElementById('date').value || null,
+                deadline: document.getElementById('deadline').value || null,
             };
         }
     }).then((result) => {
