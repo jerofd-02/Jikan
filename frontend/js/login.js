@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            localStorage.setItem("token", data.token);
             localStorage.setItem("userMail", data.mail);
             localStorage.setItem("userName", data.name);
             localStorage.setItem("boardId", data.boardId);

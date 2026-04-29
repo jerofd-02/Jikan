@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 const { handleError } = require('../utils/errors');
 
-const JWT_SECRET = "tu_secreto_seguro"; // mueve esto a una variable de entorno después
+const JWT_SECRET = "tu_secreto_seguro";
 
 // POST /auth/register
 router.post('/register', async (req, res) => {
@@ -62,7 +62,9 @@ router.post('/register', async (req, res) => {
         // Generar token
         const token = jwt.sign({ mail }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(201).json({ token, mail, name, boardId });
+        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
+
+        res.status(201).json({mail, name, boardId });
 
     } catch (error) {
         handleError(res, error, 'registrar usuario');
@@ -94,12 +96,47 @@ router.post('/login', async (req, res) => {
         );
         const boardId = boardRows[0]?.board_id;
 
-        const token = jwt.sign({ mail }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ mail, password: user.password }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({ token, mail, name: user.name, boardId });
+        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
+
+        res.status(200).json({ mail, name: user.name, boardId });
 
     } catch (error) {
         handleError(res, error, 'iniciar sesión');
+    }
+});
+
+router.get('/verify', async (req, res) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(401).json({ valid: false, message: 'No token provided' });
+    }
+
+    try {
+        const {mail, password} = jwt.verify(token, JWT_SECRET);
+
+        const [rows] = await pool.query(
+            `SELECT * FROM users WHERE mail = ?`, [mail]
+        );
+
+        if (rows.length === 0)
+            return res.status(401).json({ message: 'Email o contraseña incorrectos' });
+
+        const user = rows[0];
+        if (!user) {
+            return res.status(401).json({ valid: false, message: 'User not found' });
+        }
+
+        const passwordMatch = password === user.password;
+        if (!passwordMatch) {
+            return res.status(401).json({ valid: false, message: 'Invalid token' });
+        }
+
+        res.json({ valid: true, mail: user.mail, name: user.name });
+    } catch (error) {
+        res.status(401).json({ valid: false, message: 'Invalid token' });
     }
 });
 
