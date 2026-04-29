@@ -1215,7 +1215,7 @@ input {
 
 .new-task-input input,
 .edit-task-input input,
-.edit-task-input select,
+.edit-task-input datalist,
 .edit-task-input textarea {
     width: 100%;
     background-color: var(--background3-color);
@@ -1254,7 +1254,7 @@ input {
     gap: 8px;
 }
 
-.edit-task-input select {
+.edit-task-input datalist {
     appearance: none;
     cursor: pointer;
 }
@@ -1481,7 +1481,7 @@ input {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    min-height: 32px;
+    min-height: 0;
     margin-bottom: 8px;
 }
 
