@@ -17,17 +17,30 @@ function addModifyButton() {
     });
 }
 
-function modifyTask(taskElement) {
+async function modifyTask(taskElement) {
     if (!taskElement) return;
 
-    const parrafo = taskElement.querySelector("p");
-    const currentText = parrafo.textContent;
+    const taskId = taskElement.dataset.taskId;
+
+    let taskData;
+    try {
+        const res = await fetch(`${TASK_API_URL}/${taskId}`);
+        if (!res.ok) throw new Error();
+        taskData = await res.json();
+    } catch {
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudieron cargar los datos',
+            icon: 'error',
+            background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+            color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+        });
+        return;
+    }
 
     Swal.fire({
         width: '700px',
-        customClass: {
-            popup: 'swal-custom-popup'
-        },
+        customClass: { popup: 'swal-custom-popup' },
         title: 'Modificar tarea',
         html: `
             <div class="edit-task-input">
@@ -51,7 +64,10 @@ function modifyTask(taskElement) {
             </div>
         `,
         didOpen: () => {
-            document.getElementById('name').value = currentText;
+            document.getElementById('name').value        = taskData.name        || '';
+            document.getElementById('description').value = taskData.description || '';
+            document.getElementById('date').value        = taskData.date?.slice(0, 10)     || '';
+            document.getElementById('deadline').value    = taskData.deadline?.slice(0, 10) || '';
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -66,50 +82,59 @@ function modifyTask(taskElement) {
                 Swal.showValidationMessage('El nombre no puede estar vacío');
                 return false;
             }
-            return { name };
+            return {
+                name,
+                description: document.getElementById('description').value.trim() || null,
+                date:        document.getElementById('date').value     || null,
+                deadline:    document.getElementById('deadline').value || null,
+            };
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            saveSwalTask(taskElement, result.value.name);
+            saveSwalTask(taskElement, result.value, taskData);
         }
     });
 }
 
-async function saveSwalTask(taskElement, newText) {
+async function saveSwalTask(taskElement, newData, previousData) {
     const taskId = taskElement.dataset.taskId;
     const paragraph = taskElement.querySelector("p");
-    const previousText = paragraph.textContent;
 
     try {
         const response = await fetch(`${TASK_API_URL}/${taskId}`, {
             method: "PATCH",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({name: newText})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newData)
         });
 
         if (!response.ok) throw new Error("Error al guardar");
 
-        paragraph.textContent = newText;
+        paragraph.textContent = newData.name;
 
         undoManager.add({
             undo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({name: previousText})
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name:        previousData.name,
+                        description: previousData.description,
+                        date:        previousData.date,
+                        deadline:    previousData.deadline,
+                    })
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
-                paragraph.textContent = previousText;
+                paragraph.textContent = previousData.name;
                 hideUndoPopup();
             },
             redo: async () => {
                 const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({name: newText})
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newData)
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
-                paragraph.textContent = newText;
+                paragraph.textContent = newData.name;
                 showUndoPopup();
             }
         });
@@ -155,7 +180,6 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         undoManager.undo();
     }
-
     if (e.ctrlKey && e.key === "y") {
         e.preventDefault();
         undoManager.redo();
