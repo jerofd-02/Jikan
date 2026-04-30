@@ -74,9 +74,10 @@ router.post('/register', async (req, res) => {
         // Generar token
         const token = jwt.sign({ sub: user.id, sessionId }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
-
-        res.status(201).json({mail, name, boardId });
+        res
+            .cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Lax' })
+            .status(201)
+            .json({mail, name, boardId });
 
     } catch (error) {
         handleError(res, error, 'registrar usuario');
@@ -117,9 +118,10 @@ router.post('/login', async (req, res) => {
 
         const token = jwt.sign({ sub: user.id, sessionId }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
-
-        res.status(200).json({ mail, name: user.name, boardId });
+        res
+            .cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Lax' })
+            .status(200)
+            .json({ mail, name: user.name, boardId });
 
     } catch (error) {
         handleError(res, error, 'iniciar sesión');

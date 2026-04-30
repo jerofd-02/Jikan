@@ -1,4 +1,4 @@
-const { pool } = require('../config/database');
+const pool = require('../config/database');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = "NKJ.BGD125_$HG";
