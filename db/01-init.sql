@@ -2,9 +2,9 @@
 
 CREATE TABLE users
 (
-    user_id  INTEGER      NOT NULL,
+    user_id  INTEGER AUTO_INCREMENT NOT NULL,
     name     VARCHAR(100) NOT NULL,
-    mail     VARCHAR(255) NOT NULL,
+    mail     VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
     CONSTRAINT pk_users PRIMARY KEY (user_id)
@@ -32,19 +32,19 @@ CREATE TABLE columns_table
 
 CREATE TABLE users_board
 (
-    user_mail VARCHAR(255),
+    user_id   INT,
     board_id  INT,
 
-    CONSTRAINT pk_users_board PRIMARY KEY (user_mail, board_id),
+    CONSTRAINT pk_users_board PRIMARY KEY (user_id, board_id),
 
-    CONSTRAINT fk_ub_user FOREIGN KEY (user_mail) REFERENCES users (mail) ON DELETE CASCADE,
+    CONSTRAINT fk_ub_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
     CONSTRAINT fk_ub_board FOREIGN KEY (board_id) REFERENCES board (board_id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_sessions
 (
-    user_id     INTEGER     NOT NULL,
-    session_id  INTEGER     NOT NULL,
+    user_id     INT     NOT NULL,
+    session_id  INT     NOT NULL,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT pk_user_session PRIMARY KEY (session_id),
@@ -67,12 +67,12 @@ CREATE TABLE column_task
 
 CREATE TABLE user_task
 (
-    user_mail VARCHAR(255),
+    user_id   INT,
     task_id   INT,
 
-    CONSTRAINT pk_user_task PRIMARY KEY (user_mail, task_id),
+    CONSTRAINT pk_user_task PRIMARY KEY (user_id, task_id),
 
-    CONSTRAINT fk_ut_user FOREIGN KEY (user_mail) REFERENCES users (mail) ON DELETE CASCADE,
+    CONSTRAINT fk_ut_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
     CONSTRAINT fk_ut_task FOREIGN KEY (task_id) REFERENCES column_task (id_task) ON DELETE CASCADE
 );
 
@@ -99,32 +99,3 @@ CREATE TABLE board_column
     CONSTRAINT fk_bc_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
     CONSTRAINT fk_bc_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
 );
-
--- Restricciones Semáticas Adicionales (RSA's)
-
--- RSA (user_board): solo actúa si no estamos en modo eliminación de cuenta
-DELIMITER
-//
-
-CREATE TRIGGER trigger_ub_before_delete
-    BEFORE DELETE
-    ON users_board
-    FOR EACH ROW
-BEGIN
-    DECLARE total_users INT;
-
-    IF @disable_trigger IS NULL OR @disable_trigger = 0 THEN
-    SELECT COUNT(*)
-    INTO total_users
-    FROM users_board
-    WHERE board_id = OLD.board_id;
-
-    IF total_users <= 1 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Error: El tablero debe tener al menos un usuario.';
-END IF;
-END IF;
-END
-//
-
-DELIMITER ;
