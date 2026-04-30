@@ -2,11 +2,12 @@
 
 CREATE TABLE users
 (
+    user_id  INTEGER      NOT NULL,
     name     VARCHAR(100) NOT NULL,
     mail     VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
 
-    CONSTRAINT pk_users PRIMARY KEY (mail)
+    CONSTRAINT pk_users PRIMARY KEY (user_id)
 );
 
 
@@ -38,6 +39,16 @@ CREATE TABLE users_board
 
     CONSTRAINT fk_ub_user FOREIGN KEY (user_mail) REFERENCES users (mail) ON DELETE CASCADE,
     CONSTRAINT fk_ub_board FOREIGN KEY (board_id) REFERENCES board (board_id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_sessions
+(
+    user_id     INTEGER     NOT NULL,
+    session_id  INTEGER     NOT NULL,
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_user_session PRIMARY KEY (session_id),
+    CONSTRAINT fk_us_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE column_task
@@ -117,43 +128,3 @@ END
 //
 
 DELIMITER ;
-
--- DATOS DE EJEMPLO
-
-INSERT INTO board (name)
-VALUES ('Proyecto Backend');
-
-INSERT INTO columns_table (name)
-VALUES ('To Do');
-INSERT INTO columns_table (name)
-VALUES ('In Progress');
-INSERT INTO columns_table (name)
-VALUES ('Done');
-
-INSERT INTO board_column (id_board, id_column)
-VALUES (1, 1);
-INSERT INTO board_column (id_board, id_column)
-VALUES (1, 2);
-INSERT INTO board_column (id_board, id_column)
-VALUES (1, 3);
-
--- Columna 1 (To Do)
-INSERT INTO column_task (id_column, name, description, date)
-VALUES (1, 'Diseñar API', 'Definir endpoints', NOW()),
-       (1, 'Modelo BD', 'Diseñar tablas', NOW());
-
--- Columna 2 (In Progress)
-INSERT INTO column_task (id_column, name, description, date)
-VALUES (2, 'Implementar backend', 'Express + MySQL', NOW()),
-       (2, 'Autenticación', 'Login y registro', NOW());
-
--- Columna 3 (Done)
-INSERT INTO column_task (id_column, name, description, date)
-VALUES (3, 'Setup proyecto', 'Inicialización repo', NOW()),
-       (3, 'Docker listo', 'Contenedores funcionando', NOW());
-
-INSERT INTO users (name, mail, password)
-VALUES ('Juan', 'juan@mail.com', '1234');
-
-INSERT INTO users_board (user_mail, board_id)
-VALUES ('juan@mail.com', 1);
