@@ -140,4 +140,76 @@ router.get('/verify', async (req, res) => {
     }
 });
 
+// DELETE /auth/delete-account
+router.delete('/delete-account', async (req, res) => {
+    const token = req.cookies.token;
+
+    if (!token)
+        return res.status(401).json({ message: 'No autorizado' });
+
+    try {
+        const { mail } = jwt.verify(token, JWT_SECRET);
+
+        // Usamos una conexión fija para que el SET persista
+        const connection = await pool.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            const [boardRows] = await connection.query(
+                `SELECT board_id FROM users_board WHERE user_mail = ?`, [mail]
+            );
+
+            for (const row of boardRows) {
+                const boardId = row.board_id;
+
+                const [colRows] = await connection.query(
+                    `SELECT id_column FROM board_column WHERE id_board = ?`, [boardId]
+                );
+
+                const colIds = colRows.map(c => c.id_column);
+
+                if (colIds.length > 0) {
+                    await connection.query(
+                        `DELETE FROM column_task WHERE id_column IN (?)`, [colIds]
+                    );
+                    await connection.query(
+                        `DELETE FROM board_column WHERE id_board = ?`, [boardId]
+                    );
+                    await connection.query(
+                        `DELETE FROM columns_table WHERE column_id IN (?)`, [colIds]
+                    );
+                }
+
+                // Desactivar trigger en esta misma conexión
+                await connection.query(`SET @disable_trigger = 1`);
+                await connection.query(
+                    `DELETE FROM users_board WHERE board_id = ?`, [boardId]
+                );
+                await connection.query(`SET @disable_trigger = 0`);
+
+                await connection.query(
+                    `DELETE FROM board WHERE board_id = ?`, [boardId]
+                );
+            }
+
+            await connection.query(`DELETE FROM users WHERE mail = ?`, [mail]);
+
+            await connection.commit();
+
+        } catch (err) {
+            await connection.rollback();
+            throw err;
+        } finally {
+            connection.release();
+        }
+
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Cuenta eliminada correctamente' });
+
+    } catch (error) {
+        handleError(res, error, 'eliminar cuenta');
+    }
+});
+
 module.exports = router;
