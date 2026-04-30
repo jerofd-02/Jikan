@@ -56,6 +56,7 @@ router.get('/:id/full', verifyToken, async (req, res) => {
 router.post('/', verifyToken, async (req, res) => {
     try {
         const { name } = req.body;
+        const userId = req.user.id;
 
         if (!name) {
             return res.status(400).json({ message: 'El nombre del board es obligatorio' });
@@ -64,6 +65,13 @@ router.post('/', verifyToken, async (req, res) => {
         const [result] = await pool.query(
             `INSERT INTO board (name) VALUES (?)`,
             [name]
+        );
+
+        const boardId = result.insertId;
+
+        await pool.query(
+            `INSERT INTO users_board (user_id, board_id) VALUES (?, ?)`,
+            [userId, boardId]
         );
 
         res.status(201).json({
