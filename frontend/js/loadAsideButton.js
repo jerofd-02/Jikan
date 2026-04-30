@@ -1,8 +1,13 @@
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+
+window.undoManager = new UndoManager();
+window.hideUndoPopup = hideUndoPopup;
+
 const BASE_URL = "/api";
 
 const getData = async (link) => {
     try {
-        const response = await fetch(link);
+        const response = await fetch(link, { credentials: 'include' });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -15,9 +20,19 @@ const getData = async (link) => {
 
 const cargarBotonesLaterales = (boards, buttonSection) => {
     boards.forEach((board) => {
+        let contenedor = document.createElement('div');
+
         let boardButton = document.createElement("button");
         boardButton.textContent = board.name;
-        buttonSection.appendChild(boardButton);
+        boardButton.className = 'swap-board-button';
+        contenedor.appendChild(boardButton);
+
+        let deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("delete-board");
+        deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
+        contenedor.appendChild(deleteBtn)
+
+        buttonSection.appendChild(contenedor);
     });
 
     let newBoardButton = document.createElement("button");
@@ -27,6 +42,7 @@ const cargarBotonesLaterales = (boards, buttonSection) => {
 };
 
 const init = async () => {
+
     const buttonSection = document.getElementById("boards-buttons");
     const userMail = localStorage.getItem("userMail");
 

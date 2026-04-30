@@ -1517,7 +1517,7 @@ input {
     }
 }
 
-.delete-task, .modify-task {
+.delete-task, .modify-task, .delete-board {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1542,7 +1542,7 @@ input {
     }
 }
 
-.delete-task {
+.delete-task, .delete-board {
 
     i {
         color: darkred;

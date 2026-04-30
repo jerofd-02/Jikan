@@ -5,6 +5,39 @@ const pool = require("../config/database");
 const { handleError } = require("../utils/errors");
 const { sendNotFound,verifyToken } = require("../utils/validations");
 
+// DELETE /boards/:id
+router.delete('/:id', verifyToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        const [boardRows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        if (boardRows.length === 0) return sendNotFound(res, 'Board', id);
+
+        const [userBoard] = await pool.query(
+            `SELECT * FROM users_board WHERE board_id = ? AND user_id = ?`, [id, userId]
+        );
+
+        if (userBoard.length === 0) {
+            return res.status(403).json({ message: 'No tienes permiso para eliminar este tablero' });
+        }
+
+        await pool.query(`DELETE FROM board WHERE board_id = ?`, [id]);
+
+        await pool.query(`DELETE FROM column_task WHERE id_column IN (
+            SELECT id_column FROM board_column WHERE id_board = ?)`, [id]);
+
+        await pool.query(`DELETE FROM board_column WHERE id_board = ?`, [id]);
+
+        await pool.query(`DELETE FROM users_board WHERE board_id = ?`, [id]);
+
+        res.status(200).json({ message: 'Tablero eliminado correctamente' });
+
+    } catch (error) {
+        handleError(res, error, 'eliminar board');
+    }
+});
+
 // GET /boards/user/:mail
 router.get('/user/:mail', verifyToken, async (req, res) => {
     try {

@@ -23,10 +23,19 @@ const insertarTableroEnHTML = (nombre) => {
         return;
     };
 
-    let nuevoTablero = document.createElement("button");
-    nuevoTablero.textContent = nombre;
+    let contenedor = document.createElement('div');
 
-    seccionBotones.insertBefore(nuevoTablero, botones[botones.length - 1]);
+    let boardButton = document.createElement("button");
+    boardButton.textContent = nombre;
+    boardButton.className = 'swap-board-button';
+    contenedor.appendChild(boardButton);
+
+    let deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("delete-board");
+    deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
+    contenedor.appendChild(deleteBtn);
+
+    seccionBotones.insertBefore(contenedor, botones[botones.length - 1]);
 };
 
 const insertarTableroBasicoEnDB = async (name, columnsNames) => {
