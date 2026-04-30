@@ -2,12 +2,12 @@
 
 CREATE TABLE users
 (
-    user_id  INTEGER AUTO_INCREMENT NOT NULL,
+    id       INT          NOT NULL AUTO_INCREMENT,
     name     VARCHAR(100) NOT NULL,
     mail     VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
-    CONSTRAINT pk_users PRIMARY KEY (user_id)
+    CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
 
@@ -37,18 +37,18 @@ CREATE TABLE users_board
 
     CONSTRAINT pk_users_board PRIMARY KEY (user_id, board_id),
 
-    CONSTRAINT fk_ub_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ub_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_ub_board FOREIGN KEY (board_id) REFERENCES board (board_id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_sessions
 (
     user_id     INT     NOT NULL,
-    session_id  INT     NOT NULL,
+    session_id  VARCHAR(255)     NOT NULL,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT pk_user_session PRIMARY KEY (session_id),
-    CONSTRAINT fk_us_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+    CONSTRAINT fk_us_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE column_task
@@ -72,7 +72,7 @@ CREATE TABLE user_task
 
     CONSTRAINT pk_user_task PRIMARY KEY (user_id, task_id),
 
-    CONSTRAINT fk_ut_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ut_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_ut_task FOREIGN KEY (task_id) REFERENCES column_task (id_task) ON DELETE CASCADE
 );
 

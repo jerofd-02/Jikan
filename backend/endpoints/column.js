@@ -3,10 +3,10 @@ const router = express.Router();
 
 const pool = require("../config/database");
 const {handleError} = require("../utils/errors");
-const {sendNotFound} = require("../utils/validations");
+const {sendNotFound, verifyToken} = require("../utils/validations");
 
 // PATCH /columns/:id
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', verifyToken, async (req, res) => {
     try {
         const {id} = req.params;
         const {name} = req.body;
@@ -30,7 +30,7 @@ router.patch('/:id', async (req, res) => {
 });
 
 // DELETE /columns/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
 

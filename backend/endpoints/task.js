@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
 const router = express.Router();
+const { verifyToken } = require('../utils/validations');
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
@@ -13,7 +14,7 @@ const pool = mysql.createPool({
 });
 
 // GET /tasks — obtener todas las tareas
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`SELECT *
                                          FROM column_task`);
@@ -25,7 +26,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /tasks/labels/all — obtener todos los labels únicos
-router.get('/labels/all', async (req, res) => {
+router.get('/labels/all', verifyToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`SELECT DISTINCT label
                                          FROM task_labels
@@ -38,7 +39,7 @@ router.get('/labels/all', async (req, res) => {
 });
 
 // GET /tasks/:id — obtener una tarea por id
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     try {
         const {id} = req.params;
         const [rows] = await pool.query(`SELECT *
@@ -65,7 +66,7 @@ router.get('/:id', async (req, res) => {
 
 // POST /tasks — crear una nueva tarea
 // Body: { id_column, name, description?, date?, labels? }
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     try {
         const {id_column, name, description = null, date = null, labels = []} = req.body;
 
@@ -103,7 +104,7 @@ router.post('/', async (req, res) => {
 
 // PUT /tasks/:id — reemplazar una tarea completa
 // Body: { id_column, name, description?, date?, labels? }
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
     try {
         const {id} = req.params;
         const {id_column, name, description = null, date = null, deadline = null, labels = []} = req.body;
@@ -146,7 +147,7 @@ router.put('/:id', async (req, res) => {
 
 // PATCH /tasks/:id — actualizar campos específicos de una tarea
 // Body: { id_column?, name?, description?, date?, labels? }
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', verifyToken, async (req, res) => {
     try {
         const {id} = req.params;
         const {id_column, name, description, date, deadline, labels} = req.body;
@@ -211,7 +212,7 @@ router.patch('/:id', async (req, res) => {
 });
 
 // DELETE /tasks/:id — eliminar una tarea
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const {id} = req.params;
 

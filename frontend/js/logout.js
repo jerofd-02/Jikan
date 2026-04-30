@@ -5,11 +5,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            // Eliminar el usuario guardado en localStorage
-            localStorage.clear();
+            fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            }).then(response => {
+                if (!response.ok) {
+                    console.error("Error al cerrar sesión");
+                }
 
-            // Redirigir al login (ajusta la ruta según tu proyecto)
-            window.location.href = "../html/login.html";
+                localStorage.clear();
+                
+                // Redirigir al login (ajusta la ruta según tu proyecto)
+                window.location.href = "../html/login.html";
+            }).catch(error => {
+                console.error("Error al cerrar sesión", error);
+            });
         });
     }
 });

@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { verifyToken } = require('../utils/validations');
 
 const pool = require('../config/database');
 const { handleError } = require('../utils/errors');
 
-const JWT_SECRET = "tu_secreto_seguro";
+const JWT_SECRET = "NKJ.BGD125_$HG";
 
 // POST /auth/register
 router.post('/register', async (req, res) => {
@@ -29,12 +30,23 @@ router.post('/register', async (req, res) => {
             [name, mail, hashedPassword]
         );
 
+        const [user] = (await pool.query(
+            `SELECT * FROM users WHERE mail = ?`, [mail]
+        ))[0];
+
         // Crear board básico
         const [boardResult] = await pool.query(
             `INSERT INTO board (name) VALUES (?)`,
             [`Tablero de ${name}`]
         );
         const boardId = boardResult.insertId;
+
+        const sessionId = require('crypto').randomBytes(16).toString('hex');
+
+        await pool.query(
+            `INSERT INTO user_sessions (session_id, user_id) VALUES (?, ?)`,
+            [sessionId, user.id]
+        );
 
         //Añadir columnas
         const columnasBasicas = ['To Do', 'In Progress', 'Done'];
@@ -55,12 +67,12 @@ router.post('/register', async (req, res) => {
 
         // Vincular usuario con el board
         await pool.query( 
-            `INSERT INTO users_board (user_mail, board_id) VALUES (?, ?)`,
-            [mail, boardId]
+            `INSERT INTO users_board (user_id, board_id) VALUES (?, ?)`,
+            [user.id, boardId]
         );
 
         // Generar token
-        const token = jwt.sign({ mail }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ sub: user.id, sessionId }, JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
 
@@ -92,11 +104,18 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Email o contraseña incorrectos' });
 
         const [boardRows] = await pool.query(
-            `SELECT board_id FROM users_board WHERE user_mail = ?`, [mail]
+            `SELECT board_id FROM users_board WHERE user_id = ?`, [user.id]
         );
         const boardId = boardRows[0]?.board_id;
 
-        const token = jwt.sign({ mail, password: user.password }, JWT_SECRET, { expiresIn: '7d' });
+        const sessionId = require('crypto').randomBytes(16).toString('hex');
+
+        await pool.query(
+            `INSERT INTO user_sessions (session_id, user_id) VALUES (?, ?)`,
+            [sessionId, user.id]
+        );
+
+        const token = jwt.sign({ sub: user.id, sessionId }, JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
 
@@ -107,49 +126,13 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.get('/verify', async (req, res) => {
-    const token = req.cookies.token;
-
-    if (!token) {
-        return res.status(401).json({ valid: false, message: 'No token provided' });
-    }
-
-    try {
-        const {mail, password} = jwt.verify(token, JWT_SECRET);
-
-        const [rows] = await pool.query(
-            `SELECT * FROM users WHERE mail = ?`, [mail]
-        );
-
-        if (rows.length === 0)
-            return res.status(401).json({ message: 'Email o contraseña incorrectos' });
-
-        const user = rows[0];
-        if (!user) {
-            return res.status(401).json({ valid: false, message: 'User not found' });
-        }
-
-        const passwordMatch = password === user.password;
-        if (!passwordMatch) {
-            return res.status(401).json({ valid: false, message: 'Invalid token' });
-        }
-
-        res.json({ valid: true, mail: user.mail, name: user.name });
-    } catch (error) {
-        res.status(401).json({ valid: false, message: 'Invalid token' });
-    }
+router.get('/verify', verifyToken, async (req, res) => {
+    res.json({ ok: true, mail: req.user.mail, name: req.user.name });
 });
 
 // DELETE /auth/delete-account
-router.delete('/delete-account', async (req, res) => {
-    const token = req.cookies.token;
-
-    if (!token)
-        return res.status(401).json({ message: 'No autorizado' });
-
+router.delete('/delete-account', verifyToken, async (req, res) => {
     try {
-        const { mail } = jwt.verify(token, JWT_SECRET);
-
         // Usamos una conexión fija para que el SET persista
         const connection = await pool.getConnection();
 
@@ -157,7 +140,7 @@ router.delete('/delete-account', async (req, res) => {
             await connection.beginTransaction();
 
             const [boardRows] = await connection.query(
-                `SELECT board_id FROM users_board WHERE user_mail = ?`, [mail]
+                `SELECT board_id FROM users_board WHERE user_id = ?`, [req.user.id]
             );
 
             for (const row of boardRows) {
@@ -193,7 +176,9 @@ router.delete('/delete-account', async (req, res) => {
                 );
             }
 
-            await connection.query(`DELETE FROM users WHERE mail = ?`, [mail]);
+            await connection.query(`DELETE FROM user_sessions WHERE user_id = ?`, [req.user.id]);
+
+            await connection.query(`DELETE FROM users WHERE id = ?`, [req.user.id]);
 
             await connection.commit();
 
@@ -209,6 +194,20 @@ router.delete('/delete-account', async (req, res) => {
 
     } catch (error) {
         handleError(res, error, 'eliminar cuenta');
+    }
+});
+
+router.post('/logout', verifyToken, async (req, res) => {
+    try {
+        const sessionId = jwt.verify(req.cookies.token, JWT_SECRET).sessionId;
+
+        await pool.query(`DELETE FROM user_sessions WHERE session_id = ?`, [sessionId]);
+
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Sesión cerrada correctamente' });
+
+    } catch (error) {
+        handleError(res, error, 'cerrar sesión');
     }
 });
 
