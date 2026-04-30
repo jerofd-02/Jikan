@@ -1,152 +1,236 @@
 const express = require('express');
+const mysql = require('mysql2/promise');
 const router = express.Router();
 
-const pool = require("../config/database");
-const { handleError } = require("../utils/errors");
-const { validateRequired, sendNotFound } = require("../utils/validations");
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    database: process.env.DB_NAME || 'jikan_db',
+    waitForConnections: true,
+    connectionLimit: 10,
+});
 
-// GET /tasks
+// GET /tasks — obtener todas las tareas
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pool.query(`SELECT * FROM column_task`);
+        const [rows] = await pool.query(`SELECT *
+                                         FROM column_task`);
         res.status(200).json(rows);
     } catch (error) {
-        handleError(res, error, 'obtener todas las tareas');
+        console.error('Error al obtener las tareas:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
-// GET /tasks/:id
+// GET /tasks/labels/all — obtener todos los labels únicos
+router.get('/labels/all', async (req, res) => {
+    try {
+        const [rows] = await pool.query(`SELECT DISTINCT label
+                                         FROM task_labels
+                                         ORDER BY label`);
+        res.status(200).json(rows.map(r => r.label));
+    } catch (error) {
+        console.error("Error al obtener los labels:", error);
+        res.status(500).json({message: "Error interno del servidor"});
+    }
+});
+
+// GET /tasks/:id — obtener una tarea por id
 router.get('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const [rows] = await pool.query(
-            `SELECT * FROM column_task WHERE id_task = ?`, [id]
-        );
+        const {id} = req.params;
+        const [rows] = await pool.query(`SELECT *
+                                         FROM column_task
+                                         WHERE id_task = ?`, [id]);
 
-        if (rows.length === 0) return sendNotFound(res, 'Tarea', id);
+        if (rows.length === 0) {
+            return res.status(404).json({message: `Tarea con id ${id} no encontrada`});
+        }
 
-        const [labels] = await pool.query(
-            `SELECT label FROM task_labels WHERE task_id = ?`, [id]
-        );
+        // Incluir labels de la tarea
+        const [labels] = await pool.query(`SELECT label
+                                           FROM task_labels
+                                           WHERE task_id = ?`, [id]);
 
-        res.status(200).json({ ...rows[0], labels: labels.map(l => l.label) });
+        res.status(200).json({
+            ...rows[0], labels: labels.map(l => l.label),
+        });
     } catch (error) {
-        handleError(res, error, 'obtener tarea por id');
+        console.error('Error al obtener la tarea:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
-// POST /tasks
+// POST /tasks — crear una nueva tarea
+// Body: { id_column, name, description?, date?, labels? }
 router.post('/', async (req, res) => {
     try {
-        const { id_column, name, description = null, date = null, labels = [] } = req.body;
+        const {id_column, name, description = null, date = null, labels = []} = req.body;
 
-        const validation = validateRequired(['id_column', 'name'], req.body);
-        if (!validation.valid) return res.status(400).json({ success: false, message: validation.message });
+        if (!id_column || !name) {
+            return res.status(400).json({message: 'Los campos id_column y name son obligatorios'});
+        }
 
         const [result] = await pool.query(
-            `INSERT INTO column_task (id_column, name, description, date) VALUES (?, ?, ?, ?)`,
+            `INSERT INTO column_task (id_column, name, description, date)
+             VALUES (?, ?, ?, ?)`,
             [id_column, name, description, date]
         );
 
         const newTaskId = result.insertId;
 
+        // Insertar labels si se proporcionan
         if (labels.length > 0) {
+            const labelValues = labels.map(label => [label, newTaskId]);
             await pool.query(
-                `INSERT INTO task_labels (label, task_id) VALUES ?`,
-                [labels.map(label => [label, newTaskId])]
+                `INSERT INTO task_labels (label, task_id)
+                 VALUES ?`,
+                [labelValues]
             );
         }
 
-        res.status(201).json({ message: 'Tarea creada correctamente', id_task: newTaskId });
+        res.status(201).json({
+            message: 'Tarea creada correctamente',
+            id_task: newTaskId,
+        });
     } catch (error) {
-        handleError(res, error, 'crear tarea');
+        console.error('Error al crear la tarea:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
-// PUT /tasks/:id
+// PUT /tasks/:id — reemplazar una tarea completa
+// Body: { id_column, name, description?, date?, labels? }
 router.put('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { id_column, name, description = null, date = null, labels = [] } = req.body;
+        const {id} = req.params;
+        const {id_column, name, description = null, date = null, deadline = null, labels = []} = req.body;
 
-        const validation = validateRequired(['id_column', 'name'], req.body);
-        if (!validation.valid) return res.status(400).json({ success: false, message: validation.message });
-
-        const [check] = await pool.query(`SELECT id_task FROM column_task WHERE id_task = ?`, [id]);
-        if (check.length === 0) return sendNotFound(res, 'Tarea', id);
-
-        await pool.query(
-            `UPDATE column_task SET id_column = ?, name = ?, description = ?, date = ? WHERE id_task = ?`,
-            [id_column, name, description, date, id]
-        );
-
-        await pool.query(`DELETE FROM task_labels WHERE task_id = ?`, [id]);
-        if (labels.length > 0) {
-            await pool.query(
-                `INSERT INTO task_labels (label, task_id) VALUES ?`,
-                [labels.map(label => [label, id])]
-            );
+        if (!id_column || !name) {
+            return res.status(400).json({message: 'Los campos id_column y name son obligatorios'});
         }
 
-        res.status(200).json({ message: 'Tarea actualizada correctamente' });
+        const [check] = await pool.query(`SELECT id_task
+                                          FROM column_task
+                                          WHERE id_task = ?`, [id]);
+        if (check.length === 0) {
+            return res.status(404).json({message: `Tarea con id ${id} no encontrada`});
+        }
+
+        await pool.query(`UPDATE column_task
+                          SET id_column   = ?,
+                              name        = ?,
+                              description = ?,
+                              date        = ?,
+                              deadline    = ?
+                          WHERE id_task = ?`, [id_column, name, description, date, deadline, id]);
+
+        // Reemplazar labels
+        await pool.query(`DELETE
+                          FROM task_labels
+                          WHERE task_id = ?`, [id]);
+        if (labels.length > 0) {
+            const labelValues = labels.map(label => [label, id]);
+            await pool.query(`INSERT INTO task_labels (label, task_id)
+                              VALUES ?`, [labelValues]);
+        }
+
+        res.status(200).json({message: 'Tarea actualizada correctamente'});
     } catch (error) {
-        handleError(res, error, 'reemplazar tarea');
+        console.error('Error al reemplazar la tarea:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
-// PATCH /tasks/:id
+// PATCH /tasks/:id — actualizar campos específicos de una tarea
+// Body: { id_column?, name?, description?, date?, labels? }
 router.patch('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { id_column, name, description, date, labels } = req.body;
+        const {id} = req.params;
+        const {id_column, name, description, date, deadline, labels} = req.body;
 
-        const [check] = await pool.query(`SELECT id_task FROM column_task WHERE id_task = ?`, [id]);
-        if (check.length === 0) return sendNotFound(res, 'Tarea', id);
+        const [check] = await pool.query(`SELECT id_task
+                                          FROM column_task
+                                          WHERE id_task = ?`, [id]);
+        if (check.length === 0) {
+            return res.status(404).json({message: `Tarea con id ${id} no encontrada`});
+        }
 
+        // Construir SET dinámico solo con los campos enviados
         const fields = [];
         const values = [];
 
-        if (id_column   !== undefined) { fields.push('id_column = ?');   values.push(id_column); }
-        if (name        !== undefined) { fields.push('name = ?');         values.push(name); }
-        if (description !== undefined) { fields.push('description = ?');  values.push(description); }
-        if (date        !== undefined) { fields.push('date = ?');          values.push(date); }
-
-        if (fields.length > 0) {
-            await pool.query(
-                `UPDATE column_task SET ${fields.join(', ')} WHERE id_task = ?`,
-                [...values, id]
-            );
+        if (id_column !== undefined) {
+            fields.push('id_column = ?');
+            values.push(id_column);
+        }
+        if (name !== undefined) {
+            fields.push('name = ?');
+            values.push(name);
+        }
+        if (description !== undefined) {
+            fields.push('description = ?');
+            values.push(description);
+        }
+        if (date !== undefined) {
+            fields.push('date = ?');
+            values.push(date);
         }
 
+        if (deadline !== undefined) {
+            fields.push('deadline = ?');
+            values.push(deadline);
+        }
+
+        if (fields.length > 0) {
+            values.push(id);
+            await pool.query(`UPDATE column_task
+                              SET ${fields.join(', ')}
+                              WHERE id_task = ?`, values);
+        }
+
+        // Actualizar labels solo si se proporcionan
         if (labels !== undefined) {
-            await pool.query(`DELETE FROM task_labels WHERE task_id = ?`, [id]);
+            await pool.query(`DELETE
+                              FROM task_labels
+                              WHERE task_id = ?`, [id]);
             if (labels.length > 0) {
-                await pool.query(
-                    `INSERT INTO task_labels (label, task_id) VALUES ?`,
-                    [labels.map(label => [label, id])]
-                );
+                const labelValues = labels.map(label => [label, id]);
+                await pool.query(`INSERT INTO task_labels (label, task_id)
+                                  VALUES ?`, [labelValues]);
             }
         }
 
-        res.status(200).json({ message: 'Tarea actualizada correctamente' });
+        res.status(200).json({message: 'Tarea actualizada correctamente'});
     } catch (error) {
-        handleError(res, error, 'actualizar tarea parcial');
+        console.error('Error al actualizar la tarea:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
-// DELETE /tasks/:id
+// DELETE /tasks/:id — eliminar una tarea
 router.delete('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
-        const [check] = await pool.query(`SELECT id_task FROM column_task WHERE id_task = ?`, [id]);
-        if (check.length === 0) return sendNotFound(res, 'Tarea', id);
+        const [check] = await pool.query(`SELECT id_task
+                                          FROM column_task
+                                          WHERE id_task = ?`, [id]);
+        if (check.length === 0) {
+            return res.status(404).json({message: `Tarea con id ${id} no encontrada`});
+        }
 
-        await pool.query(`DELETE FROM column_task WHERE id_task = ?`, [id]);
+        // Las labels se eliminan en cascada por FK, pero lo hacemos explícito
+        await pool.query(`DELETE
+                          FROM column_task
+                          WHERE id_task = ?`, [id]);
 
-        res.status(200).json({ message: `Tarea con id ${id} eliminada correctamente` });
+        res.status(200).json({message: `Tarea con id ${id} eliminada correctamente`});
     } catch (error) {
-        handleError(res, error, 'eliminar tarea');
+        console.error('Error al eliminar la tarea:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
     }
 });
 
