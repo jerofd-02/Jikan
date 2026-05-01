@@ -1,3 +1,5 @@
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("column-menu-btn")) {
         const dropdown = e.target.nextElementSibling;
@@ -28,7 +30,20 @@ document.addEventListener("click", (e) => {
 });
 
 const eliminarColumna = async (columnId) => {
-    if (!confirm("¿Seguro que quieres eliminar esta columna?")) return;
+    const col = document.querySelector(`.column[data-column-id="${columnId}"]`);
+    const columnName = col?.querySelector(".editable-title")?.textContent.trim();
+
+    const { isConfirmed } = await Swal.fire({
+        customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
+        title: "¿Eliminar columna?",
+        text: `"${columnName}" y todas sus tareas se eliminarán permanentemente.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    });
+
+    if (!isConfirmed) return;
 
     try {
         const response = await fetch(`/api/columns/${columnId}`, {
@@ -42,5 +57,11 @@ const eliminarColumna = async (columnId) => {
 
     } catch (error) {
         console.error("Error al eliminar la columna:", error);
+        Swal.fire({
+            customClass: { popup: 'swal-custom-popup' },
+            title: 'Error',
+            text: 'No se pudo eliminar la columna',
+            icon: 'error',
+        });
     }
 };
