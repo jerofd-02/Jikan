@@ -1,6 +1,7 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 
-window.undoManager = new UndoManager();
+window.hideUndoPopup = hideUndoPopup;
+window.showUndoPopup = showUndoPopup;
 
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
@@ -181,7 +182,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
     const paragraph = taskElement.querySelector("p");
 
     try {
-        const response = await fetch(`${TASK_API_URL}/${taskId}`, {
+        const response = await fetch(`/api/tasks/${taskId}`, {
             method: "PATCH",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newData)
@@ -193,23 +194,25 @@ async function saveSwalTask(taskElement, newData, previousData) {
 
         undoManager.add({
             undo: async () => {
-                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
+                const body = {
+                    name: previousData.name,
+                    description: previousData.description,
+                    date: previousData.date ? previousData.date.slice(0, 10) : null,
+                    deadline: previousData.deadline ? previousData.deadline.slice(0, 10) : null,
+                    labels: previousData.labels || [],
+                };
+
+                const res = await fetch(`/api/tasks/${taskId}`, {
                     method: "PATCH",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        name: previousData.name,
-                        description: previousData.description,
-                        date: previousData.date,
-                        deadline: previousData.deadline,
-                        labels: previousData.labels || [],
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousData.name;
                 hideUndoPopup();
             },
             redo: async () => {
-                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
+                const res = await fetch(`/api/tasks/${taskId}`, {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(newData)
