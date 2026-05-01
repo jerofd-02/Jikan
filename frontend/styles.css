@@ -1,6 +1,7 @@
 * {
     font-family: system-ui;
 }
+
 html {
     height: 100%;
     overflow: hidden;
@@ -90,6 +91,7 @@ input {
     height: 100vh;
 
     overflow: hidden;
+
     .asside-left {
         border-right: 1px solid var(--border-color);
         margin-right: 10px;
@@ -262,7 +264,7 @@ input {
             }
         }
 
-        .main-panel{
+        .main-panel {
             overflow: hidden;
             overflow-y: auto;
             height: 100%;
@@ -385,8 +387,6 @@ input {
             border: 1px solid var(--border-color);
             color: var(--principal);
             transition: transform 0.35s var(--sheet-transition);
-            background: 0.2s;
-            border-color: 0.2s;
         }
 
         .sheet-chevron:hover {
@@ -416,218 +416,6 @@ input {
         .main-content {
             padding-bottom: var(--sheet-min);
         }
-    }
-
-    .overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 1000;
-        /* Centrar el popup dentro del overlay */
-        display: none;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Clase que activa la visibilidad */
-
-    .overlay.activo {
-        display: flex;
-    }
-
-    .popup {
-        background: var(--background3-color);
-        color: var(--principal);
-        border-radius: 10px;
-        padding: 2rem;
-        max-width: 500px;
-        max-height: 70%;
-        width: 90%;
-        position: relative;
-
-        overflow: hidden;
-        overflow-y: auto;
-    }
-
-    .btn-cerrar {
-        position: absolute;
-        color: var(--dark-accent);
-        top: 10px;
-        right: 15px;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-<<<<<<< HEAD
-    .popup-form {
-        
-        margin: 0 auto;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-        input {
-            width: 100%;
-            padding: 15px;
-
-            background: var(--background-color);
-            border: 1px solid var(--principal);
-            border-radius: 10px;
-            outline: none;
-
-            color: white;
-            transition: all 0.3s;
-
-            font-size: 1.2rem;
-            font-width: 400px;
-
-            &::placeholder {
-                color: var(--dark-accent);
-            }
-        }
-    }
-
-    .cancel-creation-button {
-        margin-top: 1rem;
-
-        color: red;
-        background-color: var(--background-color);
-
-        top: 10px;
-        right: 15px;
-        margin-right: 2rem;
-
-        border: 1px solid red;
-        border-radius: 10px;
-        
-        padding: 15px;
-
-        font-size: 1.5rem;
-        cursor: pointer;
-
-        &:hover {
-            color: var(--background-color);
-            border: var(--background-color);
-            background-color: red;
-        }
-    }
-
-    .create-board-button, .continue-board-button, .back-creation-button {
-        margin-top: 1rem;
-
-        color: var(--light-accent);
-        background-color: var(--background3-color);
-
-        top: 10px;
-        right: 15px;
-
-        border: 1px solid var(--light-accent);
-        border-radius: 10px;
-        
-        padding: 15px;
-
-        font-size: 1.5rem;
-        cursor: pointer;
-
-        &:hover {
-            color: var(--dark-accent);
-            border: none;
-            background-color: var(--principal);
-        }
-    }
-
-=======
->>>>>>> feat-modify-button
-    .create-board-buttons {
-
-        margin-top: 15px;
-        display: flex;
-        gap: 2rem;
-
-        button {
-            background: var(--background-color);
-            color: var(--principal);
-            border: none;
-            border-radius: 10px;
-            padding: 15px;
-            transition: all 0.2s ease;
-
-            text-align: center;
-
-            font-size: 1.2rem;
-
-            &:hover {
-                background-color: var(--principal);
-                color: var(--background3-color);
-            }
-        }
-    }
-
-    .creation-popups-options, .how-many-columns{
-        display: flex;
-        margin: 1.5rem auto;
-        width: fit-content;
-
-        gap: 3rem;
-    }
-
-    .number-stepper {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        gap: 25px;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-
-        display: flex;
-        margin: 1.5rem auto;
-        width: fit-content;
-    }
-    
-    .number-stepper__btn,
-    .number-stepper__input {
-        width: 60px;
-        height: 60px;
-        border: 1px solid var(--principal);
-        border-radius: 6px;
-        background: var(--background-color);
-        color: VAR(--principal);
-        font-size: 20px;
-        font-family: inherit;
-        font-weight: 800;
-        text-align: center;
-    }
-    
-    .number-stepper__btn {
-        font-size: 18px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-        transition: all 0.08s ease;
-    }
-    
-    .number-stepper__btn:active {
-        transform: translateY(2px);
-        box-shadow: 0 0px 0 #aaa, 0 1px 2px rgba(0, 0, 0, 0.15);
-        border-bottom: 1px solid #999;
-    }
-    
-    .number-stepper__input {
-        outline: none;
-        -moz-appearance: textfield;
-        appearance: textfield;
-    }
-    
-    .number-stepper__input::-webkit-outer-spin-button,
-    .number-stepper__input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
     }
 }
 
@@ -945,7 +733,6 @@ input {
 
         input {
             background: none;
-            border: none;
             border-radius: 5px;
             color: var(--font-color);
             border: 1px solid var(--principal);
@@ -953,7 +740,7 @@ input {
             font-weight: bold;
             max-width: 210px;
             width: 100%;
-            padding: 0px;
+            padding: 0;
 
             &::placeholder {
                 color: var(--font-color2);
@@ -975,7 +762,6 @@ input {
 
     .column-menu-btn {
         background: none;
-        border: none;
         cursor: pointer;
         font-size: 1.2rem;
         color: var(--font-color);
@@ -1002,7 +788,7 @@ input {
         border-radius: 6px;
         z-index: 10;
         min-width: 160px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);  
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
         ul {
             margin: 0;
@@ -1011,7 +797,7 @@ input {
             li {
                 list-style-type: none;
 
-                button{
+                button {
                     width: 100%;
                     padding: 8px 12px;
                     background: none;
@@ -1019,7 +805,7 @@ input {
                     cursor: pointer;
                     text-align: left;
                     color: var(--font-color2);
-                    
+
                     transition: all 0.2s ease;
 
                     &:hover {
@@ -1029,7 +815,7 @@ input {
                 }
             }
         }
-        
+
     }
 
     .column-dropdown.hidden {
@@ -1496,6 +1282,67 @@ input {
 
 .swal-custom-popup-inverse .swal2-cancel {
     --swal2-cancel-button-background-color: var(--principal) !important;
+}
+
+.swal-subtitle {
+    margin-top: 1.2rem;
+    color: var(--font-color2);
+}
+
+.swal-mode-button {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+}
+
+.swal-btn-secondary {
+    background: var(--background-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--font-color) !important;
+}
+
+.swal-btn-secondary:hover {
+    background: var(--dark-accent) !important;
+}
+
+.swal-label {
+    display: block;
+    text-align: left;
+    margin-bottom: .4rem;
+    color: var(--font-color);
+}
+
+.swal-label-spaced {
+    display: block;
+    text-align: left;
+    margin: .9rem 0 .4rem;
+    color: var(--font-color);
+}
+
+.swal-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.swal-stepper input[type="number"] {
+    width: 4rem;
+    text-align: center;
+    font-size: 1rem;
+    padding: .35rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--background-color);
+    color: var(--font-color);
+    margin: 0;
+}
+
+.swal-stepper .swal2-styled {
+    padding: .3rem .8rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    margin: 0;
 }
 
 .task-actions {
@@ -2051,7 +1898,6 @@ input {
         flex-shrink: 0;
     }
 }
-
 
 ::-webkit-scrollbar {
     width: 8px;

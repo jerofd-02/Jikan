@@ -12,11 +12,11 @@
     <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script src="./js/templateLoader.js"></script>
     <script src="./js/calendar.js"></script>
-    <script src="./js/deleteTask.js" type="module"></script>
+    <script type="module" src="./js/deleteTask.js"></script>
     <script src="./js/add_task.js"></script>
-    <script src="./js/modifyTask.js" type="module"></script>
-    <script src="./js/add_column.js"></script>
-    <script src="./js/delete_column.js" type="module"></script>
+    <script type="module" src="./js/modifyTask.js"></script>
+    <script type="module" src="./js/add_column.js"></script>
+    <script type="module" src="./js/delete_column.js"></script>
     <script type="module" src="./js/columnsLoader.js"></script>
     <script type="module" src="./js/loadAsideButton.js"></script>
     <script type="module" src="./js/draggable-bar.js"></script>
@@ -101,82 +101,6 @@
         <span id="undo-popup-text">Tarea eliminada</span>
         <button onclick="undoManager.undo(); hideUndoPopup();">Deshacer</button>
     </div>
-
-    <!--popup de "crear tablero"-->
-    <div id="create-board-popup" class="overlay">
-        <div class="popup">
-            <button class="btn-cerrar">&times;</button>
-            <h1>Organiza tus ideas</h1>
-            <h2>¿Cómo deseas crear un nuevo tablero?</h2>
-
-            <div class="create-board-buttons">
-                <button id="fast-board-button">Creación rápida</button>
-                <button id="custom-board-button">Creación personalizada</button>
-            </div>
-        </div>
-    </div>
-
-    <!--popup de creacion rapida de tablero-->
-    <div id="fast-creation-popup" class="overlay">
-        <div class="popup">
-            <button class="btn-cerrar">&times;</button>
-            <h1>Creación rápida de tablero</h1>
-            <h3>Introduce el nombre del tablero</h3>
-            
-            <form role="input" class="popup-form">
-                <label for="input"></label>
-                <input type="text" class="fast-board-name" placeholder="Mi nuevo tablero...">
-            </form>
-
-            <div class="creation-popups-options">
-                <button class="cancel-creation-button">Cancelar</button>
-                <button class="create-board-button">Crear tablero</button>
-            </div>
-        </div>
-    </div>
-
-    <!--popup de creacion personalizada de tablero PARTE 1-->
-    <div id="custom-creation-popup" class="overlay">
-        <div class="popup">
-            <button class="btn-cerrar">&times;</button>
-            <h1>Creación personalizada de tablero</h1>
-            <h3>Introduce el nombre del tablero</h3>
-            
-            <form role="input" class="popup-form">
-                <label for="input"></label>
-                <input type="text" class="custom-board-name" placeholder="Mi nuevo tablero...">
-            </form>
-
-            <h3 class="how-many-columns">¿Cuantas columnas deseas?</h3>
-
-            <div class="number-stepper">
-                <button type="button" class="number-stepper__btn" onclick="numberFLD.stepDown()">−</button>
-                <input id="numberFLD" class="number-stepper__input" type="number" step="1" min="2" max="5" value="3" readonly />
-                <button type="button" class="number-stepper__btn" onclick="numberFLD.stepUp()">+</button>
-            </div>
-
-            <div class="creation-popups-options">
-                <button class="cancel-creation-button">Cancelar</button>
-                <button class="continue-board-button">Continuar</button>
-            </div>
-        </div>
-    </div>
-    
-    <!--popup de creacion personalizada de tablero PARTE 2-->
-    <div id="custom-creation-confiramtion" class="overlay">
-        <div class="popup">
-            <button class="btn-cerrar">&times;</button>
-            <h1>Creación personalizada de tablero</h1>
-            
-            <div id="column-names-div"></div>
-
-            <div class="creation-popups-options">
-                <button class="back-creation-button">Atrás</button>
-                <button class="create-board-button">Crear tablero</button>
-            </div>
-        </div>
-    </div>
-
 </main>
 </body>
 

@@ -21,7 +21,7 @@ const insertarTableroEnHTML = (nombre) => {
     if (!nombre) {
         console.error("No se puede insertar un nombre vacío");
         return;
-    };
+    }
 
     let contenedor = document.createElement('div');
 
@@ -40,13 +40,12 @@ const insertarTableroEnHTML = (nombre) => {
 
 const insertarTableroBasicoEnDB = async (name, columnsNames) => {
     try {
-
         const boardres = await fetch(`${BASE_URL}/boards`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name })
+            body: JSON.stringify({name})
         });
 
         if (!boardres.ok) {
@@ -56,157 +55,187 @@ const insertarTableroBasicoEnDB = async (name, columnsNames) => {
         const board = await boardres.json();
         const boardId = board.board_id;
 
-        let defaultColumns = [];
+        let defaultColumns = columnsNames.length === 0
+            ? ['Por hacer', 'En progreso', 'Terminado']
+            : columnsNames
 
-        if (columnsNames.length == 0) {
-            defaultColumns = ['Por hacer', 'En progreso', 'Terminado'];
-        } else {
-            defaultColumns = columnsNames;
-        }
-
-        await Promise.all(defaultColumns.map(colName => 
+        await Promise.all(defaultColumns.map(colName =>
             fetch(`${BASE_URL}/boards/${boardId}/columns`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: colName })
+                body: JSON.stringify({name: colName})
             })
         ));
 
         return board;
-
     } catch (error) {
         console.error(error);
         throw error;
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    const overlay = document.getElementById('create-board-popup');
-    const creacionRapida = document.getElementById('fast-creation-popup');
-    const creacionPersonalizada = document.getElementById('custom-creation-popup');
-    const confirmarCustom = document.getElementById('custom-creation-confiramtion');
+async function showPopupCreateBoard() {
+    const {value: modo} = await Swal.fire({
+        title: 'Organiza tus ideas',
+        customClass: {popup: 'swal-custom-popup'},
+        html: `
+            <p class="swal-subtitle">¿Cómo deseas crear un nuevo tablero?</p>
+            <div class="swal-mode-buttons">
+            <button id="swal-rapida" class="swal2-confirm swal2-styled">Creación rápida</button>
+            <button id="swal-personalizada" class="swal2-confirm swal2-styled swal2-btn-secondary">
+                Creación personalizada
+            </button> 
+            </div>
+        `,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        didOpen: () => {
+            document.getElementById('swal-rapida').addEventListener('click', () => {
+                Swal.getPopup().__modo = 'rapida';
+                Swal.clickConfirm();
+            });
+            document.getElementById('swal-personalizada').addEventListener('click', () => {
+                Swal.getPopup().__modo = 'personalizada';
+                Swal.clickConfirm();
+            });
+        },
+        preConfirm: () => Swal.getPopup().__modo ?? null,
+    });
 
-    const btnCreacionRapida = document.getElementById('fast-board-button');
-    const btnCreacionPersonalizada = document.getElementById('custom-board-button');
+    if (!modo) return;
+    if (modo === 'rapida') await fastCreation();
+    else await customCreation();
+}
 
-    document.addEventListener('click', async (e) => {
-
-        // popup de creación de tablero
-        if (e.target.closest('#crearTablero')) {
-            overlay.classList.add('activo');
-        
-        // cerrar popups
-        } else if (e.target.closest('.btn-cerrar')) {
-            overlay.classList.remove('activo');
-            creacionRapida.classList.remove('activo');
-            creacionPersonalizada.classList.remove('activo');
-            confirmarCustom.classList.remove('activo');
-        
-        } else if (e.target.closest('.cancel-creation-button')) {
-            overlay.classList.remove('activo');
-            creacionRapida.classList.remove('activo');
-            creacionPersonalizada.classList.remove('activo');
-            confirmarCustom.classList.remove('activo');
-        
-
-        // segundo modal para creación personalizada de tableros
-        } else if (e.target.closest('.continue-board-button')) {
-            let numColumns = document.getElementById('numberFLD').value;
-            const formSection = document.getElementById('column-names-div');
-
-            creacionPersonalizada.classList.remove('activo');
-            confirmarCustom.classList.add('activo');
-            
-            for(let i = 0; i < numColumns; i++) {
-                const container = document.createElement('div');
-
-                container.innerHTML = `
-                    <h3>Introduce el nombre de la ${i + 1}ª columna</h3>
-                    <form role="input" class="popup-form">
-                        <label></label>
-                        <input type="text" class="new-board-name" placeholder="Mi columna...">
-                    </form>
-                `;
-
-                formSection.appendChild(container);
+async function fastCreation() {
+    const {value: name} = await Swal.fire({
+        title: 'Creación rápida del tablero',
+        customClass: {popup: 'swal-custom-popup'},
+        html: `
+            <label for="swal-nombre" class="swal-label">Nombre del tablero</label>
+            <input id="swal-nombre" class="swal2-input" placeholder="Tablero de..." autocomplete="off">
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Crear tablero',
+        cancelButtonText: 'Cancelar',
+        didOpen: () => document.getElementById('swal-nombre').focus(),
+        preConfirm: () => {
+            const name = document.getElementById('swal-nombre').value.trim();
+            if (!name) {
+                Swal.showValidationMessage('El nombre no puede estar vacío.');
+                return false;
             }
-        
-        // boton para volver atrás en creación personalizada de tablero
-        } else if (e.target.closest('.back-creation-button')) {
-            confirmarCustom.classList.remove('activo');
-            creacionPersonalizada.classList.add('activo');
-
-            document.getElementById('column-names-div').innerHTML = '';
-            
-        
-        } else if (e.target === overlay) {
-            overlay.classList.remove('activo');
-        
-        } else if (e.target === creacionRapida) {
-            creacionRapida.classList.remove('activo');
-
-        } else if (e.target === creacionPersonalizada) {
-            creacionPersonalizada.classList.remove('activo');
-        
-        } else if (e.target === confirmarCustom) {
-            confirmarCustom.classList.remove('activo');
-            document.getElementById('column-names-div').innerHTML = '';
-        
-        } else if (e.target.closest('.create-board-button')) {
-
-            if (creacionRapida.classList.contains('activo')) {
-                let form = document.querySelector(".fast-board-name");
-                let nombre = form.value.trim();
-
-                const tablero = await insertarTableroBasicoEnDB(nombre, []);
-
-                if (!tablero) console.error("no se ha podido crear el tablero");
-                else insertarTableroEnHTML(nombre);
-                form.value = '';
-
-            } else {
-                let form = document.querySelector(".custom-board-name");
-                let nombre = form.value.trim();
-
-                let nombresColumnas = Array.from(document.querySelectorAll('.new-board-name'))
-                    .map(col => col.value.trim())
-                    .filter(val => val !== "");
-
-                const tablero = await insertarTableroBasicoEnDB(nombre, nombresColumnas);
-
-                if (!tablero) console.error("no se ha podido crear el tablero");
-                else insertarTableroEnHTML(nombre);
-
-                form.value = '';
-                document.getElementById('column-names-div').innerHTML = '';
-            }
-
-            creacionRapida.classList.remove('activo');
-            creacionPersonalizada.classList.remove('activo');
-            confirmarCustom.classList.remove('activo');
+            return name;
         }
     });
 
-    btnCreacionRapida.addEventListener('click', () => {
-        overlay.classList.remove('activo');
-        creacionPersonalizada.classList.remove('activo');
-        confirmarCustom.classList.remove('activo');
-        creacionRapida.classList.add('activo');
+    if (!name) return;
+
+    try {
+        const board = await insertarTableroBasicoEnDB(name, []);
+        if (board) insertarTableroEnHTML(name);
+    } catch {
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo crear el tablero',
+            icon: 'error',
+            customClass: {popup: 'swal-custom-popup'},
+        });
+    }
+}
+
+async function customCreation() {
+    const step1 = await Swal.fire({
+        title: 'Creación personalizada del tablero',
+        customClass: {popup: 'swal-custom-popup'},
+        html: `
+            <label for="swal-name" class="swal-label">Nombre de tablero</label>
+            <input id="swal-name" class="swal2-input" placeholder="Tablero de..." autocomplete="off">
+            <label class="swal-label-spaced">¿Cuántas columnas deseas?</label>
+            <div class="swal-stepper">
+                <button type="button" id="sub-button" class="swal-button swal2-confirm swal2-styled">-</button>
+                <input id="swal-ncols" type="number" min="2" max="5" value="3" readonly>
+                <button type="button" id="add-button" class="swal-button swal2-confirm swal2-styled">+</button>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar',
+        didOpen: () => {
+            document.getElementById('swal-name').focus();
+            const input = document.getElementById('swal-ncols');
+            document.getElementById('sub-button').addEventListener('click', () => {
+                if (parseInt(input.value) > 2) input.value = parseInt(input.value) - 1;
+            });
+            document.getElementById('add-button').addEventListener('click', () => {
+                if (parseInt(input.value) < 5) input.value = parseInt(input.value) + 1;
+            });
+        }, preConfirm: () => {
+            const name = document.getElementById('swal-name').value.trim();
+            if (!name) {
+                Swal.showValidationMessage("El nombre no puede estar vacío");
+                return false;
+            }
+            return {name, ncols: parseInt(document.getElementById('swal-ncols').value)};
+        }
     });
 
-    btnCreacionPersonalizada.addEventListener('click', () => {
-        overlay.classList.remove('activo');
-        creacionRapida.classList.remove('activo');
-        confirmarCustom.classList.remove('activo');
-        creacionPersonalizada.classList.add('activo');
-    });
+    if (!step1.isConfirmed) return;
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') overlay.classList.remove('activo');
-        if (e.key === 'Escape') creacionRapida.classList.remove('activo');
-        if (e.key === 'Escape') creacionPersonalizada.classList.remove('activo');
-        if (e.key === 'Escape') confirmarCustom.classList.remove('activo');
+    const {name, ncols} = step1.value;
+
+    const colInputs = Array.from({length: ncols}).map((_, i) =>
+        `
+            <label class="${i ? 'swal-label-spaced' : 'swal-label'}">Nombre de la ${i + 1}º columna</label>
+            <input id="swal-col-${i}" class="swal2-input" placeholder="Columna de..." autocomplete="off">
+        `).join('');
+
+    const step2 = await Swal.fire({
+        title: 'Creación personalizada de tablero',
+        customClass: {popup: 'swal-custom-popup'},
+        html: colInputs,
+        showCancelButton: true,
+        confirmButtonText: 'Crear tablero',
+        cancelButtonText: 'Atrás',
+        didOpen: () => document.getElementById('swal-col-0').focus(),
+        preConfirm: () => {
+            const cols = Array.from({length: ncols}).map((_, i) =>
+                document.getElementById(`swal-col-${i}`).value.trim()
+            ).filter(Boolean);
+
+            if (cols.length < ncols) {
+                Swal.showValidationMessage('Rellena todos los nombre de columna');
+                return false;
+            }
+            return cols;
+        }
+    })
+
+    if (step2.isDismissed && step2.dismiss == Swal.DismissReason.cancel) {
+        await customCreation();
+        return;
+    }
+
+    if (!step2.isConfirmed) return;
+
+    try {
+        const board = await insertarTableroBasicoEnDB(name, step2.value);
+        if (board) insertarTableroEnHTML(name);
+    } catch {
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo crear el tablero',
+            icon: 'error',
+            customClass: {popup: 'swal-custom-popup'},
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#crearTablero')) showPopupCreateBoard();
     });
 });
