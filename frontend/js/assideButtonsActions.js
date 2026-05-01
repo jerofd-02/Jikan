@@ -1,4 +1,5 @@
 import { cargarColumnas } from './columnsLoader.js';
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 const BASE_URL = "/api";
 
 const getData = async (link) => {
@@ -51,25 +52,36 @@ document.addEventListener("DOMContentLoaded", () => {
         // borrar tablero
         const botonBorrar = e.target.closest('.delete-board');
         if (botonBorrar) {
-
             e.stopPropagation();
             const contenedor = botonBorrar.closest('div');
+            const nombre = contenedor.querySelector('button').textContent.trim();
+            console.log('Borrar tablero:', nombre, 'Swal:', typeof Swal); // ← añadir
 
-            let nombre = contenedor.querySelector('button').textContent.trim();
+            const { isConfirmed } = await Swal.fire({
+                customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
+                title: "¿Eliminar tablero?",
+                text: `"${nombre}" y todas sus columnas y tareas se eliminarán permanentemente.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+            });
 
-            const tablero = await getData(`${BASE_URL}/boards/name/${nombre}`);
-            const boardId = tablero.board_id;
+            if (!isConfirmed) return;
 
-            const confirmDelete = confirm('¿Estás seguro de que quieres eliminar este tablero?');
-
-            if (confirmDelete) {
-                try {
-                    contenedor.remove();
-                    await borrarTableroEnDB(boardId);
-                    window.location.reload();
-                } catch (error) {
-                    alert('No se pudo eliminar el tablero');
-                }
+            try {
+                const tablero = await getData(`${BASE_URL}/boards/name/${nombre}`);
+                const boardId = tablero.board_id;
+                contenedor.remove();
+                await borrarTableroEnDB(boardId);
+                window.location.reload();
+            } catch (error) {
+                Swal.fire({
+                    customClass: { popup: 'swal-custom-popup' },
+                    title: 'Error',
+                    text: 'No se pudo eliminar el tablero',
+                    icon: 'error',
+                });
             }
         }
 
