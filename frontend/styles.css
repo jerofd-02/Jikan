@@ -1207,6 +1207,15 @@ input {
     padding: 4px;
     border-radius: 4px;
     background-color: var(--background2-color);
+
+    div {
+        display: flex;
+        gap: 4px;
+
+        button {
+            flex: 1;
+        }
+    }
 }
 
 .new-task-input input,
@@ -1460,12 +1469,13 @@ input {
 .new-task-input button.cancel-btn,
 .edit-task-input button.save-btn,
 .edit-task-input button.cancel-btn-modify {
-    background: var(--light-accent);
+    background: var(--dark-accent);
     color: var(--font-color);
+    border: 1px solid var(--border-color) !important;
     font-size: 1rem;
     cursor: pointer;
     padding: 10px 10px;
-    border-radius: 20px;
+    border-radius: 10px;
     transition: all 0.2s ease;
     border: none;
 
