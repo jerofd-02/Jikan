@@ -6,7 +6,10 @@ window.showUndoPopup = function(text = 'Acción realizada') {
     document.getElementById('undo-popup-text').textContent = text;
     popup.style.display = 'flex';
     clearTimeout(window.undoPopupTimer);
-    window.undoPopupTimer = setTimeout(() => window.hideUndoPopup(), 5000);
+    window.undoPopupTimer = setTimeout(() => {
+        window.hideUndoPopup();
+        window.undoManager.clear();
+    }, 5000);
 };
 
 window.hideUndoPopup = function() {

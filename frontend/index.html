@@ -100,7 +100,7 @@
     <!--popup de "deshacer"-->
     <div class="undo-popup" id="undo-popup">
         <span id="undo-popup-text">Tarea eliminada</span>
-        <button onclick="undoManager.undo(); hideUndoPopup();">Deshacer</button>
+        <button onclick="undoManager.undo(); undoManager.clear(); hideUndoPopup();">Deshacer</button>
     </div>
 </main>
 </body>
