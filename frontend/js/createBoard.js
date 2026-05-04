@@ -24,6 +24,9 @@ const insertarTableroEnHTML = (nombre) => {
     }
 
     let contenedor = document.createElement('div');
+    contenedor.classList.add('board-buttons-actions');
+    let buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('task-actions');
 
     let boardButton = document.createElement("button");
     boardButton.textContent = nombre;
@@ -33,9 +36,10 @@ const insertarTableroEnHTML = (nombre) => {
     let deleteBtn = document.createElement("button");
     deleteBtn.classList.add("delete-board");
     deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
-    contenedor.appendChild(deleteBtn);
+    buttonDiv.appendChild(deleteBtn);
+    boardButton.appendChild(buttonDiv);
 
-    seccionBotones.insertBefore(contenedor, botones[botones.length - 1]);
+    seccionBotones.insertBefore(contenedor, seccionBotones.lastChild);
 };
 
 const insertarTableroBasicoEnDB = async (name, columnsNames) => {
@@ -125,7 +129,13 @@ async function fastCreation() {
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
         cancelButtonText: 'Cancelar',
-        didOpen: () => document.getElementById('swal-nombre').focus(),
+        didOpen: () => {
+            const input = document.getElementById('swal-nombre');
+            input.focus();
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') Swal.clickConfirm();
+            });
+        },
         preConfirm: () => {
             const name = document.getElementById('swal-nombre').value.trim();
             if (!name) {
@@ -169,7 +179,12 @@ async function customCreation() {
         confirmButtonText: 'Continuar',
         cancelButtonText: 'Cancelar',
         didOpen: () => {
-            document.getElementById('swal-name').focus();
+            const nameInput = document.getElementById('swal-name');
+            nameInput.focus();
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') Swal.clickConfirm();
+            });
+            
             const input = document.getElementById('swal-ncols');
             document.getElementById('sub-button').addEventListener('click', () => {
                 if (parseInt(input.value) > 2) input.value = parseInt(input.value) - 1;
@@ -177,7 +192,8 @@ async function customCreation() {
             document.getElementById('add-button').addEventListener('click', () => {
                 if (parseInt(input.value) < 5) input.value = parseInt(input.value) + 1;
             });
-        }, preConfirm: () => {
+        }, 
+        preConfirm: () => {
             const name = document.getElementById('swal-name').value.trim();
             if (!name) {
                 Swal.showValidationMessage("El nombre no puede estar vacío");
@@ -204,7 +220,15 @@ async function customCreation() {
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
         cancelButtonText: 'Atrás',
-        didOpen: () => document.getElementById('swal-col-0').focus(),
+        didOpen: () => {
+            const firstInput = document.getElementById('swal-col-0');
+            firstInput.focus();
+            for (let i = 0; i < ncols; i++) {
+                document.getElementById(`swal-col-${i}`).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') Swal.clickConfirm();
+                });
+            }
+        },
         preConfirm: () => {
             const cols = Array.from({length: ncols}).map((_, i) =>
                 document.getElementById(`swal-col-${i}`).value.trim()

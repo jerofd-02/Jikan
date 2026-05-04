@@ -1,4 +1,5 @@
 import { tituloEditable } from './add_column.js';
+import { tituloEditableBoard } from './assideButtonsActions.js';
 const BASE_URL = "/api";
 
 const getData = async (link) => {
@@ -16,11 +17,11 @@ const getData = async (link) => {
 
 let tablero = document.querySelector(".boards-section");
 
-// la función eventualmente tendrá un parámetro que será el id del tablero
-
 export const cargarColumnas = async(boards, tablero, titulo) => {
 
     titulo.textContent = boards.name;
+    titulo.classList.add("editable-title");
+    tituloEditableBoard(titulo, boards.board_id);
 
     tablero.dataset.boardId = boards.board_id;
     for (const column of boards.columns) {
@@ -102,12 +103,15 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 };
 
 const init = async () => {
-    const boardId = localStorage.getItem("boardId");
-    let boards = await getData(BASE_URL + `/boards/${boardId}/full`);
+
+    const userMail = localStorage.getItem("userMail");
+    let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
+
+    let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 
 
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
-    await cargarColumnas(boards, tablero, titulo);
+    await cargarColumnas(first, tablero, titulo);
 
     let selected = null;
 
