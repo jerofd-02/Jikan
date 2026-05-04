@@ -101,12 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botonesTableros.addEventListener('click', async (e) => {
 
-        // borrar tablero
         const botonBorrar = e.target.closest('.delete-board');
         if (botonBorrar) {
             e.stopPropagation();
+            const contenedor = botonBorrar.closest('.board-buttons-actions');
             const nombre = botonBorrar.closest('.swap-board-button').textContent.trim();
-            console.log('Borrar tablero:', nombre, 'Swal:', typeof Swal); // ← añadir
+            console.log('Borrar tablero:', nombre, 'Swal:', typeof Swal);
 
             const { isConfirmed } = await Swal.fire({
                 customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     text: 'No se pudo eliminar el tablero',
                     icon: 'error',
                 });
+                console.log(error);
             }
         }
 

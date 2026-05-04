@@ -21,6 +21,7 @@ const getData = async (link) => {
 const cargarBotonesLaterales = (boards, buttonSection) => {
     boards.forEach((board) => {
         let contenedor = document.createElement('div');
+        contenedor.classList.add('board-buttons-actions');
         let buttonDiv = document.createElement('div');
         buttonDiv.classList.add('task-actions');
 

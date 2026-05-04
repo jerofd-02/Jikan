@@ -24,6 +24,7 @@ const insertarTableroEnHTML = (nombre) => {
     }
 
     let contenedor = document.createElement('div');
+    contenedor.classList.add('board-buttons-actions');
     let buttonDiv = document.createElement('div');
     buttonDiv.classList.add('task-actions');
 
