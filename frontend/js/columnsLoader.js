@@ -102,12 +102,15 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 };
 
 const init = async () => {
-    const boardId = localStorage.getItem("boardId");
-    let boards = await getData(BASE_URL + `/boards/${boardId}/full`);
+
+    const userMail = localStorage.getItem("userMail");
+    let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
+
+    let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 
 
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
-    await cargarColumnas(boards, tablero, titulo);
+    await cargarColumnas(first, tablero, titulo);
 
     let selected = null;
 
