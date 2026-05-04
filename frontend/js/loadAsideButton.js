@@ -21,6 +21,8 @@ const getData = async (link) => {
 const cargarBotonesLaterales = (boards, buttonSection) => {
     boards.forEach((board) => {
         let contenedor = document.createElement('div');
+        let buttonDiv = document.createElement('div');
+        buttonDiv.classList.add('task-actions');
 
         let boardButton = document.createElement("button");
         boardButton.textContent = board.name;
@@ -30,7 +32,8 @@ const cargarBotonesLaterales = (boards, buttonSection) => {
         let deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete-board");
         deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
-        contenedor.appendChild(deleteBtn)
+        buttonDiv.appendChild(deleteBtn);
+        boardButton.appendChild(buttonDiv);
 
         buttonSection.appendChild(contenedor);
     });
