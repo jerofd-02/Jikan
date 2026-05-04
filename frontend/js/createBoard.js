@@ -24,6 +24,8 @@ const insertarTableroEnHTML = (nombre) => {
     }
 
     let contenedor = document.createElement('div');
+    let buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('task-actions');
 
     let boardButton = document.createElement("button");
     boardButton.textContent = nombre;
@@ -33,9 +35,10 @@ const insertarTableroEnHTML = (nombre) => {
     let deleteBtn = document.createElement("button");
     deleteBtn.classList.add("delete-board");
     deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
-    contenedor.appendChild(deleteBtn);
+    buttonDiv.appendChild(deleteBtn);
+    boardButton.appendChild(buttonDiv);
 
-    seccionBotones.insertBefore(contenedor, botones[botones.length - 1]);
+    seccionBotones.insertBefore(contenedor, seccionBotones.lastChild);
 };
 
 const insertarTableroBasicoEnDB = async (name, columnsNames) => {

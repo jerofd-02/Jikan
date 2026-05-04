@@ -53,8 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const botonBorrar = e.target.closest('.delete-board');
         if (botonBorrar) {
             e.stopPropagation();
-            const contenedor = botonBorrar.closest('div');
-            const nombre = contenedor.querySelector('button').textContent.trim();
+            const nombre = botonBorrar.closest('.swap-board-button').textContent.trim();
             console.log('Borrar tablero:', nombre, 'Swal:', typeof Swal); // ← añadir
 
             const { isConfirmed } = await Swal.fire({
