@@ -1934,3 +1934,341 @@ input:-webkit-autofill:active {
     -webkit-text-fill-color: white;
     transition: background-color 5000s ease-in-out 0s;
 }
+
+/* SISTEMA DE RECORDATORIOS */
+
+/* ── Badge de notificación en el botón campana ── */
+.notifications-button {
+    position: relative;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--principal);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    line-height: 1;
+    box-shadow: 0 0 8px var(--principal);
+    animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes badgePop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+/* ── Dropdown de notificaciones ── */
+.header-buttons {
+    position: relative;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 360px;
+    max-height: 480px;
+    overflow-y: auto;
+    background: var(--background3-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-color);
+    z-index: 9999;
+    animation: dropdownSlide 0.2s ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.notif-dropdown.hidden {
+    display: none;
+}
+
+@keyframes dropdownSlide {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.notif-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--font-color);
+    position: sticky;
+    top: 0;
+    background: var(--background3-color);
+    border-radius: 16px 16px 0 0;
+}
+
+.notif-clear-all {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--font-color2);
+    font-size: 0.62rem !important;
+    padding: 3px 7px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.notif-clear-all:hover {
+    background: var(--dark-accent);
+    color: var(--font-color);
+    border-color: var(--principal);
+}
+
+.notif-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: var(--font-color2);
+    font-size: 0.9rem;
+}
+
+.notif-empty i {
+    font-size: 2rem;
+    opacity: 0.4;
+}
+
+.notif-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border-color);
+    animation: notifIn 0.25s ease;
+}
+
+@keyframes notifIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: color-mix(in srgb, var(--principal) 8%, transparent);
+}
+
+.notif-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--principal) 20%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--principal);
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+.notif-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-msg {
+    margin: 0 0 4px;
+    font-size: 0.82rem;
+    color: var(--font-color);
+    line-height: 1.4;
+}
+
+.notif-msg strong {
+    color: var(--light-accent);
+}
+
+.notif-time {
+    font-size: 0.72rem;
+    color: var(--font-color2);
+}
+
+.notif-dismiss {
+    background: none;
+    border: none;
+    color: var(--font-color2);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    line-height: 1;
+    font-size: 0.85rem;
+}
+
+.notif-dismiss:hover {
+    background: var(--border-color);
+    color: var(--font-color);
+}
+
+/* ── Botón "Establecer recordatorio" en el diálogo de tarea ── */
+.set-reminder-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    width: 100%;
+    padding: 10px 16px;
+    background: color-mix(in srgb, var(--principal) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--principal) 40%, transparent);
+    border-radius: 10px;
+    color: var(--light-accent);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.set-reminder-btn:hover {
+    background: color-mix(in srgb, var(--principal) 25%, transparent);
+    border-color: var(--principal);
+    color: var(--font-color);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--principal) 30%, transparent);
+}
+
+.set-reminder-btn i {
+    font-size: 0.9rem;
+}
+
+/* ── Dialog de recordatorio (dentro de SweetAlert2) ── */
+.swal-reminder-popup .reminder-subtitle {
+    font-size: 0.88rem;
+    color: var(--font-color2);
+    margin: 0 0 16px;
+    text-align: center;
+}
+
+.swal-reminder-popup .reminder-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.swal-reminder-popup .reminder-preset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    background: var(--background2-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--font-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.swal-reminder-popup .reminder-preset i {
+    font-size: 1.3rem;
+    color: var(--principal);
+}
+
+.swal-reminder-popup .reminder-preset:hover {
+    background: var(--dark-accent);
+    border-color: var(--principal);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--principal) 30%, transparent);
+}
+
+.swal-reminder-popup .reminder-custom-wrap {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.swal-reminder-popup .reminder-custom-label {
+    font-size: 0.82rem;
+    color: var(--font-color2);
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+.swal-reminder-popup .reminder-custom-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.swal-reminder-popup .reminder-custom-inputs input {
+    width: 60px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--background2-color);
+    color: var(--font-color);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.swal-reminder-popup .reminder-custom-inputs label {
+    font-size: 0.78rem;
+    color: var(--font-color2);
+}
+
+.swal-reminder-popup .reminder-custom-confirm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px;
+    background: var(--principal);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.swal-reminder-popup .reminder-custom-confirm:hover {
+    background: var(--light-accent);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--principal) 50%, transparent);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.swal-reminder-popup .reminder-custom-confirm.shake {
+    animation: shake 0.4s ease;
+    background: #e05555;
+}

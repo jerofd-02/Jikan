@@ -1,7 +1,7 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+import { openReminderDialog, initReminders } from './reminders.js';
 
-window.hideUndoPopup = hideUndoPopup;
-window.showUndoPopup = showUndoPopup;
+window.undoManager = new UndoManager();
 
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
@@ -130,6 +130,10 @@ async function modifyTask(taskElement) {
                     <input type="date" id="date" autocomplete="off">
                     <label for="deadline">Fecha límite de la tarea</label>
                     <input type="date" id="deadline" autocomplete="off">
+                    <button type="button" class="set-reminder-btn" id="set-reminder-btn">
+                        <i class="fa-solid fa-bell"></i>
+                        Establecer recordatorio
+                    </button>
                 </div>
             </div>
         `,
@@ -152,6 +156,15 @@ async function modifyTask(taskElement) {
             const input = document.getElementById('new-label-input');
             const datalist = document.getElementById('labels-datalist');
             setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsContainer);
+
+            // Botón de recordatorio
+            const reminderBtn = document.getElementById('set-reminder-btn');
+            if (reminderBtn) {
+                reminderBtn.addEventListener('click', () => {
+                    const currentName = document.getElementById('name').value.trim() || taskData.name;
+                    openReminderDialog(taskId, currentName);
+                });
+            }
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -182,7 +195,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
     const paragraph = taskElement.querySelector("p");
 
     try {
-        const response = await fetch(`/api/tasks/${taskId}`, {
+        const response = await fetch(`${TASK_API_URL}/${taskId}`, {
             method: "PATCH",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newData)
@@ -194,25 +207,23 @@ async function saveSwalTask(taskElement, newData, previousData) {
 
         undoManager.add({
             undo: async () => {
-                const body = {
-                    name: previousData.name,
-                    description: previousData.description,
-                    date: previousData.date ? previousData.date.slice(0, 10) : null,
-                    deadline: previousData.deadline ? previousData.deadline.slice(0, 10) : null,
-                    labels: previousData.labels || [],
-                };
-
-                const res = await fetch(`/api/tasks/${taskId}`, {
+                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body)
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        name: previousData.name,
+                        description: previousData.description,
+                        date: previousData.date,
+                        deadline: previousData.deadline,
+                        labels: previousData.labels || [],
+                    })
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousData.name;
                 hideUndoPopup();
             },
             redo: async () => {
-                const res = await fetch(`/api/tasks/${taskId}`, {
+                const res = await fetch(`${TASK_API_URL}/${taskId}`, {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(newData)
@@ -272,6 +283,7 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     addModifyButton();
+    initReminders();
 
     const observer = new MutationObserver(() => {
         addModifyButton();
