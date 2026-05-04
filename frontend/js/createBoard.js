@@ -108,6 +108,10 @@ async function showPopupCreateBoard() {
     if (!modo) return;
     if (modo === 'rapida') await fastCreation();
     else await customCreation();
+
+    let botones = document.querySelectorAll('.swap-board-button');
+    let boton = botones[botones.length - 1];
+    boton.click();
 }
 
 async function fastCreation() {
