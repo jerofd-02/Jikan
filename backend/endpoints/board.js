@@ -140,6 +140,44 @@ router.post('/:id/columns', verifyToken, async (req, res) => {
     }
 });
 
+// PATCH /boards/:id
+router.patch('/:id', verifyToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+        const userId = req.user.id;
+
+        // Verificar que el tablero existe
+        const [boardRows] = await pool.query(`SELECT * FROM board WHERE board_id = ?`, [id]);
+        if (boardRows.length === 0) return sendNotFound(res, 'Board', id);
+
+        // Verificar que el usuario tiene permiso para actualizar este tablero
+        const [userBoard] = await pool.query(
+            `SELECT * FROM users_board WHERE board_id = ? AND user_id = ?`, [id, userId]
+        );
+
+        if (userBoard.length === 0) {
+            return res.status(403).json({ message: 'No tienes permiso para actualizar este tablero' });
+        }
+
+        // Validar que al menos se envíe un campo a actualizar
+        if (!name) {
+            return res.status(400).json({ message: 'Debes proporcionar al menos un campo para actualizar' });
+        }
+
+        // Actualizar el tablero
+        await pool.query(`UPDATE board SET name = ? WHERE board_id = ?`, [name, id]);
+
+        res.status(200).json({
+            board_id: id,
+            name
+        });
+
+    } catch (error) {
+        handleError(res, error, 'actualizar board');
+    }
+});
+
 // GET /boards/:id
 router.get('/:id', verifyToken, async (req, res) => {
     try {
