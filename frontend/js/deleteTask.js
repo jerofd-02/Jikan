@@ -1,8 +1,5 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 
-window.undoManager = new UndoManager();
-window.hideUndoPopup = hideUndoPopup;
-
 document.addEventListener("DOMContentLoaded", () => {
     addDeleteButtons();
 
@@ -35,31 +32,18 @@ function addDeleteButtons() {
 
 document.addEventListener("click", (e) => {
     const btn = e.target.closest(".delete-task");
-
     if (btn) {
         const task = btn.closest(".task");
         deleteTask(task);
     }
 });
 
-document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.key === "z") {
-        e.preventDefault();
-        undoManager.undo();
-    }
-
-    if (e.ctrlKey && e.key === "y") {
-        e.preventDefault();
-        undoManager.redo();
-    }
-})
-
 async function deleteTask(taskElement) {
     if (!taskElement) return;
 
     const taskName = taskElement.querySelector("p")?.textContent.trim();
 
-    const {isConfirmed} = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
         customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
         title: "¿Eliminar tarea?",
         text: `"${taskName}" se eliminará permanentemente.`,
@@ -97,7 +81,9 @@ async function deleteTask(taskElement) {
                     const date = taskData.date ? taskData.date.split('T')[0] : null;
 
                     const res = await fetch(`/api/tasks/`, {
-                        method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
                             id_column: taskData.id_column,
                             name: taskData.name,
                             description: taskData.description,
@@ -106,34 +92,21 @@ async function deleteTask(taskElement) {
                         })
                     });
                     const data = await res.json();
-                    taskElement.dataset.taskId = data.id_task
+                    taskElement.dataset.taskId = data.id_task;
                     taskId = data.id_task;
                     parent.insertBefore(taskElement, nextSibling);
                     taskElement.style.opacity = "1";
                     hideUndoPopup();
-                }, redo: async () => {
-                    await fetch(`/api/tasks/${taskId}`, {method: "DELETE"});
+                },
+                redo: async () => {
+                    await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
                     taskElement.remove();
-                    showUndoPopup();
+                    showUndoPopup('Tarea eliminada');
                 }
             });
-            showUndoPopup();
+            showUndoPopup('Tarea eliminada');
         }, 200);
     } catch (error) {
         console.error("Error en la petición: ", error);
     }
-}
-
-let undoPopupTimer = null;
-
-function showUndoPopup() {
-    const popup = document.getElementById('undo-popup');
-    popup.style.display = 'flex';
-    clearTimeout(undoPopupTimer);
-    undoPopupTimer = setTimeout(() => hideUndoPopup(), 5000);
-}
-
-function hideUndoPopup() {
-    document.getElementById('undo-popup').style.display = 'none';
-    clearTimeout(undoPopupTimer);
 }

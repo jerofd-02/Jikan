@@ -1,8 +1,5 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 
-window.hideUndoPopup = hideUndoPopup;
-window.showUndoPopup = showUndoPopup;
-
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
 
@@ -89,11 +86,10 @@ async function modifyTask(taskElement) {
         taskData = await res.json();
     } catch {
         Swal.fire({
+            customClass: { popup: 'swal-custom-popup' },
             title: 'Error',
             text: 'No se pudieron cargar los datos',
             icon: 'error',
-            background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
-            color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
         });
         return;
     }
@@ -102,7 +98,7 @@ async function modifyTask(taskElement) {
 
     Swal.fire({
         width: '700px',
-        customClass: {popup: 'swal-custom-popup'},
+        customClass: { popup: 'swal-custom-popup' },
         title: 'Modificar tarea',
         html: `
             <div class="edit-task-input">
@@ -115,12 +111,12 @@ async function modifyTask(taskElement) {
                 <div class="edit-task-right">
                     <label for="label-chips">Categorías</label>
                     <div class="label-chips-container" id="label-chips"></div>
-                        <div class="label-row">
-                        <input 
-                            type="text" 
-                            id="new-label-input" 
-                            list="labels-datalist" 
-                            placeholder="Selecciona o escibe..." 
+                    <div class="label-row">
+                        <input
+                            type="text"
+                            id="new-label-input"
+                            list="labels-datalist"
+                            placeholder="Selecciona o escribe..."
                             autocomplete="off"
                         >
                         <datalist id="labels-datalist"></datalist>
@@ -134,10 +130,10 @@ async function modifyTask(taskElement) {
             </div>
         `,
         didOpen: async () => {
-            document.getElementById('name').value = taskData.name || '';
+            document.getElementById('name').value        = taskData.name        || '';
             document.getElementById('description').value = taskData.description || '';
-            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 10) : '';
-            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
+            document.getElementById('date').value        = taskData.date     ? taskData.date.slice(0, 10)     : '';
+            document.getElementById('deadline').value    = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
 
             const chipsContainer = document.getElementById('label-chips');
             renderLabels(chipsContainer, currentLabels);
@@ -146,8 +142,7 @@ async function modifyTask(taskElement) {
             try {
                 const res = await fetch(`${TASK_API_URL}/labels/all`);
                 if (res.ok) allLabels = await res.json();
-            } catch {
-            }
+            } catch {}
 
             const input = document.getElementById('new-label-input');
             const datalist = document.getElementById('labels-datalist');
@@ -165,9 +160,9 @@ async function modifyTask(taskElement) {
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
-                date: document.getElementById('date').value || null,
-                deadline: document.getElementById('deadline').value || null,
-                labels: currentLabels,
+                date:        document.getElementById('date').value     || null,
+                deadline:    document.getElementById('deadline').value || null,
+                labels:      currentLabels,
             };
         }
     }).then((result) => {
@@ -184,7 +179,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
     try {
         const response = await fetch(`/api/tasks/${taskId}`, {
             method: "PATCH",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newData)
         });
 
@@ -195,11 +190,11 @@ async function saveSwalTask(taskElement, newData, previousData) {
         undoManager.add({
             undo: async () => {
                 const body = {
-                    name: previousData.name,
+                    name:        previousData.name,
                     description: previousData.description,
-                    date: previousData.date ? previousData.date.slice(0, 10) : null,
-                    deadline: previousData.deadline ? previousData.deadline.slice(0, 10) : null,
-                    labels: previousData.labels || [],
+                    date:        previousData.date     ? previousData.date.slice(0, 10)     : null,
+                    deadline:    previousData.deadline ? previousData.deadline.slice(0, 10) : null,
+                    labels:      previousData.labels || [],
                 };
 
                 const res = await fetch(`/api/tasks/${taskId}`, {
@@ -214,59 +209,32 @@ async function saveSwalTask(taskElement, newData, previousData) {
             redo: async () => {
                 const res = await fetch(`/api/tasks/${taskId}`, {
                     method: "PATCH",
-                    headers: {"Content-Type": "application/json"},
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newData)
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
                 paragraph.textContent = newData.name;
-                showUndoPopup();
+                showUndoPopup('Tarea modificada');
             }
         });
 
-        showUndoPopup();
+        showUndoPopup('Tarea modificada');
 
     } catch (error) {
         console.error("Error al actualizar la tarea:", error);
         Swal.fire({
+            customClass: { popup: 'swal-custom-popup' },
             title: 'Error',
             text: 'No se pudo guardar el cambio',
             icon: 'error',
-            background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
-            color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
         });
     }
-}
-
-let undoPopupTimer = null;
-
-function showUndoPopup() {
-    const popup = document.getElementById('undo-popup');
-    document.getElementById('undo-popup-text').textContent = 'Tarea modificada';
-    popup.style.display = 'flex';
-    clearTimeout(undoPopupTimer);
-    undoPopupTimer = setTimeout(() => hideUndoPopup(), 5000);
-}
-
-function hideUndoPopup() {
-    document.getElementById('undo-popup').style.display = 'none';
-    clearTimeout(undoPopupTimer);
 }
 
 document.addEventListener("click", (e) => {
     if (e.target.closest(".modify-task")) {
         const task = e.target.closest(".task");
         modifyTask(task);
-    }
-});
-
-document.addEventListener("keydown", (e) => {
-    if (e.ctrlKey && e.key === "z") {
-        e.preventDefault();
-        undoManager.undo();
-    }
-    if (e.ctrlKey && e.key === "y") {
-        e.preventDefault();
-        undoManager.redo();
     }
 });
 
