@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { verifyToken } = require('../utils/validations');
+const {verifyToken} = require('../utils/validations');
 
 const pool = require("../config/database");
 
@@ -59,16 +59,16 @@ router.get('/:id', verifyToken, async (req, res) => {
 // Body: { id_column, name, description?, date?, labels? }
 router.post('/', verifyToken, async (req, res) => {
     try {
-        const {id_column, name, description = null, date = null, labels = []} = req.body;
+        const {id_column, name, description = null, date = null, deadline = null, labels = []} = req.body;
 
         if (!id_column || !name) {
             return res.status(400).json({message: 'Los campos id_column y name son obligatorios'});
         }
 
         const [result] = await pool.query(
-            `INSERT INTO column_task (id_column, name, description, date)
-             VALUES (?, ?, ?, ?)`,
-            [id_column, name, description, date]
+            `INSERT INTO column_task (id_column, name, description, date, deadline)
+             VALUES (?, ?, ?, ?, ?)`,
+            [id_column, name, description, date, deadline]
         );
 
         const newTaskId = result.insertId;
