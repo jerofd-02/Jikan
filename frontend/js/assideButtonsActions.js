@@ -15,6 +15,58 @@ const getData = async (link) => {
     }
 };
 
+export const tituloEditableBoard = (titleElement, boardId) => {
+    titleElement.addEventListener("click", () => {
+        if (titleElement.querySelector("input")) return;
+
+        const currentText = titleElement.textContent;
+        titleElement.textContent = "";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = currentText;
+        input.maxLength = 50;
+        input.classList.add("edit-title-input");
+        titleElement.appendChild(input);
+        input.focus();
+        input.select();
+
+        const guardar = async () => {
+            const nuevoNombre = input.value.trim() || currentText;
+
+            try {
+                await fetch(`/api/boards/${boardId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: nuevoNombre })
+                });
+            } catch (error) {
+                console.error("Error al renombrar tablero:", error);
+            }
+
+            titleElement.textContent = nuevoNombre;
+
+            let botones = document.querySelectorAll('.swap-board-button');
+            botones.forEach(boton => {
+                if (boton.textContent == currentText) {
+                    boton.textContent = nuevoNombre;
+                    return;
+                }
+            });
+
+        };
+
+        input.addEventListener("blur", guardar);
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") input.blur();
+            if (e.key === "Escape") {
+                input.removeEventListener("blur", guardar);
+                titleElement.textContent = currentText;
+            }
+        });
+    });
+};
+
 const borrarTableroEnDB = async (boardId) => {
     try {
         const response = await fetch(`${BASE_URL}/boards/${boardId}`, {
