@@ -132,6 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         titulo.textContent = '';
                     }
 
+                    const primerBoton = document.querySelector('.swap-board-button');
+                    if (primerBoton) {
+                        primerBoton.click();
+                    }
+
                     let currentBoardId = boardId;
 
                     window.undoManager.add({
