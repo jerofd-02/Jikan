@@ -1,3 +1,5 @@
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     addDeleteButtons();
 
@@ -30,7 +32,6 @@ function addDeleteButtons() {
 
 document.addEventListener("click", (e) => {
     const btn = e.target.closest(".delete-task");
-
     if (btn) {
         const task = btn.closest(".task");
         deleteTask(task);
@@ -40,10 +41,28 @@ document.addEventListener("click", (e) => {
 async function deleteTask(taskElement) {
     if (!taskElement) return;
 
-    const taskId = taskElement.dataset.taskId;
+    const taskName = taskElement.querySelector("p")?.textContent.trim();
+
+    const { isConfirmed } = await Swal.fire({
+        customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
+        title: "¿Eliminar tarea?",
+        text: `"${taskName}" se eliminará permanentemente.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    });
+
+    if (!isConfirmed) return;
+
+    let taskId = taskElement.dataset.taskId;
+    const parent = taskElement.parentNode;
+    const nextSibling = taskElement.nextSibling;
+
+    const taskData = await fetch(`/api/tasks/${taskId}`).then(r => r.json());
 
     try {
-        const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        const response = await fetch(`/api/tasks/${taskId}`, {
             method: "DELETE",
         });
 
@@ -56,6 +75,36 @@ async function deleteTask(taskElement) {
         taskElement.style.transition = "opacity 0.2s";
         setTimeout(() => {
             taskElement.remove();
+
+            undoManager.add({
+                undo: async () => {
+                    const date = taskData.date ? taskData.date.split('T')[0] : null;
+
+                    const res = await fetch(`/api/tasks/`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            id_column: taskData.id_column,
+                            name: taskData.name,
+                            description: taskData.description,
+                            date: date,
+                            labels: taskData.labels
+                        })
+                    });
+                    const data = await res.json();
+                    taskElement.dataset.taskId = data.id_task;
+                    taskId = data.id_task;
+                    parent.insertBefore(taskElement, nextSibling);
+                    taskElement.style.opacity = "1";
+                    hideUndoPopup();
+                },
+                redo: async () => {
+                    await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+                    taskElement.remove();
+                    showUndoPopup('Tarea eliminada');
+                }
+            });
+            showUndoPopup('Tarea eliminada');
         }, 200);
     } catch (error) {
         console.error("Error en la petición: ", error);

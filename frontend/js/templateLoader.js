@@ -1,3 +1,11 @@
+async function loadTemplate(name) {
+    const response = await fetch(`./templates/${name}.html`);
+    const html = await response.text();
+    const temp = document.createElement("template");
+    temp.innerHTML = html;
+    return temp.content.cloneNode(true).firstElementChild;
+}
+
 async function init() {
     const elements = document.querySelectorAll('[data-template]');
 

@@ -1,19 +1,30 @@
-const API_URL = "http://localhost:3000/boards/1/full";
+import { tituloEditable } from './add_column.js';
+import { tituloEditableBoard } from './assideButtonsActions.js';
+const BASE_URL = "/api";
 
 const getData = async (link) => {
-    return await fetch(link)
-        .catch(error => console.error('Error fetching data:', error))
-        .then(response => response.json());
+    try {
+        const response = await fetch(link);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
 }
 
 let tablero = document.querySelector(".boards-section");
 
-console.log(tablero);
+export const cargarColumnas = async(boards, tablero, titulo) => {
 
-// la función eventualmente tendrá un parámetro que será el id del tablero
-const cargarColumnas = (boards, tablero) => {
+    titulo.textContent = boards.name;
+    titulo.classList.add("editable-title");
+    tituloEditableBoard(titulo, boards.board_id);
 
-    boards.columns.forEach((column) => {
+    tablero.dataset.boardId = boards.board_id;
+    for (const column of boards.columns) {
 
         let taskSection = document.createElement("div");
         taskSection.className = "tasks-section";
@@ -22,9 +33,25 @@ const cargarColumnas = (boards, tablero) => {
         col.className = "column";
         col.dataset.columnId = column.column_id;
 
+        let colHeader = document.createElement("div");
+        colHeader.className = "column-header";
+
         let title = document.createElement("h3");
         title.textContent = column.name;
-        col.appendChild(title);
+        title.classList.add("editable-title");
+        tituloEditable(title, column.column_id);
+
+        let menuBtn = document.createElement("button");
+        menuBtn.className = "column-menu-btn";
+        menuBtn.textContent = "⋯";
+
+        const dropdown = await loadTemplate("dropdown-column");
+        dropdown.querySelector(".delete-column-btn").dataset.columnId = column.column_id;
+
+        colHeader.appendChild(title);
+        colHeader.appendChild(menuBtn);
+        colHeader.appendChild(dropdown);
+        col.appendChild(colHeader);
 
         let tasks = document.createElement("div");
         tasks.className = "task-list";
@@ -66,19 +93,25 @@ const cargarColumnas = (boards, tablero) => {
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
-    });
+    };
 
-    let newBoardButton = document.createElement("button");
-    newBoardButton.className = "create-new-column";
-    newBoardButton.textContent = "Crear nueva columna";
+    let newBoardbutton = document.createElement("button");
+    newBoardbutton.className = "create-new-column";
+    newBoardbutton.textContent = "Crear nueva columna";
 
-    tablero.appendChild(newBoardButton);
+    tablero.appendChild(newBoardbutton);
 };
 
 const init = async () => {
-    let boards = await getData(API_URL);
+
+    const userMail = localStorage.getItem("userMail");
+    let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
+
+    let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 
+
     let tablero = document.querySelector(".boards-section");
-    cargarColumnas(boards, tablero);
+    let titulo = document.getElementById('board-title');
+    await cargarColumnas(first, tablero, titulo);
 
     let selected = null;
 
@@ -100,7 +133,7 @@ const init = async () => {
             const taskId = selected.dataset.taskId;
             const columnId = targetList.dataset.columnId;
 
-            await fetch(`http://localhost:3000/tasks/${taskId}`, {
+            await fetch(`${BASE_URL}/tasks/${taskId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id_column: columnId }),

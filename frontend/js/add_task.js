@@ -1,10 +1,9 @@
-const TASK_API_URL = "http://localhost:3000/tasks";
+const TASK_API_URL = "/api/tasks";
 
 document.addEventListener("DOMContentLoaded", () => {
     let listaActual = null;
 
     document.addEventListener("click", (e) => {
-
         // CLICK EN "+ Añade otra tarea"
         if (e.target.matches(".add-task button")) {
             const column = e.target.closest(".column");
@@ -39,14 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // CLICK EN AÑADIR
         if (e.target.matches(".add-btn")) {
             const inputDiv = e.target.closest(".new-task-input");
-            const input = inputDiv.querySelector("input");
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            const column = inputDiv.closest(".column");
-            const columnId = column.dataset.columnId;
-
-            agregarTarea(texto, columnId, inputDiv);
+            procesarTarea(inputDiv);
         }
     });
 
@@ -55,15 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") {
             const inputDiv = e.target.closest(".new-task-input");
             if (!inputDiv) return;
-
-            const input = inputDiv.querySelector("input");
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            const column = inputDiv.closest(".column");
-            const columnId = column.dataset.columnId;
-
-            agregarTarea(texto, columnId, inputDiv);
+            procesarTarea(inputDiv);
         }
     });
 });
@@ -90,6 +74,7 @@ async function agregarTarea(nombre, columnId, inputDiv) {
         nuevaTarea.classList.add("task");
         nuevaTarea.dataset.taskId = data.id_task; // guardamos el id devuelto por la BD
         nuevaTarea.innerHTML = `<input type="checkbox"></input><p>${nombre}</p>`;
+        nuevaTarea.draggable = true;
 
         const checkbox = nuevaTarea.querySelector('input')
         checkbox?.addEventListener('click', () => {
@@ -103,4 +88,17 @@ async function agregarTarea(nombre, columnId, inputDiv) {
     } catch (error) {
         console.error("Error de red al crear la tarea:", error);
     }
+}
+
+async function procesarTarea(inputDiv) {
+    if (!inputDiv) return;
+
+    const input = inputDiv.querySelector("input");
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    const column = inputDiv.closest(".column");
+    const columnId = column.dataset.columnId;
+
+    agregarTarea(texto, columnId, inputDiv);
 }
