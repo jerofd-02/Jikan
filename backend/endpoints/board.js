@@ -20,16 +20,20 @@ router.delete('/:id', verifyToken, async (req, res) => {
             `SELECT *
              FROM users_board
              WHERE board_id = ?
-               AND user_id = ?`, [id, userId]
+               AND user_id = ?`,
+            [id, userId]
         );
-
         if (userBoard.length === 0) {
             return res.status(403).json({message: 'No tienes permiso para eliminar este tablero'});
         }
 
         await pool.query(`DELETE
-                          FROM board
-                          WHERE board_id = ?`, [id]);
+                          FROM task_labels
+                          WHERE task_id IN (SELECT id_task
+                                            FROM column_task
+                                            WHERE id_column IN (SELECT id_column
+                                                                FROM board_column
+                                                                WHERE id_board = ?))`, [id]);
 
         await pool.query(`DELETE
                           FROM column_task
@@ -43,6 +47,10 @@ router.delete('/:id', verifyToken, async (req, res) => {
 
         await pool.query(`DELETE
                           FROM users_board
+                          WHERE board_id = ?`, [id]);
+
+        await pool.query(`DELETE
+                          FROM board
                           WHERE board_id = ?`, [id]);
 
         res.status(200).json({message: 'Tablero eliminado correctamente'});
