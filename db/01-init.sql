@@ -19,6 +19,23 @@ CREATE TABLE board
     CONSTRAINT pk_board PRIMARY KEY (board_id)
 );
 
+-- Entidad que hereda de la tabla "board"
+
+CREATE TABLE gamified_board
+(
+    id_board INT NOT NULL,
+
+    daily_tasks INT NOT NULL DEFAULT 4,
+    current_streak INT NOT NULL DEFAULT 0,
+    best_streak INT NOT NULL DEFAULT 0,
+    
+    CONSTRAINT pk_gamified_board PRIMARY KEY (id_board),
+    CONSTRAINT fk_gamifiedboard_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
+
+    CONSTRAINT max_tasks CHECK (daily_tasks BETWEEN 4 AND 6),
+    CONSTRAINT streak CHECK (current_streak <= best_streak)
+);
+
 
 CREATE TABLE columns_table
 (
@@ -51,6 +68,7 @@ CREATE TABLE user_sessions
     CONSTRAINT fk_us_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
+-- En esta relación vive la entidad "task"
 CREATE TABLE column_task
 (
     id_column   INT          NOT NULL,
@@ -63,6 +81,20 @@ CREATE TABLE column_task
 
     CONSTRAINT pk_task PRIMARY KEY (id_task),
     CONSTRAINT fk_ct_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
+);
+
+CREATE TABLE tasks_logs
+(
+    board_id INT NOT NULL,
+    task_id INT NOT NULL,
+
+    log_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_tasks_logs PRIMARY KEY (board_id, task_id, log_date),
+
+    CONSTRAINT fk_taskslogs_board FOREIGN KEY (board_id) REFERENCES gamified_board (id_board) ON DELETE CASCADE,
+    CONSTRAINT fk_taskslogs_tasks FOREIGN KEY (task_id) REFERENCES column_task (id_task) ON DELETE CASCADE
 );
 
 CREATE TABLE user_task
