@@ -1604,6 +1604,114 @@ input {
     padding: 8px 12px;
 }
 
+.task-chip {
+    display: block;
+    width: calc(100% - 8px);
+    margin: 2px 0 0 4px;
+    padding: 2px 5px;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 0.7rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.task-chip--date {
+    background: var(--background2-color);
+    color: var(--font-color);
+}
+
+.task-chip--deadline {
+    background: var(--background2-color);
+    color: #ff7a59;
+    border-left: 3px solid #ff7a59;
+    padding-left: 4px;
+}
+
+.task-chip--overflow {
+    background: transparent;
+    color: var(--font-color);
+    font-size: 0.65rem;
+}
+
+.task-chip:hover {
+    filter: brightness(1.15);
+}
+
+#day-tasks-popover {
+    position: absolute;
+    z-index: 999;
+    min-width: 200px;
+    max-width: 280px;
+    background: var(--background3-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: dropdownSlide 0.18s ease;
+}
+
+.day-popover__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.day-popover__title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--font-color2);
+    text-transform: uppercase;
+}
+
+.day-popover__close {
+    background: none;
+    border: none;
+    color: var(--font-color2);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.day-popover__close:hover {
+    color: var(--font-color);
+    background: var(--border-color);
+}
+
+.day-popover__item {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    border: none;
+    border-bottom: 0;
+    font-size: 0.8rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor:  pointer;
+    border-bottom: 1px solid var(--border-color);
+    margin: 0;
+}
+
+.day-popover__item:last-child {
+    border-bottom: none ;
+}
+
+.day-popover__item:hover {
+    filter: brightness(1.2);
+}
+
 /* SECCIÓN TEMAS */
 #themes {
     padding: 2rem;
