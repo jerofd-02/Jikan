@@ -6,7 +6,7 @@ const pool = require("./config/database");
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:8080',
     credentials: true,
 }));
 app.use(express.json());
@@ -16,11 +16,13 @@ const boardRoutes = require('./endpoints/board');
 const taskRoutes = require('./endpoints/task');
 const columnRoutes = require('./endpoints/column');
 const authRoutes = require('./endpoints/auth');
+const usersRouter = require('./endpoints/users');
 
 app.use('/boards', boardRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/columns', columnRoutes);
 app.use('/auth', authRoutes);
+app.use('/api/users', usersRouter);
 
 async function testConnection() {
     try {
