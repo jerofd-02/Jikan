@@ -62,6 +62,8 @@ const init = async () => {
         document.querySelector(".user-picture").parentElement.href = "./html/user-profile.html";
         console.log("Usuario autenticado:", userMail);
     }
+
+    document.dispatchEvent(new CustomEvent('boardsLoaded'));
 };
 
 document.addEventListener("DOMContentLoaded", init);

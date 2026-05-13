@@ -19,7 +19,7 @@ html {
     --light-accent: #8f7ef9;
 
     --sheet-min: 54px;
-    --sheet-mid: 280px;
+    --sheet-mid: calc(100dvh - 55px);
     --sheet-max: 70vh;
     --sheet-radius: 16px;
     --sheet-transition: cubic-bezier(0.32, 0.72, 0, 1);
@@ -198,6 +198,7 @@ input {
                 &:hover {
                     background-color: var(--dark-accent);
                     border-radius: 8px;
+
                     i {
                         color: var(--light-accent);
                         transform: scale(1.2);
@@ -214,7 +215,6 @@ input {
     }
 
     .main-content {
-
         flex: 1;
         min-width: 0;
         margin: 0;
@@ -222,11 +222,9 @@ input {
         flex-direction: column;
         position: relative;
         min-height: 0;
-        padding-bottom: var(--sheet-min);
-
         height: 100%;
         overflow: hidden;
-        overflow-y: auto;
+        padding-bottom: 0;
 
         header {
             display: flex;
@@ -269,9 +267,8 @@ input {
         }
 
         .main-panel {
-            overflow: hidden;
             overflow-y: auto;
-            height: 100%;
+            height: calc(100% - var(--sheet-min));
             padding-bottom: 20px;
         }
 
@@ -323,27 +320,24 @@ input {
         /* ─── Bottom Sheet ─── */
 
         .panel.bottom-sheet {
-            position: relative;
+            position: absolute;
             bottom: 0;
-            left: 0; /* o left: var(--sidebar-width) si quieres que respete el sidebar */
+            left: 0;
             right: 0;
             z-index: 200;
             height: var(--sheet-min);
-            border-radius: 0;
-            background: var(--background-color);
-            border-bottom: none;
             transition: height 0.38s var(--sheet-transition);
             will-change: height;
             display: flex;
             flex-direction: column;
-
+            overflow: hidden;
+            background: var(--background-color);
         }
 
         .panel.bottom-sheet.expanded {
             height: var(--sheet-mid);
+            max-height: calc(100dvh - 60px);
         }
-
-
 
         .sheet-handle-zone {
             flex-shrink: 0;
@@ -402,9 +396,8 @@ input {
 
         .sheet-content {
             flex: 1;
-            height: fit-content;
-            overflow: hidden;
-
+            overflow-y: auto;
+            min-height: 0;
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) transparent;
             border: 1px solid var(--border-color);
@@ -934,6 +927,7 @@ input {
     border: 1px solid var(--border-color);
     display: flex;
     width: 100%;
+    height: 100%;
     font-family: 'DM Mono', monospace;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -1017,9 +1011,10 @@ input {
     /* GRID */
 
     .grid-area {
-        flex: 1;
         display: flex;
         flex-direction: column;
+        flex: 1;
+        min-height: 0;
     }
 
     .weekdays-row {
@@ -1049,8 +1044,10 @@ input {
 
     .days-grid {
         display: grid;
+        flex: 1;
+        min-height: 0;
         grid-template-columns: repeat(7, 1fr);
-        grid-template-rows: repeat(6, 1fr);
+        grid-template-rows: repeat(6, auto);
         width: 100%;
     }
 
@@ -1391,7 +1388,6 @@ input {
 }
 
 
-
 .delete-task, .modify-task, .delete-board {
     display: flex;
     align-items: center;
@@ -1423,7 +1419,7 @@ input {
         color: darkred;
         font-size: 0.8rem;
     }
-    
+
     &:hover {
         background: var(--principal);
     }
@@ -1450,7 +1446,6 @@ input {
         transform: scale(1) !important;
     }
 }
-
 
 
 .modify-task {
@@ -1699,13 +1694,13 @@ input {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor:  pointer;
+    cursor: pointer;
     border-bottom: 1px solid var(--border-color);
     margin: 0;
 }
 
 .day-popover__item:last-child {
-    border-bottom: none ;
+    border-bottom: none;
 }
 
 .day-popover__item:hover {
@@ -1803,7 +1798,7 @@ input {
 
 .homepage .main-content {
     min-width: 0;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .homepage .boards-section {
@@ -2126,8 +2121,14 @@ input:-webkit-autofill:active {
 }
 
 @keyframes badgePop {
-    from { transform: scale(0); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* ── Dropdown de notificaciones ── */
@@ -2145,7 +2146,7 @@ input:-webkit-autofill:active {
     background: var(--background3-color);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color);
     z-index: 9999;
     animation: dropdownSlide 0.2s ease;
     scrollbar-width: thin;
@@ -2157,8 +2158,14 @@ input:-webkit-autofill:active {
 }
 
 @keyframes dropdownSlide {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .notif-header {
@@ -2228,8 +2235,14 @@ input:-webkit-autofill:active {
 }
 
 @keyframes notifIn {
-    from { opacity: 0; transform: translateX(-6px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .notif-item:last-child {
@@ -2424,9 +2437,15 @@ input:-webkit-autofill:active {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-5px); }
-    40%, 80% { transform: translateX(5px); }
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-5px);
+    }
+    40%, 80% {
+        transform: translateX(5px);
+    }
 }
 
 .swal-reminder-popup .reminder-custom-confirm.shake {

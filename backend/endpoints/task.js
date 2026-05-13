@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken} = require('../utils/validations');
-
 const pool = require("../config/database");
+
+// GET /tasks/board/:boardId
+router.get('/board/:boardId', verifyToken, async (req, res) => {
+    try {
+        const {boardId} = req.params;
+        const [rows] = await pool.query(`
+            SELECT ct.*
+            FROM column_task ct
+            INNER JOIN board_column bc ON ct.id_column = bc.id_column
+            WHERE bc.id_board = ?
+        `, [boardId]);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error('Error al obtener tareas del tablero:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+});
 
 // GET /tasks — obtener todas las tareas
 router.get('/', verifyToken, async (req, res) => {

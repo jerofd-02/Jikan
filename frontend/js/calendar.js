@@ -3,6 +3,7 @@ const WEEKDAYS_FULL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'S�
 const WEEKDAYS_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
 const REFRESH_INTERVAL_MS = 30_000;
+let currentBoardId = null
 
 function waitForCalendar() {
     const container = document.querySelector('[data-template="calendar"]');
@@ -42,9 +43,11 @@ function buildDateKey(year, month, day) {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-async function fetchTasksByDate() {
+async function fetchTasksByDate(boardId) {
+    if (!boardId) return {byDate: new Map(), byDeadline: new Map()};
+    const url = `http://localhost:3000/tasks/board/${boardId}`;
     try {
-        const response = await fetch('http://localhost:3000/tasks', {
+        const response = await fetch(url, {
             method: 'GET',
             credentials: 'include',
             headers: {'Content-Type': 'application/json'}
@@ -183,7 +186,7 @@ function initCalendar(container) {
         grid.style.opacity = '0';
         closeDayPopover();
 
-        ({byDate: tasksByDate, byDeadline: tasksByDeadline} = await fetchTasksByDate());
+        ({byDate: tasksByDate, byDeadline: tasksByDeadline} = await fetchTasksByDate(currentBoardId));
 
         setTimeout(() => {
             const {year, month} = current;
@@ -324,6 +327,11 @@ function initCalendar(container) {
     });
 
     document.addEventListener('taskUpdated', () => render());
+
+    document.addEventListener('boardChanged', (e) => {
+        currentBoardId = e.detail?.boardId ?? null;
+        render();
+    });
 
     let refreshTimer = setInterval(() => render(), REFRESH_INTERVAL_MS);
     document.addEventListener('visibilitychange', () => {

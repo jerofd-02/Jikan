@@ -77,10 +77,11 @@ function setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsCont
     };
 }
 
-async function modifyTask(taskElement) {
-    if (!taskElement) return;
+async function modifyTask(taskElement, taskObj = null) {
+    console.log('[modifyTask] llamada con', { taskElement, taskObj });
 
-    const taskId = taskElement.dataset.taskId;
+    const taskId = taskElement ? String(taskElement.dataset.taskId) : String(taskObj.id_task);
+    console.log('[modifyTask] taskId:', taskId);
 
     let taskData;
     try {
@@ -127,9 +128,9 @@ async function modifyTask(taskElement) {
                         <button type="button" class="add-label-btn" id="add-label-btn" title="Nueva categoría">+</button>
                     </div>
                     <label for="date">Fecha de la tarea</label>
-                    <input type="date" id="date" autocomplete="off">
+                    <input type="datetime-local" id="date" autocomplete="off">
                     <label for="deadline">Fecha límite de la tarea</label>
-                    <input type="date" id="deadline" autocomplete="off">
+                    <input type="datetime-local" id="deadline" autocomplete="off">
                     <button type="button" class="set-reminder-btn" id="set-reminder-btn">
                         <i class="fa-solid fa-bell"></i>
                         Establecer recordatorio
@@ -140,8 +141,8 @@ async function modifyTask(taskElement) {
         didOpen: async () => {
             document.getElementById('name').value = taskData.name || '';
             document.getElementById('description').value = taskData.description || '';
-            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 10) : '';
-            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
+            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 16) : '';
+            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 16) : '';
 
             const chipsContainer = document.getElementById('label-chips');
             renderLabels(chipsContainer, currentLabels);
@@ -150,8 +151,7 @@ async function modifyTask(taskElement) {
             try {
                 const res = await fetch(`${TASK_API_URL}/labels/all`);
                 if (res.ok) allLabels = await res.json();
-            } catch {
-            }
+            } catch {}
 
             const input = document.getElementById('new-label-input');
             const datalist = document.getElementById('labels-datalist');
@@ -171,6 +171,8 @@ async function modifyTask(taskElement) {
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
             const name = document.getElementById('name').value.trim();
+            const dateVal = document.getElementById('date').value;
+            const deadlineVal = document.getElementById('deadline').value;
             if (!name) {
                 Swal.showValidationMessage('El nombre no puede estar vacío');
                 return false;
@@ -178,8 +180,8 @@ async function modifyTask(taskElement) {
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
-                date: document.getElementById('date').value || null,
-                deadline: document.getElementById('deadline').value || null,
+                date: dateVal ? dateVal + ':00' : null,
+                deadline: deadlineVal ? deadlineVal + ':00' : null,
                 labels: currentLabels,
             };
         }
@@ -268,6 +270,12 @@ document.addEventListener("click", (e) => {
         const task = e.target.closest(".task");
         modifyTask(task);
     }
+});
+
+document.addEventListener('openTaskEdit', (e) => {
+    const task = e.detail?.task;
+    if (!task) return;
+    modifyTask(null, task);
 });
 
 document.addEventListener("keydown", (e) => {

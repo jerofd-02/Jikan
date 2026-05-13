@@ -206,15 +206,22 @@ document.addEventListener("DOMContentLoaded", () => {
             // cambiar de tablero
             const botonTablero = e.target.closest(".swap-board-button");
             if (botonTablero) {
-
                 const name = botonTablero.textContent.trim();
                 const boardId = await getData(BASE_URL + `/boards/name/${name}`);
                 const boards = await getData(BASE_URL + `/boards/${boardId.board_id}/full`);
 
                 tablero.innerHTML = '';
                 cargarColumnas(boards, tablero, titulo);
+
+                document.dispatchEvent(new CustomEvent('boardChanged', {
+                    detail: {boardId: boardId.board_id}
+                }));
             }
         }
-    )
-    ;
+    );
+});
+
+document.addEventListener('boardsLoaded', () => {
+    const firstButton = document.querySelector('.swap-board-button');
+    if (firstButton) firstButton.click();
 });
