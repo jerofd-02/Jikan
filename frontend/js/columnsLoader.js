@@ -97,6 +97,7 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 
     let newBoardbutton = document.createElement("button");
     newBoardbutton.className = "create-new-column";
+    //newBoardbutton.id = "Boton-Crear-Tablero";
     newBoardbutton.textContent = "Crear nueva columna";
 
     tablero.appendChild(newBoardbutton);
