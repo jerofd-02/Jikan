@@ -12,16 +12,21 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+//Añadido para el upload de imágenes-----------------------------------
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//---------------------------------------------------------------------
+
 const boardRoutes = require('./endpoints/board');
 const taskRoutes = require('./endpoints/task');
 const columnRoutes = require('./endpoints/column');
 const authRoutes = require('./endpoints/auth');
 const usersRouter = require('./endpoints/users');
 
-app.use('/boards', boardRoutes);
-app.use('/tasks', taskRoutes);
-app.use('/columns', columnRoutes);
-app.use('/auth', authRoutes);
+app.use('/api/boards', boardRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/columns', columnRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRouter);
 
 async function testConnection() {

@@ -105,6 +105,25 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 const init = async () => {
 
     const userMail = localStorage.getItem("userMail");
+
+    try {
+        const verifyRes = await fetch(`${BASE_URL}/auth/verify`, { credentials: 'include' });
+        if (verifyRes.ok) {
+            const { name, avatar_url } = await verifyRes.json();
+
+            const userPicture = document.querySelector('.user-picture');
+            if (userPicture && avatar_url) userPicture.src = avatar_url;
+
+            const userName = document.querySelector('.user-name-asside');
+            if (userName) userName.textContent = name;
+
+            const userEmailEl = document.querySelector('.user-email-asside');
+            if (userEmailEl) userEmailEl.textContent = userMail || '';
+        }
+    } catch (e) {
+        console.error('Error cargando datos de usuario:', e);
+    }
+
     let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
 
     let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 

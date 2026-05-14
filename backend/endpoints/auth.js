@@ -129,7 +129,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/verify', verifyToken, async (req, res) => {
-    res.json({ ok: true, mail: req.user.mail, name: req.user.name });
+    res.json({ ok: true, mail: req.user.mail, name: req.user.name, avatar_url: req.user.avatar_url });
 });
 
 // DELETE /auth/delete-account

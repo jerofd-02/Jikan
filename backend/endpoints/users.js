@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const uploadAvatar = require('../middlewares/uploadAvatar');
 const bcrypt = require('bcryptjs');
 const { verifyToken } = require('../utils/validations');
 const pool = require('../config/database');
@@ -68,5 +69,39 @@ router.patch('/password', verifyToken, async (req, res) => {
         handleError(res, error, 'actualizar contraseña');
     }
 });
+
+router.patch(
+    '/avatar',
+    verifyToken,
+    uploadAvatar.single('avatar'),
+
+    async (req, res) => {
+
+        try {
+
+            if (!req.file) {
+                return res.status(400).json({
+                    message: 'No se subió ninguna imagen'
+                });
+            }
+
+            const avatarUrl =
+                `/uploads/avatars/${req.file.filename}`;
+
+            await pool.query(
+                'UPDATE users SET avatar_url = ? WHERE id = ?',
+                [avatarUrl, req.user.id]
+            );
+
+            res.status(200).json({
+                message: 'Avatar actualizado correctamente',
+                avatar_url: avatarUrl
+            });
+
+        } catch (error) {
+            handleError(res, error, 'actualizar avatar');
+        }
+    }
+);
 
 module.exports = router;

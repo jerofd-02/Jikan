@@ -19,6 +19,7 @@ services:
     volumes:
       - ./backend:/app
       - node_modules:/app/node_modules
+      - uploads_data:/app/uploads
     depends_on:
       mysql:
         condition: service_healthy
@@ -48,5 +49,9 @@ services:
 volumes:
   node_modules:
     driver: local
+
   mysql_data:
+    driver: local
+
+  uploads_data:
     driver: local

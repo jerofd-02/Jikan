@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 function showToast(msg, ok = true) {
     Swal.fire({
@@ -19,13 +19,18 @@ async function loadUserData() {
     try {
         const res = await fetch(`${API}/auth/verify`, { credentials: 'include' });
         if (!res.ok) return;
-        const { name, mail } = await res.json();
+        const { name, mail, avatar_url } = await res.json();
 
         document.getElementById('username').placeholder = name || '';
         document.getElementById('email').placeholder    = mail || '';
 
         const sidebarName = document.querySelector('aside h3');
         if (sidebarName) sidebarName.textContent = name || '';
+
+        if (avatar_url) {
+            const avatarWrapper = document.querySelector('.avatar-wrapper');
+            if (avatarWrapper) avatarWrapper.style.backgroundImage = `url(${avatar_url})`;
+        }
     } catch (e) {
         console.error('Error cargando datos de usuario:', e);
     }
@@ -56,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('username').placeholder = name;
                 const sidebarName = document.querySelector('aside h3');
                 if (sidebarName) sidebarName.textContent = name;
+                localStorage.setItem('userName', name);
             } else {
                 showToast(data.message || 'Error al actualizar', false);
             }
@@ -80,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Correo actualizado');
                 document.getElementById('email').value = '';
                 document.getElementById('email').placeholder = mail;
+                localStorage.setItem('userMail', mail);
             } else {
                 showToast(data.message || 'Error al actualizar', false);
             }
@@ -116,4 +123,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(data.message || 'Error al actualizar', false);
             }
         });
+
+    // ── Avatar ────────────────────────────────────────────────────
+    const avatarWrapper = document.querySelector('.avatar-wrapper');
+    const avatarInput   = document.getElementById('avatarInput');
+
+    if (avatarWrapper && avatarInput) {
+        avatarWrapper.addEventListener('click', () => avatarInput.click());
+
+        avatarInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const res = await fetch(`${API}/users/avatar`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    body: formData,
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
+
+                avatarWrapper.style.backgroundImage = `url(${data.avatar_url})`;
+                showToast('Avatar actualizado');
+
+            } catch (err) {
+                console.error(err);
+                showToast('Error al subir el avatar', false);
+            }
+        });
+    }
 });

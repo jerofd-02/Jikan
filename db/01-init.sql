@@ -7,6 +7,8 @@ CREATE TABLE users
     mail     VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
+    avatar_url  TEXT DEFAULT NULL,
+
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
