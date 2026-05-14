@@ -209,10 +209,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 tablero.innerHTML = '';
                 await cargarColumnas(boards, tablero, titulo)
 
+                document.querySelector('.shop-button').style.display = 'none';
+                document.querySelector('.streak-badge').style.display = 'none';
+
                 if (boards.isGamified) {
                     document.querySelector('button.create-new-column').remove();
                     document.querySelectorAll('.add-task').forEach(boton => boton.remove());
                     document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
+                    document.querySelector('.shop-button').style.display = 'block';
+                    document.querySelector('.streak-badge').style.display = 'inline-flex';
                 }
             }
         }

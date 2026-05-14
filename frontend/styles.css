@@ -14,6 +14,7 @@ html {
     --border-color: #343741;
     --font-color: #e8e8f5;
     --font-color2: #9090b8;
+    --font-contrast: #e8e8f5;
     --principal: #7c6af7;
     --dark-accent: #3b2f7a;
     --light-accent: #8f7ef9;
@@ -32,6 +33,7 @@ html {
     --border-color: #dcdfea;
     --font-color: #1a1a2e;
     --font-color2: #6b6b8f;
+    --font-contrast: #e8e8f5;
 
     --principal: #6a5cff;
     --dark-accent: #4b3fc4;
@@ -45,8 +47,9 @@ html {
     --border-color: #233554;
     --font-color: #e6f1ff;
     --font-color2: #8892b0;
+    --font-contrast: #e8e8f5;
 
-    --principal: #64ffda;
+    --principal: #49af97;
     --dark-accent: #2a8f7c;
     --light-accent: #52e0c4;
 }
@@ -59,6 +62,7 @@ html {
 
     --font-color: #f3f3f7;
     --font-color2: #a0a0b3;
+    --font-contrast: #e8e8f5;
 
     /* acento lava */
     --principal: #ff4d2e;
@@ -274,10 +278,14 @@ input {
                         }
                     }
                 }
+                
+                .shop-button {
+                    display: none;
+                }
 
                 .streak-badge {
+                    display: none;
                     position: relative;
-                    display: inline-flex;
                     align-items: center;
                     justify-content: center;
 
@@ -534,6 +542,7 @@ input {
     .nav-item.active {
         color: white;
         background-color: var(--principal);
+        pointer-events: none;
     }
 
     aside {
@@ -560,7 +569,6 @@ input {
         }
 
         nav {
-            margin-top: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -580,12 +588,13 @@ input {
                     padding: 15px 20px;
                     width: 100%;
                     text-align: left;
+                    margin: 5px 0;
 
                     transition: all 0.2s ease;
 
                     &:hover {
                         background-color: var(--dark-accent);
-                        transform: scale(1.05);
+                        transform: scale(1.04);
                     }
                 }
 
@@ -602,7 +611,7 @@ input {
         justify-content: center;
         flex-direction: column;
         align-items: center;
-        max-width: 350px;
+        max-width: 500px;
         width: 100%;
         margin: auto;
 
@@ -624,14 +633,14 @@ input {
         }
 
         button {
-            background: linear-gradient(45deg, var(--light-accent) 0%, var(--principal) 100%);
+            background: var(--principal);
             border: none;
-            color: white;
+            color: var(--font-contrast);
             font-weight: bold;
             font-size: 1.2rem;
             cursor: pointer;
             padding: 15px 15px;
-            border-radius: 20px;
+            border-radius: 10px;
             margin: 20px auto 0;
 
             transition: all 0.2s ease;
@@ -645,8 +654,8 @@ input {
         form {
             display: flex;
             flex-direction: column;
-            margin-bottom: 20px;
-            width: 100%;
+            margin: 0 auto;
+            width: 350px;
 
             label {
                 color: var(--font-color);
@@ -688,11 +697,23 @@ input {
 
                     i {
                         font-size: 1.2rem;
-                        color: white;
+                        color: var(--font-color);
                     }
                 }
             }
         }
+    }
+
+    .info-form {
+        width: 300px;
+    }
+
+    .config-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .avatar-wrapper {
@@ -700,7 +721,7 @@ input {
         height: 150px;
         border-radius: 50%;
         background: #B3B3B3;
-        margin: 0 auto 20px;
+        margin: auto;
     }
 
     .notification-setting + .notification-setting {
@@ -1574,7 +1595,7 @@ input {
 .edit-task-input button.save-btn,
 .edit-task-input button.cancel-btn-modify {
     background: var(--dark-accent);
-    color: var(--font-color);
+    color: var(--font-contrast);
     border: 1px solid var(--border-color) !important;
     font-size: 1rem;
     cursor: pointer;
@@ -2444,14 +2465,15 @@ input:-webkit-autofill:active {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #888;
-  background: #f4f2ed;
+  color: var(--font-color2);
+  background: var(--background3-color);
+  border: 1px solid var(--border-color);
   padding: 4px 10px;
   border-radius: 20px;
 }
 
 .swal-points b {
-  color: #1a1a1a;
+  color: var(--font-color);
 }
 
 .swal-grid {
@@ -2507,7 +2529,7 @@ input:-webkit-autofill:active {
 .swal-card .buy-btn {
     width: 100%;
     background: var(--dark-accent);
-    color: var(--font-color);
+    color: var(--font-contrast);
     border: none;
     border-radius: 7px;
     padding: 7px 0;
@@ -2540,10 +2562,10 @@ input:-webkit-autofill:active {
     font-size: 12px;
     padding: 4px 12px;
     border-radius: 20px;
-    border: 1px solid #d0cdc6;
-    background: #fff;
-    color: #555;
+    border: 1px solid var(--border-color);
+    background: var(--background3-color);
+    color: var(--font-color2);
     cursor: pointer;
     transition: all 0.12s;
 }
-.filter-btn.active { background: var(--principal); color: var(--font-color); border-color: var(--border-color); }
+.filter-btn.active { background: var(--principal); color: var(--font-contrast); border-color: var(--border-color); }

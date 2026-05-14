@@ -1,15 +1,15 @@
 userPoints = 500;
 
 const products = [
-      { id:1, emoji:'🟦', name:'Azul',     cat:'Tema',        price:'50 €', badge:'new', description:'Color azul' },
-      { id:2, emoji:'🟨', name:'Amarillo', cat:'Tema',        price:'50 €', badge: null, description:'Color amarillo' },
-      { id:3, emoji:'🟩', name:'Verde',    cat:'Tema',        price:'50 €', badge:'sale', description:'Color verde' },
-      { id:4, emoji:'🟫', name:'Marrón',   cat:'Tema',        price:'50 €', badge:'new', description:'Color marrón' },
-      { id:5, emoji:'🔥', name:'x2',       cat:'Potenciador', price:'100 €', badge: null, description:'Potencia la racha x2 durante 24 horas' },
-      { id:6, emoji:'🔥', name:'x5',       cat:'Potenciador', price:'200 €', badge: null, description:'Potencia la racha x5 durante 24 horas' },
-      { id:7, emoji:'🔥', name:'x10',      cat:'Potenciador', price:'500 €', badge:'sale', description:'Potencia la racha x10 durante 24 horas' },
-      { id:8, emoji:'🛡️', name:'1 dia',    cat:'Protector',   price:'100 €', badge:'new', description:'Proteje la racha durante 1 día' },
-      { id:9, emoji:'🛡️', name:'2 dias',   cat:'Protector',   price:'200 €', badge: null, description:'Proteje la racha durante 2 días' },
+      { id:1, emoji:'🟦', name:'Azul',     cat:'Tema',        price: 50,  badge:'new', description:'Color azul' },
+      { id:2, emoji:'🟨', name:'Amarillo', cat:'Tema',        price: 50,  badge: null, description:'Color amarillo' },
+      { id:3, emoji:'🟩', name:'Verde',    cat:'Tema',        price: 50,  badge:'sale', description:'Color verde' },
+      { id:4, emoji:'🟫', name:'Marrón',   cat:'Tema',        price: 50,  badge:'new', description:'Color marrón' },
+      { id:5, emoji:'🔥', name:'x2',       cat:'Potenciador', price: 100, badge: null, description:'Potencia la racha x2 durante 24 horas' },
+      { id:6, emoji:'🔥', name:'x5',       cat:'Potenciador', price: 200, badge: null, description:'Potencia la racha x5 durante 24 horas' },
+      { id:7, emoji:'🔥', name:'x10',      cat:'Potenciador', price: 500, badge:'sale', description:'Potencia la racha x10 durante 24 horas' },
+      { id:8, emoji:'🛡️', name:'1 dia',    cat:'Protector',   price: 100, badge:'new', description:'Proteje la racha durante 1 día' },
+      { id:9, emoji:'🛡️', name:'2 dias',   cat:'Protector',   price: 200, badge: null, description:'Proteje la racha durante 2 días' },
     ];
  
     const cats = ['Todos', ...new Set(products.map(p => p.cat))];
@@ -24,7 +24,7 @@ function renderHTML() {
     return `
     <div class="swal-points">
         <span class="points-icon">⭐</span>
-        <span><b>${userPoints}</b> puntos</span>
+        <span><b>${userPoints}</b> jikoins</span>
     </div>
     <div class="swal-filter">
         ${cats.map(c => `
@@ -45,7 +45,7 @@ function renderHTML() {
             <div class="name">${p.name}</div>
             <div class="cat">${p.cat}</div>
             <div class="description">${p.description}</div>
-            <div class="price">${p.price}</div>
+            <div class="price">${p.price} J</div>
             <button class="buy-btn" onclick="confirmBuy(${p.id})">Comprar</button>
         </div>
         `).join('')}
