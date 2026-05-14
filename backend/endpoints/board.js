@@ -108,7 +108,10 @@ router.get('/:id/full', verifyToken, async (req, res) => {
             };
         }));
 
-        res.status(200).json({...boardRows[0], columns: columnsWithTasks});
+        const [gamified] = await pool.query('SELECT * FROM gamified_board WHERE id_board = ?', [id]);
+        const isGamified = gamified.length > 0 ? true : false;
+
+        res.status(200).json({...boardRows[0], columns: columnsWithTasks, isGamified});
     } catch (error) {
         handleError(res, error, 'obtener board completo');
     }

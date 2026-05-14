@@ -17,20 +17,22 @@ const taskRoutes = require('./endpoints/task');
 const columnRoutes = require('./endpoints/column');
 const authRoutes = require('./endpoints/auth');
 const usersRouter = require('./endpoints/users');
+const gamifiedBoardRouter = require('./endpoints/gamifiedBoard');
 
 app.use('/boards', boardRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/columns', columnRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/users', usersRouter);
+app.use('/boards/gamified', gamifiedBoardRouter);
 
 async function testConnection() {
     try {
         const conn = await pool.getConnection();
-        console.log('✓ Conectado a MySQL');
+        console.log('Conectado a MySQL');
         conn.release();
     } catch (error) {
-        console.error('✗ Error al conectar con MySQL:', error.message);
+        console.error('Error al conectar con MySQL:', error.message);
     }
 }
 
