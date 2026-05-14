@@ -1,3 +1,4 @@
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 import { tituloEditable } from './add_column.js';
 import { tituloEditableBoard } from './assideButtonsActions.js';
 const BASE_URL = "/api";
@@ -101,6 +102,18 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
     newBoardbutton.textContent = "Crear nueva columna";
 
     tablero.appendChild(newBoardbutton);
+
+    if (boards.isGamified) {
+        let columnas = tablero.querySelectorAll(".task-list");
+        let lastColumn = columnas[columnas.length -1];
+
+        lastColumn.querySelectorAll("div").forEach(task => {
+            task.draggable = false;
+            let checkbox = task.querySelector('input[type="checkbox"]');
+            checkbox.click();
+            checkbox.disabled = true;
+        });
+    }
 };
 
 const init = async () => {
@@ -129,16 +142,48 @@ const init = async () => {
     });
 
     tablero.addEventListener("drop", async (e) => {
+        const boardId = tablero.dataset.boardId;
         const targetList = e.target.closest(".task-list");
-        if (selected && targetList) {
-            const taskId = selected.dataset.taskId;
-            const columnId = targetList.dataset.columnId;
 
+        const moverTarea = async (taskId, columnId) => {
             await fetch(`${BASE_URL}/tasks/${taskId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id_column: columnId }),
             }).catch(err => console.error("Error actualizando tarea:", err));
+        }
+
+        if (selected && targetList) {
+            const taskId = selected.dataset.taskId;
+            const columnId = targetList.dataset.columnId;
+
+            const boardData = await getData(BASE_URL + `/boards/${boardId}/full`);
+            const lastColumnId = boardData.columns[boardData.columns.length - 1].column_id;
+
+            if (boardData.isGamified && parseInt(targetList.dataset.columnId) === lastColumnId) {
+                
+                const { isConfirmed } = await Swal.fire({
+                    customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
+                    title: "¿Has terminado con esta tarea?",
+                    text: `La tarea "${selected.textContent}" se dará por finalizada y no puedes volver atrás.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, completar',
+                    cancelButtonText: 'Cancelar',
+                });
+            
+                if (!isConfirmed) return;
+
+                await moverTarea(taskId, columnId);
+                
+                selected.draggable = false;
+                let checkbox = selected.querySelector('input[type="checkbox"]');
+                checkbox.click();
+                checkbox.disabled = true;
+
+            } else {
+                await moverTarea(taskId, columnId);
+            }
 
             targetList.appendChild(selected);
             selected = null;
