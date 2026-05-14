@@ -7,7 +7,10 @@ CREATE TABLE users
     mail     VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
-    CONSTRAINT pk_users PRIMARY KEY (id)
+    jikoins INT NOT NULL DEFAULT 0,
+
+    CONSTRAINT pk_users PRIMARY KEY (id),
+    CONSTRAINT min_jikoins CHECK (jikoins >= 0)
 );
 
 
@@ -43,6 +46,22 @@ CREATE TABLE columns_table
     name      VARCHAR(100) NOT NULL,
 
     CONSTRAINT pk_column PRIMARY KEY (column_id)
+);
+
+CREATE TABLE objects
+(
+    object_id INT AUTO_INCREMENT NOT NULL,
+    object_name VARCHAR(255) NOT NULL,
+    object_description VARCHAR(255) NOT NULL,
+    object_img VARCHAR(255) NOT NULL,
+
+    price INT NOT NULL,
+
+    object_category VARCHAR(255) NOT NULL,
+    object_label VARCHAR(255),
+    one_time BOOLEAN NOT NULL,
+
+    CONSTRAINT pk_object PRIMARY KEY (object_id)
 );
 
 -- RELACIONES ENTRE ENTIDADES DE LA APLICACIÓN
@@ -106,6 +125,20 @@ CREATE TABLE user_task
 
     CONSTRAINT fk_ut_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_ut_task FOREIGN KEY (task_id) REFERENCES column_task (id_task) ON DELETE CASCADE
+);
+
+CREATE TABLE purchases
+(
+    purchase_id INT AUTO_INCREMENT NOT NULL,
+    id_user INT NOT NULL,
+    id_object INT NOT NULL,
+    bought_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    price_paid INT NOT NULL,
+
+    CONSTRAINT pk_user_object PRIMARY KEY (purchase_id),
+
+    CONSTRAINT fk_uo_user FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_uo_object FOREIGN KEY (id_object) REFERENCES objects (object_id) ON DELETE CASCADE
 );
 
 -- propiedad multivaluada de "task"
