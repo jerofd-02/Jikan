@@ -173,15 +173,20 @@ async function modifyTask(taskElement, taskObj = null) {
             const name = document.getElementById('name').value.trim();
             const dateVal = document.getElementById('date').value;
             const deadlineVal = document.getElementById('deadline').value;
+            const toLocalISO = (localStr) => {
+                if (!localStr) return null;
+                return localStr + ':00';
+            }
             if (!name) {
                 Swal.showValidationMessage('El nombre no puede estar vacío');
                 return false;
             }
+
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
-                date: dateVal ? dateVal + ':00' : null,
-                deadline: deadlineVal ? deadlineVal + ':00' : null,
+                date: toLocalISO(dateVal),
+                deadline: toLocalISO(deadlineVal),
                 labels: currentLabels,
             };
         }
@@ -202,10 +207,9 @@ async function saveSwalTask(taskElement, newData, previousData) {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newData)
         });
-
         if (!response.ok) throw new Error("Error al guardar");
-
         paragraph.textContent = newData.name;
+        document.dispatchEvent(new CustomEvent('taskUpdated'));
 
         undoManager.add({
             undo: async () => {
@@ -222,6 +226,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousData.name;
+                document.dispatchEvent(new CustomEvent('taskUpdated'));
                 hideUndoPopup();
             },
             redo: async () => {
@@ -232,6 +237,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
                 paragraph.textContent = newData.name;
+                document.dispatchEvent(new CustomEvent('taskUpdated'));
                 showUndoPopup();
             }
         });

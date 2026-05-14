@@ -1,8 +1,6 @@
 const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const WEEKDAYS_FULL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const WEEKDAYS_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-
-const REFRESH_INTERVAL_MS = 30_000;
 let currentBoardId = null
 
 function waitForCalendar() {
@@ -30,13 +28,16 @@ document.addEventListener('DOMContentLoaded', waitForCalendar);
 
 function toLocalDateString(value) {
     if (!value) return null;
-    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-    const d = new Date(value);
-    if (isNaN(d)) return null;
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
+    const match = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (match) return match[1];
+    return null;
+}
+
+function formatTime(dateStr) {
+    if (!dateStr) return null;
+    const match = dateStr.match(/T(\d{2}):(\d{2})/);
+    if (!match) return null;
+    return `${match[1]}:${match[2]}`;
 }
 
 function buildDateKey(year, month, day) {
@@ -57,6 +58,7 @@ async function fetchTasksByDate(boardId) {
             return {byDate: new Map(), byDeadline: new Map()};
         }
         const tasks = await response.json();
+        console.log('[fetchTasksByDate] primera tarea:', tasks[0]);
         const byDate = new Map();
         const byDeadline = new Map();
         const addToMap = (map, key, task) => {
@@ -125,12 +127,12 @@ function showDayPopover(cell, dateKey, entries) {
     header.appendChild(closeBtn);
     popover.appendChild(header);
 
-    entries.forEach(({task, type}) => {
+    entries.forEach(({task, type, time}) => {
         const item = document.createElement('button');
         item.className = `day-popover__item task-chip task-chip--${type}`;
         item.type = 'button';
         item.title = type === 'deadline' ? `Fecha límite: ${task.name}` : task.name;
-        item.textContent = task.name;
+        item.textContent = time ? `${time} ${task.name}` : task.name;
 
         item.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -263,20 +265,34 @@ function initCalendar(container) {
 
                 const dateKey = buildDateKey(cellYear, cellMonth, dayNum);
                 const entries = [
-                    ...(tasksByDate.get(dateKey) || []).map(t => ({task: t, type: 'date'})),
-                    ...(tasksByDeadline.get(dateKey) || []).map(t => ({task: t, type: 'deadline'})),
+                    ...(tasksByDate.get(dateKey) || []).map(t => ({
+                        task: t,
+                        type: 'date',
+                        time: formatTime(t.date)
+                    })),
+                    ...(tasksByDeadline.get(dateKey) || []).map(t => ({
+                        task: t,
+                        type: 'deadline',
+                        time: formatTime(t.deadline)
+                    })),
                 ];
+
+                entries.sort((a, b) => {
+                    if (!a.time) return 1;
+                    if (!b.time) return -1;
+                    return a.time.localeCompare(b.time);
+                });
 
                 const MAX_VISIBLE = 3;
                 const visible = entries.slice(0, MAX_VISIBLE);
                 const overflow = entries.length - MAX_VISIBLE;
 
-                visible.forEach(({task, type}) => {
+                visible.forEach(({task, type, time}) => {
                     const chip = document.createElement('button');
                     chip.className = `task-chip task-chip--${type}`;
                     chip.type = 'button';
                     chip.title = type === 'deadline' ? `Fecha límite: ${task.name}` : task.name;
-                    chip.textContent = task.name;
+                    chip.textContent = time ? `${time} ${task.name}` : task.name;
                     chip.setAttribute('aria-label', `Editar tarea: ${task.name}`);
                     chip.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -325,23 +341,10 @@ function initCalendar(container) {
         }
         render();
     });
-
     document.addEventListener('taskUpdated', () => render());
-
     document.addEventListener('boardChanged', (e) => {
         currentBoardId = e.detail?.boardId ?? null;
         render();
     });
-
-    let refreshTimer = setInterval(() => render(), REFRESH_INTERVAL_MS);
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            clearInterval(refreshTimer);
-        } else {
-            render();
-            refreshTimer = setInterval(() => render(), REFRESH_INTERVAL_MS);
-        }
-    });
-
     render();
 }
