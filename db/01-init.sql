@@ -99,3 +99,18 @@ CREATE TABLE board_column
     CONSTRAINT fk_bc_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
     CONSTRAINT fk_bc_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
 );
+
+CREATE TABLE board_invitations
+(
+    invitation_id   INT AUTO_INCREMENT NOT NULL,
+    board_id        INT NOT NULL,
+    invited_by      INT NOT NULL,
+    invited_mail    VARCHAR(255) NOT NULL,
+    token           VARCHAR(255) NOT NULL UNIQUE,
+    status          ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_invitation PRIMARY KEY (invitation_id),
+    CONSTRAINT fk_inv_board FOREIGN KEY (board_id) REFERENCES board (board_id) ON DELETE CASCADE,
+    CONSTRAINT fk_inv_user FOREIGN KEY (invited_by) REFERENCES users (id) ON DELETE CASCADE
+);
