@@ -86,8 +86,7 @@ function showShareFeedback(el, msg, type) {
 }
 
 function getCurrentBoardId() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('board') || params.get('id') || 1;
+    return document.querySelector('.boards-section')?.dataset.boardId || null;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

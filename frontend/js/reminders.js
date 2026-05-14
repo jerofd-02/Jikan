@@ -109,8 +109,12 @@ function renderInvitationItem(n) {
                 <span class="notif-time">${formatTimestamp(n.fireAt)}</span>
             </div>
             <div class="notif-actions">
-                <button class="notif-accept" data-token="${n.token}">Aceptar</button>
-                <button class="notif-reject" data-token="${n.token}">Rechazar</button>
+                <button class="notif-accept" data-token="${n.token}" title="Aceptar">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button class="notif-reject" data-token="${n.token}" title="Rechazar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
         </li>`;
 }

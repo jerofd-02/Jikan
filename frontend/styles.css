@@ -2449,8 +2449,8 @@ input:-webkit-autofill:active {
 .share-feedback.hidden { display: none; }
 
 .share-feedback--success {
-    color: #22c55e;
-    background: rgba(34, 197, 94, 0.1);
+    color: var(--principal);
+    background: rgba(124, 106, 247, 0.1);
 }
 
 .share-feedback--error {
