@@ -17,12 +17,14 @@ const taskRoutes = require('./endpoints/task');
 const columnRoutes = require('./endpoints/column');
 const authRoutes = require('./endpoints/auth');
 const usersRouter = require('./endpoints/users');
+const invitationsRouter = require('./endpoints/invitations');
 
 app.use('/boards', boardRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/columns', columnRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/users', usersRouter);
+app.use('/invitations', invitationsRouter);
 
 async function testConnection() {
     try {

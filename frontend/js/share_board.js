@@ -26,85 +26,54 @@ function initShareButton() {
 function renderShareDropdown() {
     const dropdown = document.getElementById('share-dropdown');
     if (!dropdown) return;
-
-    // Se genera el enlace de invitación. TODO: AJUSTAR A LA LOGICA
-    const boardId = getCurrentBoardId(); // TODO: AJUSTAR A NUESTRA LOGICA
-    const shareUrl = `${window.location.origin}${window.location.pathname}?board=${boardId}`;
-
     dropdown.innerHTML = `
         <div class="share-header">
             <i class="fa-solid fa-share-nodes"></i>
             <span>Compartir tablero</span>
         </div>
-
         <div class="share-section">
             <label class="share-label">Invitar por correo</label>
             <div class="share-email-row">
-                <input
-                    type="email"
-                    id="share-email-input"
-                    class="share-email-input"
-                    placeholder="correo@ejemplo.com"
-                    autocomplete="off"
-                />
+                <input type="email" id="share-email-input" class="share-email-input" placeholder="correo@ejemplo.com" autocomplete="off" />
                 <button class="share-send-btn" id="share-send-btn">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
             <p class="share-feedback hidden" id="share-feedback"></p>
         </div>
-
-        <div class="share-divider">
-            <span>o</span>
-        </div>
-
-        <div class="share-section">
-            <label class="share-label">Enlace del tablero</label>
-            <div class="share-link-row">
-                <input
-                    type="text"
-                    class="share-link-input"
-                    id="share-link-input"
-                    value="${shareUrl}"
-                    readonly
-                />
-                <button class="share-copy-btn" id="share-copy-btn" title="Copiar enlace">
-                    <i class="fa-regular fa-copy"></i>
-                </button>
-            </div>
-        </div>
     `;
 
-
-    // TODO: Enviar invitación por correo (DUMMY)
-    dropdown.querySelector('#share-send-btn').addEventListener('click', () => {
+    const sendBtn = dropdown.querySelector('#share-send-btn');
+    sendBtn.addEventListener('click', async () => {
         const input = dropdown.querySelector('#share-email-input');
         const feedback = dropdown.querySelector('#share-feedback');
         const email = input.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const boardId = getCurrentBoardId();
 
-        if (!emailRegex.test(email)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             showShareFeedback(feedback, 'Introduce un correo válido.', 'error');
             return;
         }
 
-        // TODO: HAY QUE CONECTAR CON EL BACKEND LAS INVITACIONES (por ahora se simula éxito)
-        showShareFeedback(feedback, `Invitación enviada a ${email}`, 'success');
-        input.value = '';
-    });
+        try {
+            const res = await fetch('/api/invitations/send', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({board_id: boardId, invited_mail: email}),
+                credentials: 'include'
+            });
 
-    // Copiar enlace al portapapeles
-    dropdown.querySelector('#share-copy-btn').addEventListener('click', () => {
-        const linkInput = dropdown.querySelector('#share-link-input');
-        navigator.clipboard.writeText(linkInput.value).then(() => {
-            const copyBtn = dropdown.querySelector('#share-copy-btn');
-            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
-            copyBtn.classList.add('copied');
-            setTimeout(() => {
-                copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-                copyBtn.classList.remove('copied');
-            }, 2000);
-        });
+            const data = await res.json();
+            if (!res.ok) {
+                showShareFeedback(feedback, data.error || 'Error al enviar.', 'error');
+                return;
+            }
+
+            showShareFeedback(feedback, `Invitación enviada a ${email}`, 'success');
+            input.value = '';
+        } catch (err) {
+            showShareFeedback(feedback, 'Error de red.', 'error');
+        }
     });
 }
 
@@ -116,9 +85,9 @@ function showShareFeedback(el, msg, type) {
     }, 3000);
 }
 
-// TODO: AJUSTAR A NUESTRA LOGICA SEGN LOS IDS DEL TABLERO
 function getCurrentBoardId() {
-    return new URLSearchParams(window.location.search).get('board') || 'default';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('board') || params.get('id') || 1;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

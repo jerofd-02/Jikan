@@ -23,9 +23,9 @@ function saveReminders(reminders) {
 
 function msToLabel(ms) {
     const totalMin = Math.floor(ms / (1000 * 60));
-    const totalH   = Math.floor(ms / (1000 * 60 * 60));
-    const totalD   = Math.floor(ms / (1000 * 60 * 60 * 24));
-    const totalW   = Math.floor(ms / (1000 * 60 * 60 * 24 * 7));
+    const totalH = Math.floor(ms / (1000 * 60 * 60));
+    const totalD = Math.floor(ms / (1000 * 60 * 60 * 24));
+    const totalW = Math.floor(ms / (1000 * 60 * 60 * 24 * 7));
 
     if (totalW >= 1 && ms % (7 * 24 * 60 * 60 * 1000) === 0)
         return `${totalW} semana${totalW > 1 ? 's' : ''}`;
@@ -80,38 +80,65 @@ function updateBellBadge() {
     }
 }
 
+function renderReminderItem(n) {
+    return `
+        <li class="notif-item" data-id="${n.id}">
+            <div class="notif-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="notif-body">
+                <p class="notif-msg">
+                    Recuerda que la tarea <strong>${escapeHtml(n.taskName)}</strong>
+                    ha pasado <strong>${n.label}</strong>, ¡realízala lo antes posible!
+                </p>
+                <span class="notif-time">${formatTimestamp(n.fireAt)}</span>
+            </div>
+            <button class="notif-dismiss" data-id="${n.id}" title="Descartar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </li>`;
+}
+
+function renderInvitationItem(n) {
+    return `
+        <li class="notif-item notif-item--invite" data-id="${n.id}">
+            <div class="notif-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div class="notif-body">
+                <p class="notif-msg">
+                    <strong>${escapeHtml(n.invitedBy)}</strong> te ha invitado al tablero
+                    <strong>${escapeHtml(n.boardName)}</strong>
+                </p>
+                <span class="notif-time">${formatTimestamp(n.fireAt)}</span>
+            </div>
+            <div class="notif-actions">
+                <button class="notif-accept" data-token="${n.token}">Aceptar</button>
+                <button class="notif-reject" data-token="${n.token}">Rechazar</button>
+            </div>
+        </li>`;
+}
+
 // ── Dropdown de notificaciones ────────────────
 
 function renderNotificationDropdown() {
-    let dropdown = document.getElementById('notif-dropdown');
+    const dropdown = document.getElementById('notif-dropdown');
     if (!dropdown) return;
 
     if (activeNotifications.length === 0) {
         dropdown.innerHTML = `
             <div class="notif-empty">
                 <i class="fa-regular fa-bell-slash"></i>
-                <span>Sin recordatorios pendientes</span>
+                <span>Sin notificaciones pendientes</span>
             </div>`;
         return;
     }
 
     dropdown.innerHTML = `
         <div class="notif-header">
-            <span>Recordatorios</span>
+            <span>Notificaciones</span>
             <button class="notif-clear-all" id="notif-clear-all">Limpiar todo</button>
         </div>
         <ul class="notif-list">
-            ${activeNotifications.map(n => `
-                <li class="notif-item" data-id="${n.id}">
-                    <div class="notif-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                    <div class="notif-body">
-                        <p class="notif-msg">Recuerda que la tarea <strong>${escapeHtml(n.taskName)}</strong> ha pasado <strong>${n.label}</strong>, ¡realízala lo antes posible!</p>
-                        <span class="notif-time">${formatTimestamp(n.fireAt)}</span>
-                    </div>
-                    <button class="notif-dismiss" data-id="${n.id}" title="Descartar">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </li>`).join('')}
+            ${activeNotifications.map(n =>
+        n.type === 'invitation' ? renderInvitationItem(n) : renderReminderItem(n)
+    ).join('')}
         </ul>`;
 
     dropdown.querySelector('#notif-clear-all')?.addEventListener('click', () => {
@@ -137,6 +164,31 @@ function renderNotificationDropdown() {
             renderNotificationDropdown();
         });
     });
+
+    dropdown.querySelectorAll('.notif-accept, .notif-reject').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const action = btn.classList.contains('notif-accept') ? 'accepted' : 'rejected';
+            const token = btn.dataset.token;
+
+            try {
+                await fetch('/api/invitations/respond', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({token, action}),
+                    credentials: 'include'
+                });
+            } catch {
+                // silencioso; la notificación se descarta igualmente
+            }
+
+            activeNotifications = activeNotifications.filter(n => n.token !== token);
+            updateBellBadge();
+            renderNotificationDropdown();
+
+            if (action === 'accepted') location.reload();
+        });
+    });
 }
 
 function formatTimestamp(ts) {
@@ -160,7 +212,7 @@ function initBellButton() {
     const btn = document.querySelector('.notifications-button');
     if (!btn) return;
 
-    let dropdown = document.createElement('div');
+    const dropdown = document.createElement('div');
     dropdown.id = 'notif-dropdown';
     dropdown.className = 'notif-dropdown hidden';
 
@@ -172,9 +224,7 @@ function initBellButton() {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         dropdown.classList.toggle('hidden');
-        if (!dropdown.classList.contains('hidden')) {
-            renderNotificationDropdown();
-        }
+        if (!dropdown.classList.contains('hidden')) renderNotificationDropdown();
     });
 
     document.addEventListener('click', (e) => {
@@ -184,58 +234,76 @@ function initBellButton() {
     });
 }
 
-// ── Agregar recordatorio a una tarea ─────────
+// ── Invitaciones ──────────────────────────────
+async function checkInvitations() {
+    try {
+        const res = await fetch('/api/invitations/pending', {credentials: 'include'});
+        if (!res.ok) return;
+        const list = await res.json();
+
+        list.forEach(inv => {
+            if (!activeNotifications.find(n => n.id === `inv_${inv.invitation_id}`)) {
+                activeNotifications.push({
+                    id: `inv_${inv.invitation_id}`,
+                    type: 'invitation',
+                    token: inv.token,
+                    boardName: inv.board_name,
+                    invitedBy: inv.invited_by_name,
+                    fireAt: new Date(inv.created_at).getTime(),
+                });
+            }
+        });
+
+        updateBellBadge();
+        renderNotificationDropdown();
+    } catch {}
+}
+
+// ── Recordatorios ─────────────────────────────
 
 export function openReminderDialog(taskId, taskName) {
-    const bg = getComputedStyle(document.documentElement)
-        .getPropertyValue('--background3-color').trim();
-    const fg = getComputedStyle(document.documentElement)
-        .getPropertyValue('--font-color').trim();
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim();
+    const fg = getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim();
 
     Swal.fire({
         title: 'Establecer recordatorio',
         background: bg,
         color: fg,
-        customClass: { popup: 'swal-custom-popup swal-reminder-popup' },
+        customClass: {popup: 'swal-custom-popup swal-reminder-popup'},
         html: `
             <p class="reminder-subtitle">¿Cuándo quieres que te recordemos esta tarea?</p>
             <div class="reminder-options">
                 <button type="button" class="reminder-preset" data-ms="${60 * 60 * 1000}">
-                    <i class="fa-regular fa-clock"></i>
-                    <span>1 hora</span>
+                    <i class="fa-regular fa-clock"></i><span>1 hora</span>
                 </button>
                 <button type="button" class="reminder-preset" data-ms="${24 * 60 * 60 * 1000}">
-                    <i class="fa-regular fa-clock"></i>
-                    <span>1 día</span>
+                    <i class="fa-regular fa-clock"></i><span>1 día</span>
                 </button>
                 <button type="button" class="reminder-preset" data-ms="${7 * 24 * 60 * 60 * 1000}">
-                    <i class="fa-regular fa-clock"></i>
-                    <span>1 semana</span>
+                    <i class="fa-regular fa-clock"></i><span>1 semana</span>
                 </button>
             </div>
             <div class="reminder-custom-wrap">
                 <p class="reminder-custom-label">O elige una hora personalizada:</p>
                 <div class="reminder-custom-inputs">
-                    <input type="number" id="custom-days" min="0" max="365" value="0" placeholder="Días">
+                    <input type="number" id="custom-days"    min="0" max="365" value="0" placeholder="Días">
                     <label>días</label>
-                    <input type="number" id="custom-hours" min="0" max="23" value="0" placeholder="Horas">
+                    <input type="number" id="custom-hours"   min="0" max="23"  value="0" placeholder="Horas">
                     <label>horas</label>
-                    <input type="number" id="custom-minutes" min="0" max="59" value="0" placeholder="Min">
+                    <input type="number" id="custom-minutes" min="0" max="59"  value="0" placeholder="Min">
                     <label>min</label>
                 </div>
                 <button type="button" class="reminder-custom-confirm" id="reminder-custom-btn">
                     <i class="fa-solid fa-bell"></i> Recordar en este tiempo
                 </button>
-            </div>
-        `,
+            </div>`,
         showConfirmButton: false,
         showCancelButton: true,
         cancelButtonText: 'Cancelar',
         didOpen: () => {
             document.querySelectorAll('.reminder-preset').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const ms = parseInt(btn.dataset.ms);
-                    scheduleReminder(taskId, taskName, ms);
+                    scheduleReminder(taskId, taskName, parseInt(btn.dataset.ms));
                     Swal.close();
                 });
             });
@@ -245,9 +313,11 @@ export function openReminderDialog(taskId, taskName) {
                 const h = parseInt(document.getElementById('custom-hours').value) || 0;
                 const m = parseInt(document.getElementById('custom-minutes').value) || 0;
                 const ms = ((d * 24 * 60) + (h * 60) + m) * 60 * 1000;
+
                 if (ms <= 0) {
-                    document.getElementById('reminder-custom-btn').classList.add('shake');
-                    setTimeout(() => document.getElementById('reminder-custom-btn')?.classList.remove('shake'), 500);
+                    const customBtn = document.getElementById('reminder-custom-btn');
+                    customBtn.classList.add('shake');
+                    setTimeout(() => customBtn?.classList.remove('shake'), 500);
                     return;
                 }
                 scheduleReminder(taskId, taskName, ms);
@@ -260,7 +330,7 @@ export function openReminderDialog(taskId, taskName) {
 function scheduleReminder(taskId, taskName, delayMs) {
     const reminders = loadReminders();
     const now = Date.now();
-    const reminder = {
+    reminders.push({
         id: `${taskId}_${now}`,
         taskId,
         taskName,
@@ -268,14 +338,11 @@ function scheduleReminder(taskId, taskName, delayMs) {
         createdAt: now,
         fireAt: now + delayMs,
         fired: false,
-    };
-    reminders.push(reminder);
+    });
     saveReminders(reminders);
 
-    const bg = getComputedStyle(document.documentElement)
-        .getPropertyValue('--background3-color').trim();
-    const fg = getComputedStyle(document.documentElement)
-        .getPropertyValue('--font-color').trim();
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim();
+    const fg = getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim();
 
     Swal.fire({
         icon: 'success',
@@ -286,14 +353,15 @@ function scheduleReminder(taskId, taskName, delayMs) {
         showConfirmButton: false,
         background: bg,
         color: fg,
-        customClass: { popup: 'swal-custom-popup' },
+        customClass: {popup: 'swal-custom-popup'},
     });
 }
 
 // ── Init ──────────────────────────────────────
-
 export function initReminders() {
     initBellButton();
     checkReminders();
-    setInterval(checkReminders, 10000); // comprobar cada 10s
+    checkInvitations();
+    setInterval(checkReminders, 10_000);
+    setInterval(checkInvitations, 15_000);
 }
