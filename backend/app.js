@@ -18,6 +18,7 @@ const columnRoutes = require('./endpoints/column');
 const authRoutes = require('./endpoints/auth');
 const usersRouter = require('./endpoints/users');
 const gamifiedBoardRouter = require('./endpoints/gamifiedBoard');
+const tasksLogsRouter = require('./endpoints/tasksLogs');
 
 app.use('/boards', boardRoutes);
 app.use('/tasks', taskRoutes);
@@ -25,6 +26,7 @@ app.use('/columns', columnRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/users', usersRouter);
 app.use('/boards/gamified', gamifiedBoardRouter);
+app.use('/tasks/logs', tasksLogsRouter);
 
 async function testConnection() {
     try {

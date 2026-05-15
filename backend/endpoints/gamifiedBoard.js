@@ -149,4 +149,18 @@ router.get('/:id/full', verifyToken, async (req, res) => {
     }
 });
 
+router.patch('/:id/complete', verifyToken, async (req, res) => {
+    try {
+        const {id} = req.params.id;
+
+        const [[board]] = await pool.query(`SELECT * FROM gamified_board WHERE id_board == ?`, [id]);
+        if (!board) sendNotFound(res, 'Gamifiedboard', id);
+
+        
+
+    } catch (error) {
+        handleError(res, error, 'completar la racha de un tablero');
+    }
+});
+
 module.exports = router;

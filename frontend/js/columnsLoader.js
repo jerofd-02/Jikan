@@ -1,6 +1,7 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
 import { tituloEditable } from './add_column.js';
 import { tituloEditableBoard } from './assideButtonsActions.js';
+import { completeTasks } from './gamifiedBoardsFunctions.js';
 const BASE_URL = "/api";
 
 const getData = async (link) => {
@@ -174,12 +175,31 @@ const init = async () => {
             
                 if (!isConfirmed) return;
 
-                await moverTarea(taskId, columnId);
+                try {
+
+                    await fetch(BASE_URL + `/tasks/logs`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({board_id: boardData.board_id, task_id: taskId})
+                    });
+
+                    await moverTarea(taskId, columnId);
                 
-                selected.draggable = false;
-                let checkbox = selected.querySelector('input[type="checkbox"]');
-                checkbox.click();
-                checkbox.disabled = true;
+                    selected.draggable = false;
+                    let checkbox = selected.querySelector('input[type="checkbox"]');
+                    checkbox.click();
+                    checkbox.disabled = true;
+
+                    completeTasks(boardData, targetList);
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se ha podido completar la tarea",
+                    });
+                    console.log(error);
+                }
 
             } else {
                 await moverTarea(taskId, columnId);
