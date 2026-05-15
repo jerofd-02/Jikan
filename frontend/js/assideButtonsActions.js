@@ -36,11 +36,16 @@ export const tituloEditableBoard = (titleElement, boardId) => {
             const nuevoNombre = input.value.trim() || currentText;
 
             try {
-                await fetch(`/api/boards/${boardId}`, {
+
+                const currentBoardId =
+                    document.querySelector(".boards-section").dataset.boardId;
+
+                await fetch(`/api/boards/${currentBoardId}`, {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({name: nuevoNombre})
                 });
+
             } catch (error) {
                 console.error("Error al renombrar tablero:", error);
             }
@@ -48,13 +53,13 @@ export const tituloEditableBoard = (titleElement, boardId) => {
             titleElement.textContent = nuevoNombre;
 
             let botones = document.querySelectorAll('.swap-board-button');
+
             botones.forEach(boton => {
                 if (boton.textContent == currentText) {
                     boton.textContent = nuevoNombre;
                     return;
                 }
             });
-
         };
 
         input.addEventListener("blur", guardar);
@@ -208,6 +213,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (botonTablero) {
                 const name = botonTablero.textContent.trim();
                 const boardId = await getData(BASE_URL + `/boards/name/${name}`);
+
+                localStorage.setItem("lastBoardId", boardId.board_id);
+
                 const boards = await getData(BASE_URL + `/boards/${boardId.board_id}/full`);
 
                 tablero.innerHTML = '';
@@ -221,7 +229,3 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 });
 
-document.addEventListener('boardsLoaded', () => {
-    const firstButton = document.querySelector('.swap-board-button');
-    if (firstButton) firstButton.click();
-});

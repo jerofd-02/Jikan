@@ -126,7 +126,14 @@ const init = async () => {
 
     let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
 
-    let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 
+    const savedBoardId = localStorage.getItem("lastBoardId");
+
+    const boardToLoad =
+        savedBoardId || boards[0].board_id;
+
+    let first = await getData(
+        BASE_URL + `/boards/${boardToLoad}/full`
+    );
 
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
