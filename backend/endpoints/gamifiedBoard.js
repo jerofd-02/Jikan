@@ -149,14 +149,54 @@ router.get('/:id/full', verifyToken, async (req, res) => {
     }
 });
 
+// PATCH /boards/gamified/:id/complete
 router.patch('/:id/complete', verifyToken, async (req, res) => {
     try {
-        const {id} = req.params.id;
+        const { id } = req.params;
+        const userId = req.user.id;
 
-        const [[board]] = await pool.query(`SELECT * FROM gamified_board WHERE id_board == ?`, [id]);
-        if (!board) sendNotFound(res, 'Gamifiedboard', id);
+        const [boardRows] = await pool.query(`SELECT * FROM gamified_board WHERE id_board = ?`, [id]);
 
-        
+        if (boardRows.length === 0) return sendNotFound(res, 'GamifiedBoard', id);
+
+        const board = boardRows[0];
+        const today = new Date().toISOString().split('T')[0];
+
+        const [logsRows] = await pool.query(
+            `SELECT COUNT(*) as count FROM tasks_logs 
+             WHERE board_id = ? AND log_date = ?`,
+            [id, today]
+        );
+
+        const completedTasksToday = logsRows[0].count;
+
+        if (completedTasksToday < board.daily_tasks) {
+            return res.status(400).json({
+                message: `No se han completado todas las tareas de hoy. Completadas: ${completedTasksToday}/${board.daily_tasks}`
+            });
+        }
+
+        const newStreak = board.current_streak + 1;
+        const newBestStreak = Math.max(newStreak, board.best_streak);
+
+        await pool.query(
+            `UPDATE gamified_board 
+             SET current_streak = ?, best_streak = ? 
+             WHERE id_board = ?`,
+            [newStreak, newBestStreak, id]
+        );
+
+        const points = 10 * Math.ceil(0.5 + (Math.log(newStreak + 1) / Math.log(4)));
+
+        await pool.query(`UPDATE users SET jikoins = jikoins + ? WHERE id = ?`, [points, userId]);
+
+        res.status(200).json({
+            message: 'Racha completada exitosamente',
+            new_streak: newStreak,
+            best_streak: newBestStreak,
+            points_earned: points,
+            completed_tasks: completedTasksToday
+        });
 
     } catch (error) {
         handleError(res, error, 'completar la racha de un tablero');

@@ -190,7 +190,7 @@ const init = async () => {
                     checkbox.click();
                     checkbox.disabled = true;
 
-                    completeTasks(boardData, targetList);
+                    completeTasks(boardData.board_id);
 
                 } catch (error) {
                     Swal.fire({

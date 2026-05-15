@@ -12,19 +12,25 @@ const getData = async (link) => {
         throw error;
     }
 };
+export const completeTasks = async (boardId) => {
 
-const pointsCalculator = (rachaAcumulada) => {
-    let points = Math.ceil(0.5 + (Math.log(rachaAcumulada + 1) / Math.log(4)));
-    return 10 * points;
-};
+    try {
+        const response = await fetch (BASE_URL + `/boards/gamified/${boardId}/complete`, {
+            method: 'PATCH',
+            credentials: "include"
+        });
 
-export const completeTasks = async (board, lastColumn) => {
-    const gamifiedInfo = await getData(BASE_URL + `/boards/gamified/${board.board_id}`);
-    const tasksToComplete = gamifiedInfo.daily_tasks;
+        if (!response.ok) return;
 
-    let completedTasks = lastColumn.querySelectorAll("div.task.done");
+        const data = await response.json();
 
-    if (completedTasks.length === tasksToComplete) {
-        console.log("muy bien chiquitin sigue asi");
+        Swal.fire({
+            title: "¡Todas las tareas completadas!",
+            icon: "success",
+            text: `¡Llevas ${data.new_streak} días seguidos y has ganado ${data.points_earned} puntos hoy!`
+        });
+
+    } catch (error) {
+        console.log(error);
     }
 };
