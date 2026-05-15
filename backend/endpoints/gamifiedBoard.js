@@ -186,7 +186,7 @@ router.patch('/:id/complete', verifyToken, async (req, res) => {
             [newStreak, newBestStreak, id]
         );
 
-        const points = 10 * Math.ceil(0.5 + (Math.log(newStreak + 1) / Math.log(4)));
+        const points = 10 * Math.round(0.5 + (Math.log(newStreak + 1) / Math.log(4)));
 
         await pool.query(`UPDATE users SET jikoins = jikoins + ? WHERE id = ?`, [points, userId]);
 
