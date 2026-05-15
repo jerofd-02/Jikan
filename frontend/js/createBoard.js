@@ -308,7 +308,7 @@ async function customCreation() {
 async function gamifiedCreation() {
     const step1 = await Swal.fire({
         title: '¿Quieres jugar?',
-        customClass: {popup: 'swal-gamified-popup'},
+        customClass: {popup: 'swal-custom-popup'},
         html: `
             <p class="swal-description">
                 Bienvenido a la verdadera experiencia Jikan. En este tablero tendrás unas tareas diarias que debes
@@ -363,7 +363,8 @@ async function gamifiedCreation() {
 
     const step2 = await Swal.fire({
         title: 'Definamos el reto',
-        customClass: {popup: 'swal-gamified-popup'},
+        text: 'Escribe el nombre de las tareas que deseas repetir diariamente',
+        customClass: {popup: 'swal-custom-popup'},
         html: tasksInputs,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
