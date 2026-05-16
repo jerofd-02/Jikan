@@ -1,30 +1,25 @@
-userPoints = 500;
 
-const products = [
-      { id:1, emoji:'🟦', name:'Azul',     cat:'Tema',        price: 50,  badge:'new', description:'Color azul' },
-      { id:2, emoji:'🟨', name:'Amarillo', cat:'Tema',        price: 50,  badge: null, description:'Color amarillo' },
-      { id:3, emoji:'🟩', name:'Verde',    cat:'Tema',        price: 50,  badge:'sale', description:'Color verde' },
-      { id:4, emoji:'🟫', name:'Marrón',   cat:'Tema',        price: 50,  badge:'new', description:'Color marrón' },
-      { id:5, emoji:'🔥', name:'x2',       cat:'Potenciador', price: 100, badge: null, description:'Potencia la racha x2 durante 24 horas' },
-      { id:6, emoji:'🔥', name:'x5',       cat:'Potenciador', price: 200, badge: null, description:'Potencia la racha x5 durante 24 horas' },
-      { id:7, emoji:'🔥', name:'x10',      cat:'Potenciador', price: 500, badge:'sale', description:'Potencia la racha x10 durante 24 horas' },
-      { id:8, emoji:'🛡️', name:'1 dia',    cat:'Protector',   price: 100, badge:'new', description:'Proteje la racha durante 1 día' },
-      { id:9, emoji:'🛡️', name:'2 dias',   cat:'Protector',   price: 200, badge: null, description:'Proteje la racha durante 2 días' },
-    ];
- 
-    const cats = ['Todos', ...new Set(products.map(p => p.cat))];
- 
-    let activeFilter = 'Todos';
+let activeFilter = 'Todos';
+let products = [];
+let userJikoins = 0;
+let ownedObjectIds = new Set();
 
-function renderHTML() {
+async function fetchProducts() {
+    const res = await fetch('/api/shop/objects', { credentials: 'include' });
+    const data = await res.json();
+    return data;
+}
+
+function renderHTML(products) {
+    const cats = ['Todos', ...new Set(products.map(p => p.object_category))];
     const filtered = activeFilter === 'Todos'
     ? products
-    : products.filter(p => p.cat === activeFilter);
+    : products.filter(p => p.object_category === activeFilter);
 
     return `
     <div class="swal-points">
         <span class="points-icon">⭐</span>
-        <span><b>${userPoints}</b> jikoins</span>
+        <span><b>${userJikoins}</b> jikoins</span>
     </div>
     <div class="swal-filter">
         ${cats.map(c => `
@@ -34,42 +29,44 @@ function renderHTML() {
     </div>
 
     <div class="swal-grid">
-        ${filtered.map(p => `
-        <div class="swal-card">
-            ${p.badge
-            ? `<span class="badge badge-${p.badge}">
-                    ${p.badge === 'new' ? 'Nuevo' : 'Oferta'}
-                </span>`
+        ${filtered.map(p => {
+        const owned = p.one_time && ownedObjectIds.has(p.object_id);
+        return `
+        <div class="swal-card ${owned ? 'owned' : ''}">
+            ${p.object_label
+            ? `<span class="badge badge-new">${p.object_label}</span>`
             : ''}
-            <div class="emoji-img">${p.emoji}</div>
-            <div class="name">${p.name}</div>
-            <div class="cat">${p.cat}</div>
-            <div class="description">${p.description}</div>
-            <div class="price">${p.price} J</div>
-            <button class="buy-btn" onclick="confirmBuy(${p.id})">Comprar</button>
+            <div class="emoji-img">${p.object_img}</div>
+            <div class="name">${p.object_name}</div>
+            <div class="cat">${p.object_category}</div>
+            <div class="description">${p.object_description}</div>
+            <div class="price">${p.object_price} J</div>
+            <button class="buy-btn" onclick="confirmBuy(${p.object_id})" ${owned ? 'disabled' : ''}>
+                ${owned ? 'Ya adquirido' : 'Comprar'}
+            </button>
         </div>
-        `).join('')}
+        `;}).join('')}
     </div>
     `;
 }
 
 function setFilter(cat) {
     activeFilter = cat;
-    document.querySelector('.swal-popup-content').innerHTML = renderHTML();
+    document.querySelector('.swal-popup-content').innerHTML = renderHTML(products);
 }
 
-function confirmBuy(id) {
-    const p = products.find(x => x.id === id);
-    Swal.fire({
+async function confirmBuy(id) {
+    const p = products.find(x => x.object_id === id);
+    const {isConfirmed} = await Swal.fire({
     title: '¿Confirmar compra?',
     color: 'var(--principal)',
     html: `
         <div style="display:flex;align-items:center;gap:14px;margin:12px 0;padding:14px;background:var(--background3-color);border:1px solid var(--border-color);border-radius:10px;text-align:left;">
-        <div style="font-size:36px;line-height:1">${p.emoji}</div>
+        <div style="font-size:36px;line-height:1">${p.object_img}</div>
         <div>
-            <div style="font-weight:500;font-size:15px;color:var(--font-color)">${p.name}</div>
-            <div style="font-size:12px;color:var(--font-color2);margin:2px 0">${p.cat}</div>
-            <div style="font-size:17px;font-weight:600;color:var(--font-color)">${p.price}</div>
+            <div style="font-weight:500;font-size:15px;color:var(--font-color)">${p.object_name}</div>
+            <div style="font-size:12px;color:var(--font-color2);margin:2px 0">${p.object_category}</div>
+            <div style="font-size:17px;font-weight:600;color:var(--font-color)">${p.object_price}</div>
         </div>
         </div>
     `,
@@ -82,47 +79,83 @@ function confirmBuy(id) {
     customClass: { cancelButton: 'swal-cancel-dark' },
     reverseButtons: true,
     width: 380,
-    }).then(result => {
-        if (result.isConfirmed && userPoints >= parseInt(p.price)) {
-            userPoints -= parseInt(p.price);
-            Swal.fire({
-                icon: 'success',
-                title: '¡Compra realizada!',
-                color: 'var(--font-color)',
-                html: `Puedes ver tu artículo en tu perfil.`,
-                background: 'var(--background-color)',
-                confirmButtonText: 'Seguir comprando',
-                confirmButtonColor: 'var(--dark-accent)',
-                width: 380,
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: { title: 'swal-title-custom' },
-                didOpen: () => {
-                    document.querySelector('.swal2-timer-progress-bar').style.background = 'var(--principal)';
-                }
-            }).then(() => openShop());
-        } else if (result.isConfirmed) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Puntos insuficientes',
-                color: 'var(--font-color)',
-                background: 'var(--background-color)',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: 'var(--dark-accent)',
-                customClass: { title: 'swal-title-custom' },
-                width: 380,
-            });
-        }
     });
+
+    if (!isConfirmed) return;
+
+    const res = await fetch(`/api/shop/purchase`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_object: id }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        const messages = {
+            400: { title: 'Jikoins insuficientes', text: `Necesitas ${p.object_price} jikoins para comprar este objeto.` },
+            409: { title: 'Ya lo tienes',          text: `${p.object_name} ya está en tu inventario.` },
+            404: { title: 'Error',                 text: data.error },
+        };
+
+        const msg = messages[res.status] ?? { title: 'Error inesperado', text: 'Inténtalo de nuevo más tarde.' };
+
+        Swal.fire({
+            icon: 'error',
+            title: msg.title,
+            text: msg.text,
+            background: 'var(--background-color)',
+            color: 'var(--font-color)',
+            confirmButtonColor: 'var(--dark-accent)',
+            customClass: { title: 'swal-title-custom' },
+            width: 380,
+        });
+        return;
+    }
+
+    userJikoins = data.jikoins_remaining;
+    ownedObjectIds.add(id);
+
+    Swal.fire({
+        icon: 'success',
+        title: '¡Compra realizada!',
+        color: 'var(--font-color)',
+        html: `Puedes ver tu artículo en tu perfil.`,
+        background: 'var(--background-color)',
+        confirmButtonText: 'Seguir comprando',
+        confirmButtonColor: 'var(--dark-accent)',
+        width: 380,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: { title: 'swal-title-custom' },
+        didOpen: () => {
+            document.querySelector('.swal2-timer-progress-bar').style.background = 'var(--principal)';
+        }
+    }).then(() => openShop());
 }
 
-function openShop() {
+async function openShop() {
+
+    const [fetchedProducts, userRes, inventoryRes] = await Promise.all([
+        fetchProducts(),
+        fetch('http://localhost:3000/api/users/jikoins', { credentials: 'include' }),
+        fetch('http://localhost:3000/api/inventory', { credentials: 'include' })
+    ]);
+
+    products = fetchedProducts;
+    const userData = await userRes.json();
+    userJikoins = userData.jikoins;
+
+    const inventory = await inventoryRes.json();
+    ownedObjectIds = new Set(inventory.map(i => i.object_id));
+
     activeFilter = 'Todos';
-    selectedId   = null;
     Swal.fire({
         title: 'Tienda',
         color: 'var(--principal)',
-        html: `<div class="swal-popup-content">${renderHTML()}</div>`,
+        fontWeight: '600',
+        html: `<div class="swal-popup-content">${renderHTML(products)}</div>`,
         background: 'var(--background2-color)',
         border: '1px solid var(--border-color)',
         showConfirmButton: false,
@@ -130,8 +163,9 @@ function openShop() {
         width: 680,
         padding: '1.5rem',
         didOpen: () => {
-            window.setFilter = setFilter;
+            window.setFilter  = setFilter;
             window.confirmBuy = confirmBuy;
         }
     });
 }
+

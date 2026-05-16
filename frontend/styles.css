@@ -2459,7 +2459,7 @@ input:-webkit-autofill:active {
 
 .swal-points {
   position: absolute;
-  top: 16px;
+  top: 40px;
   left: 20px;
   display: flex;
   align-items: center;
@@ -2523,7 +2523,6 @@ input:-webkit-autofill:active {
     font-size: 13px;
     color: var(--font-color2);
     margin-bottom: 10px;
-    height: 32px;
     overflow: hidden;
 }
 .swal-card .buy-btn {
@@ -2549,6 +2548,17 @@ input:-webkit-autofill:active {
     border-radius: 20px;
     font-weight: 500;
 }
+
+.swal-card.owned {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.swal-card.owned .buy-btn {
+  background: #888;
+  cursor: not-allowed;
+}
+
 .badge-new  { background: #E1F5EE; color: #0F6E56; }
 .badge-sale { background: #FAECE7; color: #993C1D; }
 

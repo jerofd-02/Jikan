@@ -1,4 +1,7 @@
 -- ENTIDADES DE LA APLICACIÓN
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 
 CREATE TABLE users
 (
@@ -55,14 +58,14 @@ CREATE TABLE objects
     object_description VARCHAR(255) NOT NULL,
     object_img VARCHAR(255) NOT NULL,
 
-    price INT NOT NULL,
+    object_price INT NOT NULL,
 
     object_category VARCHAR(255) NOT NULL,
     object_label VARCHAR(255),
     one_time BOOLEAN NOT NULL,
 
     CONSTRAINT pk_object PRIMARY KEY (object_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- RELACIONES ENTRE ENTIDADES DE LA APLICACIÓN
 
@@ -164,3 +167,15 @@ CREATE TABLE board_column
     CONSTRAINT fk_bc_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
     CONSTRAINT fk_bc_column FOREIGN KEY (id_column) REFERENCES columns_table (column_id) ON DELETE CASCADE
 );
+
+
+INSERT INTO objects (object_id, object_name, object_description, object_img, object_price, object_category, object_label, one_time) VALUES 
+(1, "Azul", "Cambia el tema de la aplicación a azul", "🟦", 50, "Tema", null, true),
+(2, "Amarillo", "Cambia el tema de la aplicación a amarillo", "🟨", 50, "Tema", null, true),
+(3, "Verde", "Cambia el tema de la aplicación a verde", "🟩", 50, "Tema", null, true),
+(4, "Marrón", "Cambia el tema de la aplicación a marrón", "🟫", 50, "Tema", "Nuevo", true),
+(5, "x2", "Potencia la racha x2 durante 24 horas", "🔥", 100, "Potenciador", null, false),
+(6, "x5", "Potencia la racha x5 durante 24 horas", "🔥", 200, "Potenciador", null, false),
+(7, "x10", "Potencia la racha x10 durante 24 horas", "🔥", 500, "Potenciador", null, false),
+(8, "1 dia", "Proteje la racha durante 1 día", "🛡️", 100, "Protector", "Oferta", false),
+(9, "2 dias", "Proteje la racha durante 2 días", "🛡️", 200, "Protector", null, false);
