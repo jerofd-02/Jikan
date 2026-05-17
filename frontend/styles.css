@@ -70,6 +70,63 @@ html {
     --light-accent: #ff7a59;
 }
 
+
+[data-theme="Marrón"] {
+    --background-color: #160e05;
+    --background2-color: #211508;
+    --background3-color: #2c1c0a;
+    --border-color: #4a2e12;
+    --font-color: #f0dcc0;
+    --font-color2: #a07040;
+    --font-contrast: #f0dcc0;
+
+    --principal: #c47c2e;
+    --dark-accent: #7a3e10;
+    --light-accent: #e8a050;
+}
+
+[data-theme="Verde"] {
+    --background-color: #0d1a0f;
+    --background2-color: #132016;
+    --background3-color: #1a2e1c;
+    --border-color: #2a4030;
+    --font-color: #d4ecd6;
+    --font-color2: #7aab80;
+    --font-contrast: #d4ecd6;
+
+    --principal: #4caf6e;
+    --dark-accent: #2d7a48;
+    --light-accent: #72d492;
+}
+
+[data-theme="Amarillo"] {
+    --background-color: #1a1500;
+    --background2-color: #231c00;
+    --background3-color: #2e2500;
+    --border-color: #4a3c00;
+    --font-color: #fff8d6;
+    --font-color2: #c8b040;
+    --font-contrast: #fff8d6;
+
+    --principal: #f5c400;
+    --dark-accent: #a88200;
+    --light-accent: #ffda44;
+}
+
+[data-theme="Azul"] {
+    --background-color: #1e2430;
+    --background2-color: #252d3b;
+    --background3-color: #2e3749;
+    --border-color: #3b4a60;
+    --font-color: #eceff4;
+    --font-color2: #8fa3be;
+    --font-contrast: #eceff4;
+
+    --principal: #5e81ac;
+    --dark-accent: #3d5a80;
+    --light-accent: #88c0d0;
+}
+
 body {
     font-family: Helvetica, sans-serif;
     background: var(--background-color);
@@ -1809,6 +1866,34 @@ input {
     --btn-bg: #0b0b10;
     --btn-principal: #ff4d2e;
     --btn-text: #f3f3f7;
+}
+
+/* MARRÓN */
+.theme-btn[data-theme="Marrón"] {
+    --btn-bg: #160e05;
+    --btn-principal: #c47c2e;
+    --btn-text: #f0dcc0;
+}
+
+/* VERDE */
+.theme-btn[data-theme="Verde"] {
+    --btn-bg: #0d1a0f;
+    --btn-principal: #4caf6e;
+    --btn-text: #d4ecd6;
+}
+
+/* AMARILLO */
+.theme-btn[data-theme="Amarillo"] {
+    --btn-bg: #1a1500;
+    --btn-principal: #f5c400;
+    --btn-text: #fff8d6;
+}
+
+/* AZUL */
+.theme-btn[data-theme="Azul"] {
+    --btn-bg: #1e2430;
+    --btn-principal: #5e81ac;
+    --btn-text: #eceff4;
 }
 
 /* RESPONSIVE */
