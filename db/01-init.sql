@@ -34,6 +34,7 @@ CREATE TABLE users_board
 (
     user_id   INT,
     board_id  INT,
+    role      ENUM('owner', 'member') NOT NULL DEFAULT 'owner',
 
     CONSTRAINT pk_users_board PRIMARY KEY (user_id, board_id),
 

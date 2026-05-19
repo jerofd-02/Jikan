@@ -108,7 +108,7 @@ router.post('/respond', verifyToken, async (req, res) => {
 
         if (action === 'accepted') {
             await pool.query(
-                'INSERT IGNORE INTO users_board (user_id, board_id) VALUES (?, ?)',
+                'INSERT IGNORE INTO users_board (user_id, board_id, role) VALUES (?, ?, "member")',
                 [user[0].id, inv[0].board_id]
             );
         }
