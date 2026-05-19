@@ -11,6 +11,8 @@ CREATE TABLE users
     password VARCHAR(255) NOT NULL,
 
     jikoins INT NOT NULL DEFAULT 0,
+    multiplier INT default null,
+    
 
     CONSTRAINT pk_users PRIMARY KEY (id),
     CONSTRAINT min_jikoins CHECK (jikoins >= 0)
@@ -34,7 +36,7 @@ CREATE TABLE gamified_board
     daily_tasks INT NOT NULL DEFAULT 4,
     current_streak INT NOT NULL DEFAULT 0,
     best_streak INT NOT NULL DEFAULT 0,
-    
+
     CONSTRAINT pk_gamified_board PRIMARY KEY (id_board),
     CONSTRAINT fk_gamifiedboard_board FOREIGN KEY (id_board) REFERENCES board (board_id) ON DELETE CASCADE,
 
@@ -136,6 +138,7 @@ CREATE TABLE purchases
     id_user INT NOT NULL,
     id_object INT NOT NULL,
     bought_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMP DEFAULT NULL,
     price_paid INT NOT NULL,
 
     CONSTRAINT pk_user_object PRIMARY KEY (purchase_id),

@@ -84,4 +84,24 @@ router.post('/purchase', verifyToken, async (req, res) => {
   }
 });
 
+// GET /shop/objects/:id
+router.get('/objects/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [objects] = await pool.query(`SELECT * FROM objects WHERE object_id = ?` , [id]);
+    
+    if (objects.length === 0) {
+      return res.status(404).json({ error: 'Objeto no encontrado' });
+    }
+
+    res.status(200).json(objects[0]);
+
+  } catch (error) {
+
+    res.status(500).json({message: 'Error al obtener objeto por id'});
+
+  }
+});
+
 module.exports = router;

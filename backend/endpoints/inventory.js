@@ -31,4 +31,46 @@ router.get('/inventory', verifyToken, async (req, res) => {
   }
 });
 
+// GET /api/inventory/use/boost/:id
+router.patch('/inventory/use/boost/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const [purchase] = await pool.query(`SELECT * FROM purchases WHERE purchase_id = ?`, [id]);
+
+    if (purchase.length === 0) {
+      return res.status(404).json({ error: 'Compra no encontrada' });
+    }
+
+    const [multiplier] = await pool.query(`SELECT * FROM objects WHERE object_id = ?`, [purchase[0].id_object]);
+
+
+    if (multiplier.length === 0) return res.status(400).json({ error: 'El objeto no existe' });
+    if (multiplier[0].object_category != 'Potenciador') return res.status(400).json({ error: 'El objeto no es un potenciador' });
+    if (purchase[0].uset_at != null) return res.status(400).json({ error: 'Este potenciador ya ha sido utilizado previamente' });
+
+    const multiplierMatch = multiplier[0].object_name.match(/x(\d+)/);
+    if (!multiplierMatch) {
+      return res.status(400).json({ error: 'El objeto no tiene un multiplicador válido' });
+    }
+
+    const multiplierValue = parseInt(multiplierMatch[1]);
+
+    await pool.query(
+      'UPDATE users SET multiplier = ? WHERE id = ?',
+      [multiplierValue, userId]
+    );
+
+    await pool.query(
+      'UPDATE purchases SET used_at = CURRENT_TIMESTAMP WHERE purchase_id = ?', 
+      [id]
+    );
+
+    res.json({ success: true, multiplier: multiplierValue, message: 'Potenciador aplicado correctamente' });
+  } catch (err) {
+    handleError(res, err, 'usar potenciador');
+  }
+});
+
 module.exports = router;

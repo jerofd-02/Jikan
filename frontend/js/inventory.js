@@ -3,7 +3,49 @@ document.addEventListener('DOMContentLoaded', async () => {
    await loadInventory();
 });
 
-async function useItem(objectId) {
+const useMuliplier = async (purchaseId) => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/inventory/use/boost/${purchaseId}`, {
+            method: 'PATCH',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+            Swal.fire({
+                title: '¡Listo!',
+                text: `¡Aprovecha tu potenciador x${data.multiplier} antes de que se acabe!`,
+                icon: 'success',
+                color: 'var(--font-color)',
+                background: 'var(--background-color)',
+            });
+            await loadInventory();
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: data.error,
+                icon: 'error',
+                color: 'var(--font-color)',
+                background: 'var(--background-color)',
+            });
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        Swal.fire({
+            title: 'Error',
+            text: 'Error al aplicar el potenciador',
+            icon: 'error',
+            color: 'var(--font-color)',
+            background: 'var(--background-color)',
+        });
+    }
+}
+
+const applyProtector = async (protectorInfo) => {
+    return;
+}
+
+async function useItem(purchaseId, objectCategory) {
     Swal.fire({
         title: '¿Usar este objeto?',
         text: '¿Estás seguro de que quieres usar este objeto? El objeto se consumirá al usarlo.',
@@ -16,9 +58,20 @@ async function useItem(objectId) {
         confirmButtonText: 'Usar',
         cancelButtonText: 'Cancelar',
         customClass: { title: 'swal-title-custom' },
+
     }).then(async (result) => {
+
         if (result.isConfirmed) {
-            // Lógica para usar el objeto
+
+            if (objectCategory == "Potenciador") {
+
+                useMuliplier(purchaseId);
+
+            } else if (objectCategory == "Protector") {
+
+                applyProtector(purchaseId);
+
+            }
         }
     });
 }
@@ -54,7 +107,7 @@ async function loadInventory() {
                 <div style="font-size:12px;color:var(--font-color2);margin:2px 0">${item.object_category}</div>
                 <div style="font-size:14px;font-weight:600;color:var(--font-color)">${item.object_description}</div>
             </div>
-            <button style="margin:0;margin-left:auto;font-size:17px;color:var(--font-contrast);background:var(--principal);border:var(--border-color);cursor:pointer" onclick="useItem(${item.object_id})">Usar</button>
+            <button style="margin:0;margin-left:auto;font-size:17px;color:var(--font-contrast);background:var(--principal);border:var(--border-color);cursor:pointer" onclick="useItem(${item.purchase_id}, '${item.object_category}')">Usar</button>
             </div>
         `;
         grid.appendChild(itemElement);
