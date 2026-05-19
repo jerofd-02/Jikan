@@ -30,12 +30,14 @@ const cargarBotonesLaterales = (boards, buttonSection) => {
         boardButton.className = 'swap-board-button';
         contenedor.appendChild(boardButton);
 
-        let deleteBtn = document.createElement("button");
-        deleteBtn.classList.add("delete-board");
-        deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
-        buttonDiv.appendChild(deleteBtn);
-        boardButton.appendChild(buttonDiv);
+        if (board.role === 'owner') {
+            let deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("delete-board");
+            deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
+            buttonDiv.appendChild(deleteBtn);
+        }
 
+        boardButton.appendChild(buttonDiv);
         buttonSection.appendChild(contenedor);
     });
 

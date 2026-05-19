@@ -199,7 +199,6 @@ input {
                 &:hover {
                     background-color: var(--dark-accent);
                     border-radius: 8px;
-
                     i {
                         color: var(--light-accent);
                         transform: scale(1.2);
@@ -337,8 +336,9 @@ input {
 
         .panel.bottom-sheet.expanded {
             height: var(--sheet-mid);
-            max-height: calc(100dvh - 60px);
         }
+
+
 
         .sheet-handle-zone {
             flex-shrink: 0;
@@ -594,16 +594,12 @@ input {
     }
 
     .avatar-wrapper {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
-        background: #B3B3B3;
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        margin: 0 auto 20px;
         cursor: pointer;
-        filter: grayscale(70%);
     }
     .avatar-wrapper:hover {
         filter: grayscale(100%);
@@ -1410,6 +1406,7 @@ input {
 }
 
 
+
 .delete-task, .modify-task, .delete-board {
     display: flex;
     align-items: center;
@@ -1441,7 +1438,6 @@ input {
         color: darkred;
         font-size: 0.8rem;
     }
-
     &:hover {
         background: var(--principal);
     }
@@ -2267,14 +2263,8 @@ span.flatpickr-weekday {
 }
 
 @keyframes badgePop {
-    from {
-        transform: scale(0);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
 }
 
 /* ── Dropdown de notificaciones ── */
@@ -2282,10 +2272,12 @@ span.flatpickr-weekday {
     position: relative;
 }
 
-.notif-dropdown {
+.notif-dropdown,
+.share-dropdown {
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     right: 0;
+    z-index: 100;
     width: 360px;
     max-height: 480px;
     overflow-y: auto;
@@ -2293,7 +2285,6 @@ span.flatpickr-weekday {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color);
-    z-index: 9999;
     animation: dropdownSlide 0.2s ease;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
@@ -2304,14 +2295,8 @@ span.flatpickr-weekday {
 }
 
 @keyframes dropdownSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.97);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .notif-header {
@@ -2381,14 +2366,8 @@ span.flatpickr-weekday {
 }
 
 @keyframes notifIn {
-    from {
-        opacity: 0;
-        transform: translateX(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 .notif-item:last-child {
@@ -2583,15 +2562,9 @@ span.flatpickr-weekday {
 }
 
 @keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    20%, 60% {
-        transform: translateX(-5px);
-    }
-    40%, 80% {
-        transform: translateX(5px);
-    }
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
 }
 
 .swal-reminder-popup .reminder-custom-confirm.shake {
@@ -2599,11 +2572,151 @@ span.flatpickr-weekday {
     background: #e05555;
 }
 
-.avatar-wrapper {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
+.share-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 300px;
+    background: var(--background2-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    overflow: hidden;
+    transform-origin: top right;
+}
+
+.share-dropdown.hidden {
+    display: none;
+}
+
+.share-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--font-color);
+}
+
+.share-header i {
+    color: var(--principal);
+}
+
+.share-section {
+    padding: 14px 16px;
+}
+
+.share-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--font-color2);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.share-email-row,
+.share-link-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.share-email-input,
+.share-link-input {
+    flex: 1;
+    background: var(--background3-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    color: var(--font-color);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.share-email-input::placeholder {
+    color: var(--font-color2);
+}
+
+.share-email-input:focus,
+.share-link-input:focus {
+    border-color: var(--principal);
+}
+
+.share-link-input {
+    color: var(--font-color2);
+    cursor: default;
+    font-size: 0.78rem;
+}
+
+.share-send-btn,
+.share-copy-btn {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: var(--principal);
+    color: #fff;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.share-send-btn:hover,
+.share-copy-btn:hover {
+    background: var(--light-accent);
+}
+
+.share-copy-btn.copied {
+    background: #22c55e;
+}
+
+.share-send-btn:active,
+.share-copy-btn:active {
+    transform: scale(0.93);
+}
+
+.share-feedback {
+    font-size: 0.78rem;
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.share-feedback.hidden { display: none; }
+
+.share-feedback--success {
+    color: var(--principal);
+    background: rgba(124, 106, 247, 0.1);
+}
+
+.share-feedback--error {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.share-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    color: var(--font-color2);
+    font-size: 0.75rem;
+}
+
+.share-divider::before,
+.share-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
 }

@@ -27,24 +27,19 @@ router.delete('/:id', verifyToken, async (req, res) => {
             return res.status(403).json({message: 'No tienes permiso para eliminar este tablero'});
         }
 
-        await pool.query(`DELETE
-                          FROM task_labels
-                          WHERE task_id IN (SELECT id_task
-                                            FROM column_task
-                                            WHERE id_column IN (SELECT id_column
-                                                                FROM board_column
-                                                                WHERE id_board = ?))`, [id]);
+        if (userBoard[0].role !== 'owner') {
+            return res.status(403).json({message: 'Solo el propietario del tablero puede eliminarlo'});
+        }
 
+        await pool.query(`DELETE
+                          FROM board
+                          WHERE board_id = ?`, [id]);
         await pool.query(`DELETE
                           FROM column_task
-                          WHERE id_column IN (SELECT id_column
-                                              FROM board_column
-                                              WHERE id_board = ?)`, [id]);
-
+                          WHERE id_column IN (SELECT id_column FROM board_column WHERE id_board = ?)`, [id]);
         await pool.query(`DELETE
                           FROM board_column
                           WHERE id_board = ?`, [id]);
-
         await pool.query(`DELETE
                           FROM users_board
                           WHERE board_id = ?`, [id]);
@@ -64,7 +59,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
 router.get('/user/:mail', verifyToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`
-            SELECT b.board_id, b.name
+            SELECT b.board_id, b.name, ub.role
             FROM board b
                      INNER JOIN users_board ub ON b.board_id = ub.board_id
             WHERE ub.user_id = ?
