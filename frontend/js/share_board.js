@@ -6,13 +6,14 @@ function initShareButton() {
     dropdown.id = 'share-dropdown';
     dropdown.className = 'share-dropdown hidden';
 
-    btn.parentElement.style.position = 'relative';
-    btn.parentElement.appendChild(dropdown);
+    btn.style.position = 'relative';
+    btn.appendChild(dropdown);
 
     renderShareDropdown();
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        document.getElementById('notif-dropdown')?.classList.add('hidden');
         dropdown.classList.toggle('hidden');
     });
 

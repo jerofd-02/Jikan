@@ -220,13 +220,14 @@ function initBellButton() {
     dropdown.id = 'notif-dropdown';
     dropdown.className = 'notif-dropdown hidden';
 
-    btn.parentElement.style.position = 'relative';
-    btn.parentElement.appendChild(dropdown);
+    btn.style.position = 'relative';
+    btn.appendChild(dropdown);
 
     renderNotificationDropdown();
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        document.getElementById('share-dropdown')?.classList.add('hidden');
         dropdown.classList.toggle('hidden');
         if (!dropdown.classList.contains('hidden')) renderNotificationDropdown();
     });

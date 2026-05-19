@@ -2027,10 +2027,12 @@ input:-webkit-autofill:active {
     position: relative;
 }
 
-.notif-dropdown {
+.notif-dropdown,
+.share-dropdown {
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     right: 0;
+    z-index: 100;
     width: 360px;
     max-height: 480px;
     overflow-y: auto;
@@ -2038,7 +2040,6 @@ input:-webkit-autofill:active {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border-color);
-    z-index: 9999;
     animation: dropdownSlide 0.2s ease;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
