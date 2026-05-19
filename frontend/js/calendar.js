@@ -2,23 +2,27 @@ const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 
 const WEEKDAYS_FULL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const WEEKDAYS_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 let currentBoardId = null
+let pendingBoardId = localStorage.getItem("lastBoardId");
+
+document.addEventListener('boardChanged', (e) => {
+    pendingBoardId = e.detail?.boardId ?? pendingBoardId;
+    if (currentBoardId === null && pendingBoardId) {
+        currentBoardId = pendingBoardId;
+    }
+});
 
 function waitForCalendar() {
     const container = document.querySelector('[data-template="calendar"]');
     if (container && container.querySelector('.calendar-wrap')) {
-        initCalendar(container);
+        initCalendar(container, pendingBoardId);
         return;
     }
-    let attempts = 0;
-    const maxAttempts = 100;
+
     const observer = new MutationObserver(() => {
         const container = document.querySelector('[data-template="calendar"]');
         if (container && container.querySelector('.calendar-wrap')) {
             observer.disconnect();
-            initCalendar(container);
-        } else if (++attempts >= maxAttempts) {
-            observer.disconnect();
-            console.error('Calendar template not loaded within timeout');
+            initCalendar(container, pendingBoardId);
         }
     });
     observer.observe(document.body, {childList: true, subtree: true});
@@ -46,7 +50,7 @@ function buildDateKey(year, month, day) {
 
 async function fetchTasksByDate(boardId) {
     if (!boardId) return {byDate: new Map(), byDeadline: new Map()};
-    const url = `http://localhost:3000/tasks/board/${boardId}`;
+    const url = `/api/tasks/board/${boardId}`;
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -161,7 +165,7 @@ function showDayPopover(cell, dateKey, entries) {
     setTimeout(() => document.addEventListener('click', onOutsideClick), 0);
 }
 
-function initCalendar(container) {
+function initCalendar(container, initialBoardId = null) {
     const today = new Date();
     let current = {year: today.getFullYear(), month: today.getMonth()};
     let tasksByDate = new Map();
@@ -343,8 +347,9 @@ function initCalendar(container) {
     });
     document.addEventListener('taskUpdated', () => render());
     document.addEventListener('boardChanged', (e) => {
-        currentBoardId = e.detail?.boardId ?? null;
+        currentBoardId = e.detail?.boardId ?? localStorage.getItem("lastBoardId");
         render();
     });
+    currentBoardId = initialBoardId ?? localStorage.getItem("lastBoardId");
     render();
 }

@@ -103,6 +103,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const tablero = document.querySelector(".boards-section");
     const titulo = document.getElementById('board-title');
 
+    function dispatchBoardChanged(boardId) {
+        const dispatch = () => document.dispatchEvent(new CustomEvent('boardChanged', {
+            detail: {boardId}
+        }));
+
+        const calendarReady = document.querySelector('[data-template="calendar"] .calendar-wrap');
+        if (calendarReady) {
+            dispatch();
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            if (document.querySelector('[data-template="calendar"] .calendar-wrap')) {
+                observer.disconnect();
+                dispatch();
+            }
+        });
+        observer.observe(document.body, {childList: true, subtree: true});
+    }
+
+    const lastBoardId = localStorage.getItem("lastBoardId");
+    if (lastBoardId) {
+        dispatchBoardChanged(lastBoardId);
+    } else {
+        const observer = new MutationObserver(() => {
+            const primerBoton = document.querySelector('.swap-board-button');
+            if (primerBoton) {
+                observer.disconnect();
+                primerBoton.click();
+            }
+        });
+        observer.observe(botonesTableros, {childList: true, subtree: true});
+    }
+
     botonesTableros.addEventListener('click', async (e) => {
             const botonBorrar = e.target.closest('.delete-board');
             if (botonBorrar) {
