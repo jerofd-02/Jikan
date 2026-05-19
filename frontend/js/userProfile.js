@@ -31,6 +31,14 @@ async function loadUserData() {
             const avatarWrapper = document.querySelector('.avatar-wrapper');
             if (avatarWrapper) avatarWrapper.style.backgroundImage = `url(${avatar_url})`;
         }
+
+        const sidebarImg = document.querySelector('aside .user-img');
+        if (sidebarImg && avatar_url) {
+            sidebarImg.style.backgroundImage = `url(${avatar_url})`;
+            sidebarImg.style.backgroundSize = 'cover';
+            sidebarImg.style.backgroundPosition = 'center';
+        }
+
     } catch (e) {
         console.error('Error cargando datos de usuario:', e);
     }

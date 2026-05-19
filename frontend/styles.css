@@ -598,7 +598,28 @@ input {
         height: 150px;
         border-radius: 50%;
         background: #B3B3B3;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         margin: 0 auto 20px;
+        cursor: pointer;
+        filter: grayscale(70%);
+    }
+    .avatar-wrapper:hover {
+        filter: grayscale(100%);
+    }
+
+    .boton-superpuesto {
+        position: absolute;
+        bottom: 60px;
+        left: 160px;
+        i{
+            font-size: 1.5rem;
+        }
+    }
+
+    .contenedor-imagen {
+        position: relative;
     }
 
     .notification-setting + .notification-setting {
