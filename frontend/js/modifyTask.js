@@ -105,6 +105,10 @@ async function modifyTask(taskElement, taskObj = null) {
         width: '700px',
         customClass: {popup: 'swal-custom-popup'},
         title: 'Modificar tarea',
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         html: `
             <div class="edit-task-input">
                 <div class="edit-task-left">
