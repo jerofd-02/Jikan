@@ -48,7 +48,7 @@ router.patch('/inventory/use/boost/:id', verifyToken, async (req, res) => {
 
     if (multiplier.length === 0) return res.status(400).json({ error: 'El objeto no existe' });
     if (multiplier[0].object_category != 'Potenciador') return res.status(400).json({ error: 'El objeto no es un potenciador' });
-    if (purchase[0].uset_at != null) return res.status(400).json({ error: 'Este potenciador ya ha sido utilizado previamente' });
+    if (purchase[0].used_at != null) return res.status(400).json({ error: 'Este potenciador ya ha sido utilizado previamente' });
 
     const multiplierMatch = multiplier[0].object_name.match(/x(\d+)/);
     if (!multiplierMatch) {
@@ -58,7 +58,7 @@ router.patch('/inventory/use/boost/:id', verifyToken, async (req, res) => {
     const multiplierValue = parseInt(multiplierMatch[1]);
 
     await pool.query(
-      'UPDATE users SET multiplier = ? WHERE id = ?',
+      'UPDATE users SET multiplier = ?, boosted_until = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE id = ?',
       [multiplierValue, userId]
     );
 
@@ -70,6 +70,48 @@ router.patch('/inventory/use/boost/:id', verifyToken, async (req, res) => {
     res.json({ success: true, multiplier: multiplierValue, message: 'Potenciador aplicado correctamente' });
   } catch (err) {
     handleError(res, err, 'usar potenciador');
+  }
+});
+
+// GET /api/inventory/use/protector/:id
+router.patch('/inventory/use/protector/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const [purchase] = await pool.query(`SELECT * FROM purchases WHERE purchase_id = ?`, [id]);
+
+    if (purchase.length === 0) {
+      return res.status(404).json({ error: 'Compra no encontrada' });
+    }
+
+    const [protector] = await pool.query(`SELECT * FROM objects WHERE object_id = ?`, [purchase[0].id_object]);
+
+
+    if (protector.length === 0) return res.status(400).json({ error: 'El objeto no existe' });
+    if (protector[0].object_category != 'Protector') return res.status(400).json({ error: 'El objeto no es un protector' });
+    if (purchase[0].uset_at != null) return res.status(400).json({ error: 'Este protector ya ha sido utilizado previamente' });
+
+    const daysMatch = protector[0].object_name.match(/^(\d+)\s+d[ií]as?$/i);
+    if (!daysMatch) {
+      return res.status(400).json({ error: 'El objeto no tiene un número de días válido' });
+    }
+
+    const daysValue = parseInt(daysMatch[1]);
+
+    await pool.query(
+      'UPDATE users SET protect_until = DATE_ADD(NOW(), INTERVAL ? DAY) WHERE id = ?',
+      [daysValue, userId]
+    );
+
+    await pool.query(
+      'UPDATE purchases SET used_at = CURRENT_TIMESTAMP WHERE purchase_id = ?', 
+      [id]
+    );
+
+    res.json({ success: true, protector: daysValue, message: 'Protector aplicado correctamente' });
+  } catch (err) {
+    handleError(res, err, 'usar protector');
   }
 });
 

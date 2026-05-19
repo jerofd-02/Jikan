@@ -41,8 +41,42 @@ const useMuliplier = async (purchaseId) => {
     }
 }
 
-const applyProtector = async (protectorInfo) => {
-    return;
+const applyProtector = async (purchaseId) => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/inventory/use/protector/${purchaseId}`, {
+            method: 'PATCH',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+            Swal.fire({
+                title: '¡Listo!',
+                text: `¡Tienes todos tus tableros protegidos por x${data.protector} días desde hoy!`,
+                icon: 'success',
+                color: 'var(--font-color)',
+                background: 'var(--background-color)',
+            });
+            await loadInventory();
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: data.error,
+                icon: 'error',
+                color: 'var(--font-color)',
+                background: 'var(--background-color)',
+            });
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        Swal.fire({
+            title: 'Error',
+            text: 'Error al aplicar el potenciador',
+            icon: 'error',
+            color: 'var(--font-color)',
+            background: 'var(--background-color)',
+        });
+    }
 }
 
 async function useItem(purchaseId, objectCategory) {
