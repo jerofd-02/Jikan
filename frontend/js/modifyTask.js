@@ -1,5 +1,5 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
-import { openReminderDialog, initReminders } from './reminders.js';
+import {initReminders, openReminderDialog} from './reminders.js';
 
 window.undoManager = new UndoManager();
 
@@ -78,7 +78,7 @@ function setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsCont
 }
 
 async function modifyTask(taskElement, taskObj = null) {
-    console.log('[modifyTask] llamada con', { taskElement, taskObj });
+    console.log('[modifyTask] llamada con', {taskElement, taskObj});
 
     const taskId = taskElement ? String(taskElement.dataset.taskId) : String(taskObj.id_task);
     console.log('[modifyTask] taskId:', taskId);
@@ -116,7 +116,7 @@ async function modifyTask(taskElement, taskObj = null) {
                 <div class="edit-task-right">
                     <label for="label-chips">Categorías</label>
                     <div class="label-chips-container" id="label-chips"></div>
-                        <div class="label-row">
+                    <div class="label-row">
                         <input 
                             type="text" 
                             id="new-label-input" 
@@ -128,9 +128,9 @@ async function modifyTask(taskElement, taskObj = null) {
                         <button type="button" class="add-label-btn" id="add-label-btn" title="Nueva categoría">+</button>
                     </div>
                     <label for="date">Fecha de la tarea</label>
-                    <input type="datetime-local" id="date" autocomplete="off">
+                    <input type="text" id="date" autocomplete="off" placeholder="Selecciona fecha y hora...">
                     <label for="deadline">Fecha límite de la tarea</label>
-                    <input type="datetime-local" id="deadline" autocomplete="off">
+                    <input type="text" id="deadline" autocomplete="off" placeholder="Selecciona fecha y hora...">
                     <button type="button" class="set-reminder-btn" id="set-reminder-btn">
                         <i class="fa-solid fa-bell"></i>
                         Establecer recordatorio
@@ -141,8 +141,45 @@ async function modifyTask(taskElement, taskObj = null) {
         didOpen: async () => {
             document.getElementById('name').value = taskData.name || '';
             document.getElementById('description').value = taskData.description || '';
-            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 16) : '';
-            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 16) : '';
+
+            const fpConfig = {
+                enableTime: true,
+                dateFormat: "Y-m-d\\TH:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true,
+                disableMobile: true,
+                locale: {
+                    firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                        longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                    },
+                    months: {
+                        shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                        longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                    },
+                    rangeSeparator: " a ",
+                    weekAbbreviation: "Sem",
+                    scrollTitle: "Desplázate para cambiar",
+                    toggleTitle: "Haz clic para cambiar",
+                    amPM: ["AM", "PM"],
+                    yearAriaLabel: "Año",
+                    monthAriaLabel: "Mes",
+                    hourAriaLabel: "Hora",
+                    minuteAriaLabel: "Minuto",
+                },
+            };
+
+            flatpickr(document.getElementById('date'), {
+                ...fpConfig,
+                defaultDate: taskData.date ? taskData.date.slice(0, 16) : null,
+            });
+
+            flatpickr(document.getElementById('deadline'), {
+                ...fpConfig,
+                defaultDate: taskData.deadline ? taskData.deadline.slice(0, 16) : null,
+            });
 
             const chipsContainer = document.getElementById('label-chips');
             renderLabels(chipsContainer, currentLabels);
@@ -157,7 +194,6 @@ async function modifyTask(taskElement, taskObj = null) {
             const datalist = document.getElementById('labels-datalist');
             setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsContainer);
 
-            // Botón de recordatorio
             const reminderBtn = document.getElementById('set-reminder-btn');
             if (reminderBtn) {
                 reminderBtn.addEventListener('click', () => {
@@ -173,10 +209,12 @@ async function modifyTask(taskElement, taskObj = null) {
             const name = document.getElementById('name').value.trim();
             const dateVal = document.getElementById('date').value;
             const deadlineVal = document.getElementById('deadline').value;
+
             const toLocalISO = (localStr) => {
                 if (!localStr) return null;
                 return localStr + ':00';
-            }
+            };
+
             if (!name) {
                 Swal.showValidationMessage('El nombre no puede estar vacío');
                 return false;
