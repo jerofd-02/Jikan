@@ -171,6 +171,7 @@ router.patch('/:id/complete', verifyToken, async (req, res) => {
         const completedTasksToday = logsRows[0].count;
 
         if (completedTasksToday < board.daily_tasks) {
+
             return res.status(400).json({
                 message: `No se han completado todas las tareas de hoy. Completadas: ${completedTasksToday}/${board.daily_tasks}`
             });

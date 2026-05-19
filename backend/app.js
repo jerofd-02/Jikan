@@ -54,6 +54,9 @@ cron.schedule('0 0 * * *', async () => {
                 );
 
                 if (completed < board.daily_tasks) {
+                    const [userInfo] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+                    if (userInfo[0].protect_until != null && userInfo[0].protect_until > yesterday) return;
+
                     await pool.query(
                         `UPDATE gamified_board 
                          SET current_streak = 0 
@@ -95,6 +98,29 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
+cron.schedule('*/5 * * * *', async () => {
+    try {
+        let now = new Date();
+
+        const [users] = await pool.query('SELECT * FROM users');
+        for (const user of users) {
+            if (user.protect_until != null && user.protect_until <= now) {
+                await pool.query(`UPDATE users SET protect_until = null WHERE id = ?`, [user.id]);
+            } else {
+                console.log(`El usuario ${user.name} aun tiene un protector de racha`);
+            }
+
+            if (user.boosted_until != null && user.boosted_until <= now) {
+                await pool.query(`UPDATE users
+                    SET multiplier = null, boosted_until = null WHERE id = ?`, [user.id]);
+            } else {
+                console.log(`El usuario ${user.name} aun tiene un potenciador de puntos`);
+            }
+        }
+    } catch (error) {
+        console.error('Error en el cron de reseteo de potenciadores y protectores', error);
+    }
+});
 
 async function testConnection() {
     try {

@@ -90,7 +90,7 @@ router.patch('/inventory/use/protector/:id', verifyToken, async (req, res) => {
 
     if (protector.length === 0) return res.status(400).json({ error: 'El objeto no existe' });
     if (protector[0].object_category != 'Protector') return res.status(400).json({ error: 'El objeto no es un protector' });
-    if (purchase[0].uset_at != null) return res.status(400).json({ error: 'Este protector ya ha sido utilizado previamente' });
+    if (purchase[0].used_at != null) return res.status(400).json({ error: 'Este protector ya ha sido utilizado previamente' });
 
     const daysMatch = protector[0].object_name.match(/^(\d+)\s+d[ií]as?$/i);
     if (!daysMatch) {
