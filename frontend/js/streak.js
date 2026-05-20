@@ -52,12 +52,17 @@ async function updateStreakDisplay(newStreak = null, newPoints = null) {
         }
 
         if (streakIcon) {
-            if (currentStreak >= 10) {
-                streakIcon.classList.remove('fa-fire-flame-simple');
-                streakIcon.classList.add('fa-fire-flame');
+            if (currentStreak == 0) {
+                streakIcon.style.filter = 'grayscale(1)';
             } else {
-                streakIcon.classList.add('fa-fire-flame-simple');
-                streakIcon.classList.remove('fa-fire-flame');
+                streakIcon.style.filter = 'grayscale(0)';
+                if (currentStreak >= 10) {
+                    streakIcon.classList.remove('fa-fire-flame-simple');
+                    streakIcon.classList.add('fa-fire');
+                } else {
+                    streakIcon.classList.add('fa-fire-flame-simple');
+                    streakIcon.classList.remove('fa-fire');
+                }
             }
         }
     } catch (error) {

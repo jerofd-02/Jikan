@@ -71,7 +71,7 @@ html {
 }
 
 
-[data-theme="Marrón"] {
+[data-theme="marrón"] {
     --background-color: #160e05;
     --background2-color: #211508;
     --background3-color: #2c1c0a;
@@ -85,7 +85,7 @@ html {
     --light-accent: #e8a050;
 }
 
-[data-theme="Verde"] {
+[data-theme="verde"] {
     --background-color: #0d1a0f;
     --background2-color: #132016;
     --background3-color: #1a2e1c;
@@ -99,7 +99,7 @@ html {
     --light-accent: #72d492;
 }
 
-[data-theme="Amarillo"] {
+[data-theme="amarillo"] {
     --background-color: #1a1500;
     --background2-color: #231c00;
     --background3-color: #2e2500;
@@ -113,7 +113,7 @@ html {
     --light-accent: #ffda44;
 }
 
-[data-theme="Azul"] {
+[data-theme="azul"] {
     --background-color: #1e2430;
     --background2-color: #252d3b;
     --background3-color: #2e3749;
@@ -1869,28 +1869,28 @@ input {
 }
 
 /* MARRÓN */
-.theme-btn[data-theme="Marrón"] {
+.theme-btn[data-theme="marrón"] {
     --btn-bg: #160e05;
     --btn-principal: #c47c2e;
     --btn-text: #f0dcc0;
 }
 
 /* VERDE */
-.theme-btn[data-theme="Verde"] {
+.theme-btn[data-theme="verde"] {
     --btn-bg: #0d1a0f;
     --btn-principal: #4caf6e;
     --btn-text: #d4ecd6;
 }
 
 /* AMARILLO */
-.theme-btn[data-theme="Amarillo"] {
+.theme-btn[data-theme="amarillo"] {
     --btn-bg: #1a1500;
     --btn-principal: #f5c400;
     --btn-text: #fff8d6;
 }
 
 /* AZUL */
-.theme-btn[data-theme="Azul"] {
+.theme-btn[data-theme="azul"] {
     --btn-bg: #1e2430;
     --btn-principal: #5e81ac;
     --btn-text: #eceff4;

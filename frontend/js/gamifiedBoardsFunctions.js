@@ -31,6 +31,7 @@ export const completeTasks = async (boardId) => {
         }
 
         Swal.fire({
+            customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
             title: "¡Todas las tareas completadas!",
             icon: "success",
             text: `¡Llevas ${data.new_streak} días seguidos y has ganado ${data.points_earned} puntos hoy!`

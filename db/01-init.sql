@@ -10,7 +10,7 @@ CREATE TABLE users
     mail     VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
-    jikoins INT NOT NULL DEFAULT 1000,
+    jikoins INT NOT NULL DEFAULT 0,
     multiplier INT default null,
     boosted_until TIMESTAMP default null,
     protect_until TIMESTAMP default null,

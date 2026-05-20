@@ -129,8 +129,14 @@ async function loadInventory() {
     if (item.object_category === 'Tema') {
         const themeBtn = document.createElement('button');
         themeBtn.className = 'theme-btn';
-        themeBtn.textContent = item.object_name;
+        themeBtn.innerHTML = `<span>${item.object_name}</span>`;
         themeBtn.dataset.theme = item.object_name.toLowerCase();
+        
+        // Agregar event listener para permitir seleccionar el tema
+        themeBtn.addEventListener('click', () => {
+            applyTheme(themeBtn.dataset.theme);
+        });
+        
         themeGrid.appendChild(themeBtn);
     } else {
         const itemElement = document.createElement('div');
