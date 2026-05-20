@@ -355,7 +355,7 @@ input {
                         bottom: -5px;
                         right: -4px;
                         background-color: var(--principal);
-                        color: var(--font-color);
+                        color: var(--font-contrast);
                         border: 1px solid var(--background-color);
                         line-height: 1;
                         white-space: nowrap;
@@ -1981,7 +1981,7 @@ input {
 /* OCEAN */
 .theme-btn[data-theme="ocean"] {
     --btn-bg: #0a192f;
-    --btn-principal: #64ffda;
+    --btn-principal: #49af97;
     --btn-text: #e6f1ff;
 }
 

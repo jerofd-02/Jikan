@@ -29,11 +29,11 @@ async function updateStreakDisplay(newStreak = null, newPoints = null) {
 
         // Si no nos pasan los valores, los obtenemos de la API
         if (currentStreak === null || jikoins === null) {
-            const response = await fetch(`http://localhost:3000/boards/gamified/${boardId}/full`, {
+            const response = await fetch(`/api/boards/gamified/${boardId}/full`, {
                 credentials: 'include'
             });
 
-            const resPoints = await fetch('http://localhost:3000/api/users/jikoins', { credentials: 'include' });
+            const resPoints = await fetch('/api/users/jikoins', { credentials: 'include' });
 
             if (!response.ok) throw new Error('Failed to fetch board data');
             if (!resPoints.ok) throw new Error('Failed to fetch user points');
