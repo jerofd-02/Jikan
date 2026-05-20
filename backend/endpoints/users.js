@@ -70,6 +70,22 @@ router.patch('/password', verifyToken, async (req, res) => {
     }
 });
 
+// GET /users/jikoins
+router.get('/jikoins', verifyToken, async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            `SELECT jikoins FROM users WHERE id = ?`,
+            [req.user.id]
+        );
+        if (!rows.length)
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        handleError(res, error, 'obtener jikoins del usuario');
+    }
+});
+
 router.patch(
     '/avatar',
     verifyToken,

@@ -253,11 +253,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 const boards = await getData(BASE_URL + `/boards/${boardId.board_id}/full`);
 
                 tablero.innerHTML = '';
-                cargarColumnas(boards, tablero, titulo);
+                await cargarColumnas(boards, tablero, titulo);
 
                 document.dispatchEvent(new CustomEvent('boardChanged', {
                     detail: {boardId: boardId.board_id}
                 }));
+
+                document.querySelector('.shop-button').style.display = 'none';
+                document.querySelector('.streak-badge').style.display = 'none';
+
+                if (boards.isGamified) {
+                    document.querySelector('button.create-new-column').remove();
+                    document.querySelectorAll('.add-task').forEach(boton => boton.remove());
+                    document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
+                    document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
+                    document.querySelector('.shop-button').style.display = 'block';
+                    document.querySelector('.streak-badge').style.display = 'inline-flex';
+                }
             }
         }
     );
