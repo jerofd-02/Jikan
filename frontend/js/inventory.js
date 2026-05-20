@@ -79,7 +79,7 @@ const applyProtector = async (purchaseId) => {
     }
 }
 
-async function useItem(purchaseId, objectCategory) {
+async function useItem(purchaseId, objectCategory, element) {
     Swal.fire({
         title: '¿Usar este objeto?',
         text: '¿Estás seguro de que quieres usar este objeto? El objeto se consumirá al usarlo.',
@@ -99,13 +99,15 @@ async function useItem(purchaseId, objectCategory) {
 
             if (objectCategory == "Potenciador") {
 
-                useMuliplier(purchaseId);
+                await useMuliplier(purchaseId);
 
             } else if (objectCategory == "Protector") {
 
-                applyProtector(purchaseId);
+                await applyProtector(purchaseId);
 
             }
+
+            element.remove();
         }
     });
 }
@@ -141,7 +143,7 @@ async function loadInventory() {
                 <div style="font-size:12px;color:var(--font-color2);margin:2px 0">${item.object_category}</div>
                 <div style="font-size:14px;font-weight:600;color:var(--font-color)">${item.object_description}</div>
             </div>
-            <button style="margin:0;margin-left:auto;font-size:17px;color:var(--font-contrast);background:var(--principal);border:var(--border-color);cursor:pointer" onclick="useItem(${item.purchase_id}, '${item.object_category}')">Usar</button>
+            <button style="margin:0;margin-left:auto;font-size:17px;color:var(--font-contrast);background:var(--principal);border:var(--border-color);cursor:pointer" onclick="useItem(${item.purchase_id}, '${item.object_category}', this.closest('.inventory-item'))")">Usar</button>
             </div>
         `;
         grid.appendChild(itemElement);

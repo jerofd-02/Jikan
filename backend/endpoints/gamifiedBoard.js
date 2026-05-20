@@ -8,7 +8,7 @@ const {sendNotFound, verifyToken} = require("../utils/validations");
 // POST /boards/gamified
 router.post('/', verifyToken, async (req, res) => {
     try {
-        const {name} = req.body;
+        const {name, ntasks} = req.body;
         const userId = req.user.id;
 
         if (!name) {
@@ -30,7 +30,7 @@ router.post('/', verifyToken, async (req, res) => {
         );
 
         await pool.query(
-            'INSERT INTO gamified_board (id_board) VALUES (?)', [boardId]
+            'INSERT INTO gamified_board (id_board, daily_tasks) VALUES (?, ?)', [boardId, ntasks]
         );
 
         const basicColumns = ['Por hacer', 'En progreso', 'Finalizadas'];

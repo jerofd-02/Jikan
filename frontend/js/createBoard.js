@@ -80,14 +80,14 @@ const insertarTableroBasicoEnDB = async (name, columnsNames) => {
     }
 };
 
-const insertarTableroGamificadoEnDB = async (name, tareas) => {
+const insertarTableroGamificadoEnDB = async (name, ntasks, tareas) => {
     try {
         const boardres = await fetch(`${BASE_URL}/boards/gamified`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({name})
+            body: JSON.stringify({name, ntasks})
         });
 
         if (!boardres.ok) {
@@ -399,7 +399,7 @@ async function gamifiedCreation() {
     if (!step2.isConfirmed) return;
 
     try {
-        const board = await insertarTableroGamificadoEnDB(name, step2.value);
+        const board = await insertarTableroGamificadoEnDB(name, ntasks, step2.value);
         if (board) insertarTableroEnHTML(name);
     } catch {
         Swal.fire({

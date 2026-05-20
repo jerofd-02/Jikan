@@ -21,7 +21,7 @@ router.get('/inventory', verifyToken, async (req, res) => {
         p.bought_at
       FROM purchases p
       JOIN objects o ON p.id_object = o.object_id
-      WHERE p.id_user = ?
+      WHERE p.id_user = ? AND p.used_at IS NULL
       ORDER BY p.bought_at DESC
     `, [req.user.id]);
 
