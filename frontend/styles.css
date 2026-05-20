@@ -786,8 +786,8 @@ input {
 
     .boton-superpuesto {
         position: absolute;
-        bottom: 60px;
-        left: 160px;
+        bottom: 45px;
+        left: 45px;
 
         i {
             font-size: 1.5rem;
@@ -796,6 +796,9 @@ input {
 
     .contenedor-imagen {
         position: relative;
+        max-width: 120px;
+        max-height: 120px;
+        margin: auto 0;
     }
 
     .notification-setting + .notification-setting {

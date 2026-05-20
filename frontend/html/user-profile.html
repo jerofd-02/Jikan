@@ -36,28 +36,30 @@
 </aside>
 <main>
     <section class="section active" id="section-account-info">
-
-        <div class="contenedor-imagen">
-        <div class="avatar-wrapper">
-            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none">
-        </div>
-        <div class="boton-superpuesto"><i class="far fa-pen-to-square"></i></div>
-        </div>
-
-        <form action="">
-            <label for="username">Cambiar nombre de usuario:</label>
-            <div class="inputandbutton">
-                <input type="text" id="username" name="username" placeholder="Nombre">
-                <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+        <div class="config-wrapper">
+            <div class="contenedor-imagen">
+                <div class="avatar-wrapper">
+                    <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+                </div>
+                <div class="boton-superpuesto"><i class="far fa-pen-to-square"></i></div>
             </div>
-        </form>
-        <form action="">
-            <label for="email">Cambiar correo electrónico:</label>
-            <div class="inputandbutton">
-                <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
-                <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+            <div class="form-wrapper">
+                <form class="info-form" action="">
+                    <label for="username">Cambiar nombre de usuario:</label>
+                    <div class="inputandbutton">
+                        <input type="text" id="username" name="username" placeholder="Nombre">
+                        <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+                    </div>
+                </form>
+                <form class="info-form" action="">
+                    <label for="email">Cambiar correo electrónico:</label>
+                    <div class="inputandbutton">
+                        <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
+                        <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
 
         <div class="inventory">
             <h2>Inventario</h2>
