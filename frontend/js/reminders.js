@@ -193,6 +193,10 @@ function renderNotificationDropdown() {
             if (action === 'accepted') location.reload();
         });
     });
+
+    dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
 }
 
 function formatTimestamp(ts) {
@@ -233,7 +237,7 @@ function initBellButton() {
     });
 
     document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== btn) {
+        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
             dropdown.classList.add('hidden');
         }
     });

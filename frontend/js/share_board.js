@@ -18,7 +18,7 @@ function initShareButton() {
     });
 
     document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target) && e.target !== btn) {
+        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
             dropdown.classList.add('hidden');
         }
     });
@@ -75,6 +75,10 @@ function renderShareDropdown() {
         } catch (err) {
             showShareFeedback(feedback, 'Error de red.', 'error');
         }
+    });
+
+    dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 }
 
