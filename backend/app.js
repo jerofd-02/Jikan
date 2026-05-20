@@ -34,10 +34,11 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/columns', columnRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRouter);
-app.use('/boards/gamified', gamifiedBoardRouter);
-app.use('/shop', shopRouter);
+app.use('/api/boards/gamified', gamifiedBoardRouter);
+app.use('/api/shop', shopRouter);
 app.use('/api', inventoryRouter);
-app.use('/tasks/logs', tasksLogsRouter);
+app.use('/api/tasks/logs', tasksLogsRouter);
+app.use('/api/invitations', invitationsRouter);
 
 
 cron.schedule('0 0 * * *', async () => {
