@@ -78,12 +78,12 @@ function setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsCont
 }
 
 async function modifyTask(taskElement, taskObj = null) {
-    console.log('[modifyTask] llamada con', {taskElement, taskObj});
-
     const taskId = taskElement ? String(taskElement.dataset.taskId) : String(taskObj.id_task);
-    console.log('[modifyTask] taskId:', taskId);
 
     let taskData;
+    let boardMembers = [];
+    let currentAssignees = [];
+
     try {
         const res = await fetch(`${TASK_API_URL}/${taskId}`);
         if (!res.ok) throw new Error();
@@ -98,6 +98,16 @@ async function modifyTask(taskElement, taskObj = null) {
         });
         return;
     }
+
+    try {
+        const boardId = document.querySelector('.boards-section')?.dataset.boardId;
+        const [membersRes, assigneesRes] = await Promise.all([
+            fetch(`/api/boards/${boardId}/members`, { credentials: 'include' }),
+            fetch(`/api/tasks/${taskId}/assignees`, { credentials: 'include' })
+        ]);
+        if (membersRes.ok) boardMembers = await membersRes.json();
+        if (assigneesRes.ok) currentAssignees = (await assigneesRes.json()).map(u => u.id);
+    } catch {}
 
     let currentLabels = [...(taskData.labels || [])];
 
@@ -116,6 +126,26 @@ async function modifyTask(taskElement, taskObj = null) {
                     <input type="text" id="name" autocomplete="off">
                     <label for="description">Descripción de la tarea</label>
                     <textarea id="description"></textarea>
+                    <label>Asignados</label>
+                    <div class="assignees-selector">
+                        <div class="assignees-selected" id="assignees-selected"></div>
+                        <div class="assignees-dropdown-trigger" id="assignees-trigger">
+                            <span>Seleccionar usuarios...</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="assignees-dropdown hidden" id="assignees-dropdown">
+                            ${boardMembers.length === 0
+                                    ? `<span class="assignees-empty">No hay más miembros en este tablero</span>`
+                                    : boardMembers.map(u => `
+                                    <label class="assignee-option">
+                                        <span>${u.name}</span>
+                                        <input type="checkbox" value="${u.id}" ${currentAssignees.includes(u.id) ? 'checked' : ''}>
+                                    </label>
+                                `).join('')
+                                }
+                        </div>
+                        <div class="assignees-selected" id="assignees-selected"></div>
+                    </div>
                 </div>
                 <div class="edit-task-right">
                     <label for="label-chips">Categorías</label>
@@ -125,7 +155,7 @@ async function modifyTask(taskElement, taskObj = null) {
                             type="text" 
                             id="new-label-input" 
                             list="labels-datalist" 
-                            placeholder="Selecciona o escibe..." 
+                            placeholder="Selecciona o escribe..." 
                             autocomplete="off"
                         >
                         <datalist id="labels-datalist"></datalist>
@@ -205,6 +235,51 @@ async function modifyTask(taskElement, taskObj = null) {
                     openReminderDialog(taskId, currentName);
                 });
             }
+
+            const trigger = document.getElementById('assignees-trigger');
+            const dropdown = document.getElementById('assignees-dropdown');
+            const selectedContainer = document.getElementById('assignees-selected');
+            const MAX_VISIBLE = 4;
+
+            function renderSelectedAvatars() {
+                const checked = [...dropdown.querySelectorAll('input:checked')];
+                selectedContainer.innerHTML = '';
+
+                const visible = checked.slice(0, MAX_VISIBLE);
+                const hidden = checked.slice(MAX_VISIBLE);
+
+                visible.forEach(cb => {
+                    const member = boardMembers.find(u => String(u.id) === cb.value);
+                    if (!member) return;
+                    const img = document.createElement('img');
+                    img.src = member.avatar_url || '/img/default-avatar.png';
+                    img.className = 'assignee-avatar-bubble';
+                    img.title = member.name;
+                    selectedContainer.appendChild(img);
+                });
+
+                if (hidden.length > 0) {
+                    const more = document.createElement('div');
+                    more.className = 'assignee-avatar-more';
+                    more.title = hidden.map(cb => boardMembers.find(u => String(u.id) === cb.value)?.name).join(', ');
+                    more.textContent = `+${hidden.length}`;
+                    selectedContainer.appendChild(more);
+                }
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+
+            dropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                renderSelectedAvatars();
+            });
+
+            document.addEventListener('click', () => dropdown.classList.add('hidden'));
+
+            renderSelectedAvatars();
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -224,12 +299,16 @@ async function modifyTask(taskElement, taskObj = null) {
                 return false;
             }
 
+            const assigneeIds = [...document.querySelectorAll('#assignees-dropdown input:checked')]
+                .map(cb => parseInt(cb.value));
+
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
                 date: toLocalISO(dateVal),
                 deadline: toLocalISO(deadlineVal),
                 labels: currentLabels,
+                assignee_ids: assigneeIds,
             };
         }
     }).then((result) => {
@@ -250,6 +329,13 @@ async function saveSwalTask(taskElement, newData, previousData) {
             body: JSON.stringify(newData)
         });
         if (!response.ok) throw new Error("Error al guardar");
+
+        await fetch(`/api/tasks/${taskId}/assignees`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_ids: newData.assignee_ids || []})
+        });
+
         paragraph.textContent = newData.name;
         document.dispatchEvent(new CustomEvent('taskUpdated'));
 

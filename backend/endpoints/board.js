@@ -111,10 +111,7 @@ router.get('/:id/full', verifyToken, async (req, res) => {
             };
         }));
 
-        const [gamified] = await pool.query('SELECT * FROM gamified_board WHERE id_board = ?', [id]);
-        const isGamified = gamified.length > 0 ? true : false;
-
-        res.status(200).json({...boardRows[0], columns: columnsWithTasks, isGamified});
+        res.status(200).json({...boardRows[0], columns: columnsWithTasks});
     } catch (error) {
         handleError(res, error, 'obtener board completo');
     }
@@ -255,6 +252,22 @@ router.get('/name/:nombre', verifyToken, async (req, res) => {
         res.status(200).json(rows[0]);
     } catch (error) {
         handleError(res, error, 'obtener board por nombre');
+    }
+});
+
+// GET /boards/:id/members
+router.get('/:id/members', verifyToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [members] = await pool.query(`
+            SELECT u.id, u.name, u.mail, u.avatar_url, ub.role
+            FROM users u
+            INNER JOIN users_board ub ON u.id = ub.user_id
+            WHERE ub.board_id = ?
+        `, [id]);
+        res.status(200).json(members);
+    } catch (error) {
+        handleError(res, error, 'obtener miembros del tablero');
     }
 });
 
