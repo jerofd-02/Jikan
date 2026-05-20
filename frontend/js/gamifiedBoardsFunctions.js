@@ -24,6 +24,12 @@ export const completeTasks = async (boardId) => {
 
         const data = await response.json();
 
+        // Actualizar el streak dinámicamente sin refrescar
+        if (window.updateStreakDisplay) {
+            console.log("Actualizando streak display con:", data.new_streak, data.jikoins);
+            window.updateStreakDisplay(data.new_streak, data.jikoins);
+        }
+
         Swal.fire({
             title: "¡Todas las tareas completadas!",
             icon: "success",
