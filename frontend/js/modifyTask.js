@@ -128,23 +128,21 @@ async function modifyTask(taskElement, taskObj = null) {
                     <textarea id="description"></textarea>
                     <label>Asignados</label>
                     <div class="assignees-selector">
+                        <div class="assignees-selected" id="assignees-selected"></div>
                         <div class="assignees-dropdown-trigger" id="assignees-trigger">
                             <span>Seleccionar usuarios...</span>
                             <i class="fa-solid fa-chevron-down"></i>
                         </div>
                         <div class="assignees-dropdown hidden" id="assignees-dropdown">
                             ${boardMembers.length === 0
-                                ? `<span class="assignees-empty">No hay más miembros en este tablero</span>`
-                                : boardMembers.map(u => `
+                                    ? `<span class="assignees-empty">No hay más miembros en este tablero</span>`
+                                    : boardMembers.map(u => `
                                     <label class="assignee-option">
-                                        <div class="assignee-option-left">
-                                            <img src="${u.avatar_url || '/img/default-avatar.png'}" class="assignee-avatar">
-                                            <span>${u.name}</span>
-                                        </div>
+                                        <span>${u.name}</span>
                                         <input type="checkbox" value="${u.id}" ${currentAssignees.includes(u.id) ? 'checked' : ''}>
                                     </label>
                                 `).join('')
-                            }
+                                }
                         </div>
                         <div class="assignees-selected" id="assignees-selected"></div>
                     </div>
