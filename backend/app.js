@@ -40,7 +40,6 @@ app.use('/api', inventoryRouter);
 app.use('/api/tasks/logs', tasksLogsRouter);
 app.use('/api/invitations', invitationsRouter);
 
-
 cron.schedule('0 0 * * *', async () => {
 
     const yesterday = new Date();
@@ -128,7 +127,6 @@ cron.schedule('*/5 * * * *', async () => {
         console.error('Error en el cron de reseteo de potenciadores y protectores', error);
     }
 });
-app.use('/api/invitations', invitationsRouter);
 
 async function testConnection() {
     try {

@@ -1,11 +1,10 @@
-
 let activeFilter = 'Todos';
 let products = [];
 let userJikoins = 0;
 let ownedObjectIds = new Set();
 
 async function fetchProducts() {
-    const res = await fetch('/api/shop/objects', { credentials: 'include' });
+    const res = await fetch('/api/shop/objects', {credentials: 'include'});
     const data = await res.json();
     return data;
 }
@@ -13,8 +12,8 @@ async function fetchProducts() {
 function renderHTML(products) {
     const cats = ['Todos', ...new Set(products.map(p => p.object_category))];
     const filtered = activeFilter === 'Todos'
-    ? products
-    : products.filter(p => p.object_category === activeFilter);
+        ? products
+        : products.filter(p => p.object_category === activeFilter);
 
     return `
     <div class="swal-points">
@@ -45,7 +44,8 @@ function renderHTML(products) {
                 ${owned ? 'Ya adquirido' : 'Comprar'}
             </button>
         </div>
-        `;}).join('')}
+        `;
+    }).join('')}
     </div>
     `;
 }
@@ -58,9 +58,9 @@ function setFilter(cat) {
 async function confirmBuy(id) {
     const p = products.find(x => x.object_id === id);
     const {isConfirmed} = await Swal.fire({
-    title: '¿Confirmar compra?',
-    color: 'var(--principal)',
-    html: `
+        title: '¿Confirmar compra?',
+        color: 'var(--principal)',
+        html: `
         <div style="display:flex;align-items:center;gap:14px;margin:12px 0;padding:14px;background:var(--background3-color);border:1px solid var(--border-color);border-radius:10px;text-align:left;">
         <div style="font-size:36px;line-height:1">${p.object_img}</div>
         <div>
@@ -70,15 +70,15 @@ async function confirmBuy(id) {
         </div>
         </div>
     `,
-    background: 'var(--background-color)',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, comprar',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: 'var(--dark-accent)',
-    cancelButtonColor: 'darkred',
-    customClass: { cancelButton: 'swal-cancel-dark' },
-    reverseButtons: true,
-    width: 380,
+        background: 'var(--background-color)',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, comprar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: 'var(--dark-accent)',
+        cancelButtonColor: 'darkred',
+        customClass: {cancelButton: 'swal-cancel-dark'},
+        reverseButtons: true,
+        width: 380,
     });
 
     if (!isConfirmed) return;
@@ -86,20 +86,23 @@ async function confirmBuy(id) {
     const res = await fetch(`/api/shop/purchase`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_object: id }),
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id_object: id}),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
         const messages = {
-            400: { title: 'Jikoins insuficientes', text: `Necesitas ${p.object_price} jikoins para comprar este objeto.` },
-            409: { title: 'Ya lo tienes',          text: `${p.object_name} ya está en tu inventario.` },
-            404: { title: 'Error',                 text: data.error },
+            400: {
+                title: 'Jikoins insuficientes',
+                text: `Necesitas ${p.object_price} jikoins para comprar este objeto.`
+            },
+            409: {title: 'Ya lo tienes', text: `${p.object_name} ya está en tu inventario.`},
+            404: {title: 'Error', text: data.error},
         };
 
-        const msg = messages[res.status] ?? { title: 'Error inesperado', text: 'Inténtalo de nuevo más tarde.' };
+        const msg = messages[res.status] ?? {title: 'Error inesperado', text: 'Inténtalo de nuevo más tarde.'};
 
         Swal.fire({
             icon: 'error',
@@ -108,7 +111,7 @@ async function confirmBuy(id) {
             background: 'var(--background-color)',
             color: 'var(--font-color)',
             confirmButtonColor: 'var(--dark-accent)',
-            customClass: { title: 'swal-title-custom' },
+            customClass: {title: 'swal-title-custom'},
             width: 380,
         });
         return;
@@ -128,7 +131,7 @@ async function confirmBuy(id) {
         width: 380,
         timer: 3000,
         timerProgressBar: true,
-        customClass: { title: 'swal-title-custom' },
+        customClass: {title: 'swal-title-custom'},
         didOpen: () => {
             document.querySelector('.swal2-timer-progress-bar').style.background = 'var(--principal)';
         }
@@ -139,8 +142,8 @@ async function openShop() {
 
     const [fetchedProducts, userRes, inventoryRes] = await Promise.all([
         fetchProducts(),
-        fetch('http://localhost:3000/api/users/jikoins', { credentials: 'include' }),
-        fetch('http://localhost:3000/api/inventory', { credentials: 'include' })
+        fetch('api/users/jikoins', {credentials: 'include'}),
+        fetch('api/inventory', {credentials: 'include'})
     ]);
 
     products = fetchedProducts;
@@ -163,7 +166,7 @@ async function openShop() {
         width: 680,
         padding: '1.5rem',
         didOpen: () => {
-            window.setFilter  = setFilter;
+            window.setFilter = setFilter;
             window.confirmBuy = confirmBuy;
         }
     });
