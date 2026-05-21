@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         const observer = new MutationObserver(() => {
             const primerBoton = document.querySelector('.swap-board-button');
-            if (primerBoton) {
+            if (primerBoton && !tablero.querySelector('.column')) {
                 observer.disconnect();
                 primerBoton.click();
             }

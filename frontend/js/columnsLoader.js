@@ -152,7 +152,20 @@ const init = async () => {
 
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
+    tablero.innerHTML = '';
     await cargarColumnas(first, tablero, titulo);
+
+    if (first.isGamified) {
+        const createColBtn = document.querySelector('button.create-new-column');
+        if (createColBtn) createColBtn.remove();
+        
+        document.querySelectorAll('.add-task').forEach(boton => boton.remove());
+        document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
+        document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
+        
+        document.querySelector('.shop-button').style.display = 'block';
+        document.querySelector('.streak-badge').style.display = 'inline-flex';
+    }
 
     let selected = null;
 
