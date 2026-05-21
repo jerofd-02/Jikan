@@ -4,11 +4,11 @@
     const details = document.getElementById('sheetDetails');
 
     const MIN = 54;
-    const MAX = window.innerHeight * 0.7;
+    const MAX = 'fit-content';
 
     function setExpanded(open) {
         sheet.classList.toggle('expanded', open);
-        sheet.style.height = (open ? MAX : MIN) + 'px';
+        sheet.style.height = (open ? MAX : MIN + 'px');
         details.open = open;
     }
 
