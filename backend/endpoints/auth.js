@@ -30,6 +30,12 @@ router.post('/register', async (req, res) => {
             [name, mail, hashedPassword]
         );
 
+        const defaultAvatarUrl = '/uploads/avatars/dummy_user.png';
+        await pool.query(
+            `UPDATE users SET avatar_url = ? WHERE mail = ?`,
+            [defaultAvatarUrl, mail]
+        );
+
         const [user] = (await pool.query(
             `SELECT * FROM users WHERE mail = ?`, [mail]
         ))[0];

@@ -86,12 +86,7 @@ router.get('/jikoins', verifyToken, async (req, res) => {
     }
 });
 
-router.patch(
-    '/avatar',
-    verifyToken,
-    uploadAvatar.single('avatar'),
-
-    async (req, res) => {
+router.patch('/avatar', verifyToken, uploadAvatar.single('avatar'), async (req, res) => {
 
         try {
 
