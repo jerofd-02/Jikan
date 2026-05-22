@@ -101,7 +101,6 @@ export const cargarColumnas = async (boards, tablero, titulo) => {
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
     }
-    ;
 
     let newBoardbutton = document.createElement("button");
     newBoardbutton.className = "create-new-column";
@@ -117,7 +116,7 @@ export const cargarColumnas = async (boards, tablero, titulo) => {
         lastColumn.querySelectorAll("div").forEach(task => {
             task.draggable = false;
             let checkbox = task.querySelector('input[type="checkbox"]');
-            checkbox.click();
+            checkbox.checked = true;
             checkbox.disabled = true;
         });
     }
@@ -165,12 +164,15 @@ const init = async () => {
         const createColBtn = document.querySelector('button.create-new-column');
         if (createColBtn) createColBtn.remove();
 
+        tablero.dataset.isGamified = 'true';
+
         document.querySelectorAll('.add-task').forEach(boton => boton.remove());
         document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
         document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
 
         document.querySelector('.shop-button').style.display = 'block';
         document.querySelector('.streak-badge').style.display = 'inline-flex';
+        if (window.updateStreakDisplay) window.updateStreakDisplay();
     }
 
     let selected = null;
