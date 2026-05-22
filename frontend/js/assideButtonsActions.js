@@ -267,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.querySelectorAll('.add-task').forEach(boton => boton.remove());
                     document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
                     document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
+                    document.querySelectorAll('button.share-button').forEach(boton => boton.remove());
                     document.querySelector('.shop-button').style.display = 'block';
                     document.querySelector('.streak-badge').style.display = 'inline-flex';
                 }

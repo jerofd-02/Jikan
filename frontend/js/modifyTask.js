@@ -5,9 +5,9 @@ window.undoManager = new UndoManager();
 
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
-
     tasks.forEach(task => {
         if (task.querySelector(".modify-task")) return;
+        if (task.dataset.noModify === 'true') return;
 
         const modifyBtn = document.createElement("button");
         modifyBtn.classList.add("modify-task");

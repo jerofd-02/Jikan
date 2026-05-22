@@ -1,12 +1,12 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateStreakDisplay();
-    
+
     const tablero = document.querySelector(".boards-section");
     if (tablero) {
         const observer = new MutationObserver(() => {
             updateStreakDisplay();
         });
-        
+
         observer.observe(tablero, {
             attributes: true,
             subtree: false
@@ -18,6 +18,9 @@ async function updateStreakDisplay(newStreak = null, newPoints = null) {
     try {
         const boardId = getBoardIdFromURL();
         if (!boardId) return;
+
+        const tablero = document.querySelector('.boards-section');
+        if (tablero?.dataset.isGamified !== 'true') return;
 
         const streakBadge = document.querySelector('.streak-badge');
         const streakCount = streakBadge?.querySelector('span');
@@ -33,7 +36,7 @@ async function updateStreakDisplay(newStreak = null, newPoints = null) {
                 credentials: 'include'
             });
 
-            const resPoints = await fetch('/api/users/jikoins', { credentials: 'include' });
+            const resPoints = await fetch('/api/users/jikoins', {credentials: 'include'});
 
             if (!response.ok) throw new Error('Failed to fetch board data');
             if (!resPoints.ok) throw new Error('Failed to fetch user points');

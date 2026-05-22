@@ -1,22 +1,30 @@
 const express = require("express");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
 const pool = require("./config/database");
 const app = express();
 const cron = require('node-cron');
+const fs = require('fs');
+const path = require('path');
 
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: ['http://localhost:8080', 'http://127.0.0.1:4200'],
     credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
 
-//Añadido para el upload de imágenes-----------------------------------
-const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-//---------------------------------------------------------------------
+
+const uploadsDir = path.join(__dirname, 'uploads', 'avatars');
+const dummyAvatarPath = path.join(uploadsDir, 'dummy_user.png');
+
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, {recursive: true});
+
+if (!fs.existsSync(dummyAvatarPath)) {
+    const sourcePath = path.join(__dirname, 'uploads', 'avatars', 'dummy_user.png');
+    if (fs.existsSync(sourcePath)) fs.copyFileSync(sourcePath, dummyAvatarPath);
+}
 
 const boardRoutes = require('./endpoints/board');
 const taskRoutes = require('./endpoints/task');
@@ -29,12 +37,12 @@ const inventoryRouter = require('./endpoints/inventory');
 const tasksLogsRouter = require('./endpoints/tasksLogs');
 const invitationsRouter = require('./endpoints/invitations');
 
+app.use('/api/boards/gamified', gamifiedBoardRouter);
 app.use('/api/boards', boardRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/columns', columnRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRouter);
-app.use('/api/boards/gamified', gamifiedBoardRouter);
 app.use('/api/shop', shopRouter);
 app.use('/api', inventoryRouter);
 app.use('/api/tasks/logs', tasksLogsRouter);
@@ -52,10 +60,11 @@ cron.schedule('0 0 * * *', async () => {
         for (const board of boards) {
 
             try {
-                const [[{ completed }]] = await pool.query(
-                    `SELECT COUNT(*) AS completed 
-                     FROM tasks_logs 
-                     WHERE board_id = ? AND log_date = ?`,
+                const [[{completed}]] = await pool.query(
+                    `SELECT COUNT(*) AS completed
+                     FROM tasks_logs
+                     WHERE board_id = ?
+                       AND log_date = ?`,
                     [board.id_board, checkDate]
                 );
 
@@ -64,32 +73,33 @@ cron.schedule('0 0 * * *', async () => {
                     if (userInfo[0].protect_until != null && userInfo[0].protect_until > yesterday) return;
 
                     await pool.query(
-                        `UPDATE gamified_board 
-                         SET current_streak = 0 
+                        `UPDATE gamified_board
+                         SET current_streak = 0
                          WHERE id_board = ?`,
                         [board.id_board]
                     );
                 }
 
                 const [[firstColumn]] = await pool.query(
-                    `SELECT id_column 
-                     FROM board_column 
-                     WHERE id_board = ? 
-                     ORDER BY id_column ASC 
-                     LIMIT 1`,
+                    `SELECT id_column
+                     FROM board_column
+                     WHERE id_board = ?
+                     ORDER BY id_column ASC LIMIT 1`,
                     [board.id_board]
                 );
 
                 const [columns] = await pool.query(
-                    `SELECT id_column FROM board_column WHERE id_board = ?`,
+                    `SELECT id_column
+                     FROM board_column
+                     WHERE id_board = ?`,
                     [board.id_board]
                 );
 
                 const columnIds = columns.map(c => c.id_column);
 
                 await pool.query(
-                    `UPDATE column_task 
-                     SET id_column = ? 
+                    `UPDATE column_task
+                     SET id_column = ?
                      WHERE id_column IN (?)`,
                     [firstColumn.id_column, columnIds]
                 );
@@ -111,14 +121,18 @@ cron.schedule('*/5 * * * *', async () => {
         const [users] = await pool.query('SELECT * FROM users');
         for (const user of users) {
             if (user.protect_until != null && user.protect_until <= now) {
-                await pool.query(`UPDATE users SET protect_until = null WHERE id = ?`, [user.id]);
+                await pool.query(`UPDATE users
+                                  SET protect_until = null
+                                  WHERE id = ?`, [user.id]);
             } else {
                 console.log(`El usuario ${user.name} aun tiene un protector de racha`);
             }
 
             if (user.boosted_until != null && user.boosted_until <= now) {
                 await pool.query(`UPDATE users
-                    SET multiplier = null, boosted_until = null WHERE id = ?`, [user.id]);
+                                  SET multiplier    = null,
+                                      boosted_until = null
+                                  WHERE id = ?`, [user.id]);
             } else {
                 console.log(`El usuario ${user.name} aun tiene un potenciador de puntos`);
             }

@@ -157,10 +157,9 @@ async function openShop() {
     Swal.fire({
         title: 'Tienda',
         color: 'var(--principal)',
-        fontWeight: '600',
+        customClass: {title: 'swal-title-custom'},
         html: `<div class="swal-popup-content">${renderHTML(products)}</div>`,
         background: 'var(--background2-color)',
-        border: '1px solid var(--border-color)',
         showConfirmButton: false,
         showCloseButton: true,
         width: 680,

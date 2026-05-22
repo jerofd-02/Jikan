@@ -2,6 +2,8 @@ const {app, BrowserWindow, Menu} = require('electron');
 const path = require('path');
 const {startServer, PORT} = require('./server');
 
+Menu.setApplicationMenu(null);
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 1280,
