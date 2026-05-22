@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    updateStreakDisplay();
-
     const tablero = document.querySelector(".boards-section");
     if (tablero) {
         const observer = new MutationObserver(() => {

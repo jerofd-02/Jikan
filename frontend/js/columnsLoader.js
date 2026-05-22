@@ -165,12 +165,15 @@ const init = async () => {
         const createColBtn = document.querySelector('button.create-new-column');
         if (createColBtn) createColBtn.remove();
 
+        tablero.dataset.isGamified = 'true';
+
         document.querySelectorAll('.add-task').forEach(boton => boton.remove());
         document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
         document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
 
         document.querySelector('.shop-button').style.display = 'block';
         document.querySelector('.streak-badge').style.display = 'inline-flex';
+        if (window.updateStreakDisplay) window.updateStreakDisplay();
     }
 
     let selected = null;
