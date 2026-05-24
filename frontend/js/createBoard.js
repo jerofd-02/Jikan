@@ -104,8 +104,8 @@ const insertarTableroGamificadoEnDB = async (name, ntasks, tareas) => {
         await Promise.all(tareas.map(task =>
             fetch(`${BASE_URL}/tasks`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_column: firstColumnId, name: task })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id_column: firstColumnId, name: task})
             })
         ));
 
@@ -118,18 +118,20 @@ const insertarTableroGamificadoEnDB = async (name, ntasks, tareas) => {
 };
 
 async function showPopupCreateBoard() {
+    const principal = getComputedStyle(document.documentElement).getPropertyValue('--principal').trim();
+
     const {value: modo} = await Swal.fire({
         title: 'Organiza tus ideas',
         customClass: {popup: 'swal-custom-popup'},
         html: `
             <p class="swal-subtitle">¿Cómo deseas crear un nuevo tablero?</p>
             <div class="swal-mode-buttons">
-            <button id="swal-rapida" class="swal2-confirm swal2-styled">Creación rápida</button>
-            <button id="swal-personalizada" class="swal2-confirm swal2-styled swal2-btn-secondary">
+            <button id="swal-rapida" class="swal2-confirm swal2-styled swal-mode-btn">Creación rápida</button>
+            <button id="swal-personalizada" class="swal2-confirm swal2-styled swal-mode-btn">
                 Creación personalizada
             </button> 
             </div>
-            <button id="swal-gamificado" class="swal2-confirm swal2-styled">Jikan Play</button>
+            <button id="swal-gamificado" class="swal2-confirm swal2-styled swal-mode-btn">Jikan Play</button>
         `,
         showConfirmButton: false,
         showCancelButton: true,
@@ -163,15 +165,19 @@ async function showPopupCreateBoard() {
 
 async function fastCreation() {
     const {value: name} = await Swal.fire({
-        title: 'Creación rápida del tablero',
         customClass: {popup: 'swal-custom-popup'},
+        title: 'Creación rápida del tablero',
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
         html: `
             <label for="swal-nombre" class="swal-label">Nombre del tablero</label>
             <input id="swal-nombre" class="swal2-input" placeholder="Tablero de..." autocomplete="off">
         `,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const input = document.getElementById('swal-nombre');
             input.focus();
@@ -220,14 +226,16 @@ async function customCreation() {
         `,
         showCancelButton: true,
         confirmButtonText: 'Continuar',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const nameInput = document.getElementById('swal-name');
             nameInput.focus();
             nameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') Swal.clickConfirm();
             });
-            
+
             const input = document.getElementById('swal-ncols');
             document.getElementById('sub-button').addEventListener('click', () => {
                 if (parseInt(input.value) > 2) input.value = parseInt(input.value) - 1;
@@ -235,7 +243,7 @@ async function customCreation() {
             document.getElementById('add-button').addEventListener('click', () => {
                 if (parseInt(input.value) < 5) input.value = parseInt(input.value) + 1;
             });
-        }, 
+        },
         preConfirm: () => {
             const name = document.getElementById('swal-name').value.trim();
             if (!name) {
@@ -262,7 +270,9 @@ async function customCreation() {
         html: colInputs,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Atrás',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const firstInput = document.getElementById('swal-col-0');
             firstInput.focus();
@@ -325,14 +335,16 @@ async function gamifiedCreation() {
         `,
         showCancelButton: true,
         confirmButtonText: 'Continuar',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const nameInput = document.getElementById('swal-name');
             nameInput.focus();
             nameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') Swal.clickConfirm();
             });
-            
+
             const input = document.getElementById('swal-ntasks');
             document.getElementById('sub-button').addEventListener('click', () => {
                 if (parseInt(input.value) > 4) input.value = parseInt(input.value) - 1;
@@ -340,7 +352,7 @@ async function gamifiedCreation() {
             document.getElementById('add-button').addEventListener('click', () => {
                 if (parseInt(input.value) < 6) input.value = parseInt(input.value) + 1;
             });
-        }, 
+        },
         preConfirm: () => {
             const name = document.getElementById('swal-name').value.trim();
             if (!name) {
@@ -368,7 +380,9 @@ async function gamifiedCreation() {
         html: tasksInputs,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Atrás',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const firstInput = document.getElementById('swal-col-0');
             firstInput.focus();

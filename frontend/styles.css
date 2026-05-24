@@ -1485,12 +1485,24 @@ input {
     background-color: var(--swal2-confirm-button-background-color) !important;
 }
 
-.swal-custom-popup-inverse .swal2-confirm {
-    --swal2-confirm-button-background-color: #B0000F !important;
+.swal-custom-popup .swal2-cancel {
+    background-color: var(--swal2-cancel-button-background-color) !important;
 }
 
-.swal-custom-popup .swal2-cancel {
-    --swal2-cancel-button-background-color: #B0000F !important;
+.swal-custom-popup .swal2-confirm.swal-mode-btn {
+    --swal2-confirm-button-background-color: var(--principal) !important;
+}
+
+.swal-custom-popup:not(.swal-custom-popup-inverse) .swal2-confirm {
+    --swal2-confirm-button-background-color: var(--principal) !important;
+}
+
+.swal-custom-popup:not(.swal-custom-popup-inverse) .swal2-cancel {
+    --swal2-cancel-button-background-color: #BF0000 !important;
+}
+
+.swal-custom-popup-inverse .swal2-confirm {
+    --swal2-confirm-button-background-color: #BF0000 !important;
 }
 
 .swal-custom-popup-inverse .swal2-cancel {
@@ -1556,6 +1568,8 @@ input {
     font-size: 1.1rem;
     line-height: 1;
     margin: 0;
+    background-color: var(--principal) !important;
+    color: var(--font-color) !important;
 }
 
 .task-actions {

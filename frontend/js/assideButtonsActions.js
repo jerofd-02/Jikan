@@ -261,18 +261,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.querySelector('.shop-button').style.display = 'none';
                 document.querySelector('.streak-badge').style.display = 'none';
+                document.querySelector('button.share-button').style.display = 'block';
 
                 if (boards.isGamified) {
+                    tablero.dataset.isGamified = 'true';
                     document.querySelector('button.create-new-column').remove();
                     document.querySelectorAll('.add-task').forEach(boton => boton.remove());
                     document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
                     document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
-                    document.querySelectorAll('button.share-button').forEach(boton => boton.remove());
+                    document.querySelector('button.share-button').style.display = 'none';
                     document.querySelector('.shop-button').style.display = 'block';
                     document.querySelector('.streak-badge').style.display = 'inline-flex';
+                } else {
+                    tablero.dataset.isGamified = 'false';
                 }
             }
         }
     );
 });
-

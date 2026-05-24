@@ -1,5 +1,3 @@
-import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
-
 window.undoManager = new UndoManager();
 window.hideUndoPopup = hideUndoPopup;
 
@@ -7,7 +5,7 @@ const BASE_URL = "/api";
 
 const getData = async (link) => {
     try {
-        const response = await fetch(link, { credentials: 'include' });
+        const response = await fetch(link, {credentials: 'include'});
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
