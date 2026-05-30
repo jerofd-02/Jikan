@@ -43,8 +43,8 @@ async function deleteTask(taskElement) {
 
     const taskName = taskElement.querySelector("p")?.textContent.trim();
 
-    const { isConfirmed } = await Swal.fire({
-        customClass: { popup: 'swal-custom-popup swal-custom-popup-inverse' },
+    const {isConfirmed} = await Swal.fire({
+        customClass: {popup: 'swal-custom-popup swal-custom-popup-inverse'},
         title: "¿Eliminar tarea?",
         text: `"${taskName}" se eliminará permanentemente.`,
         icon: 'warning',
@@ -62,10 +62,7 @@ async function deleteTask(taskElement) {
     const taskData = await fetch(`/api/tasks/${taskId}`).then(r => r.json());
 
     try {
-        const response = await fetch(`/api/tasks/${taskId}`, {
-            method: "DELETE",
-        });
-
+        const response = await fetch(`/api/tasks/${taskId}`, {method: "DELETE",});
         if (!response.ok) {
             console.error("Error al eliminar la tarea.");
             return;
@@ -75,14 +72,14 @@ async function deleteTask(taskElement) {
         taskElement.style.transition = "opacity 0.2s";
         setTimeout(() => {
             taskElement.remove();
-
+            document.dispatchEvent(new CustomEvent('taskUpdated'));
             undoManager.add({
                 undo: async () => {
                     const date = taskData.date ? taskData.date.split('T')[0] : null;
 
                     const res = await fetch(`/api/tasks/`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {"Content-Type": "application/json"},
                         body: JSON.stringify({
                             id_column: taskData.id_column,
                             name: taskData.name,
@@ -96,11 +93,13 @@ async function deleteTask(taskElement) {
                     taskId = data.id_task;
                     parent.insertBefore(taskElement, nextSibling);
                     taskElement.style.opacity = "1";
+                    document.dispatchEvent(new CustomEvent('taskUpdated'));
                     hideUndoPopup();
                 },
                 redo: async () => {
-                    await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+                    await fetch(`/api/tasks/${taskId}`, {method: "DELETE"});
                     taskElement.remove();
+                    document.dispatchEvent(new CustomEvent('taskUpdated'));
                     showUndoPopup('Tarea eliminada');
                 }
             });

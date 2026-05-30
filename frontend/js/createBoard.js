@@ -80,18 +80,58 @@ const insertarTableroBasicoEnDB = async (name, columnsNames) => {
     }
 };
 
+const insertarTableroGamificadoEnDB = async (name, ntasks, tareas) => {
+    try {
+        const boardres = await fetch(`${BASE_URL}/boards/gamified`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name, ntasks})
+        });
+
+        if (!boardres.ok) {
+            throw new Error('Error al crear el tablero');
+        }
+
+        const board = await boardres.json();
+        const boardId = board.board_id;
+
+        const columnsRes = await fetch(`${BASE_URL}/boards/${boardId}/full`);
+        const boardInfo = await columnsRes.json();
+        const firstColumnId = boardInfo.columns[0].column_id;
+
+        await Promise.all(tareas.map(task =>
+            fetch(`${BASE_URL}/tasks`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id_column: firstColumnId, name: task})
+            })
+        ));
+
+        return board;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 async function showPopupCreateBoard() {
+    const principal = getComputedStyle(document.documentElement).getPropertyValue('--principal').trim();
+
     const {value: modo} = await Swal.fire({
         title: 'Organiza tus ideas',
         customClass: {popup: 'swal-custom-popup'},
         html: `
             <p class="swal-subtitle">¿Cómo deseas crear un nuevo tablero?</p>
             <div class="swal-mode-buttons">
-            <button id="swal-rapida" class="swal2-confirm swal2-styled">Creación rápida</button>
-            <button id="swal-personalizada" class="swal2-confirm swal2-styled swal2-btn-secondary">
+            <button id="swal-rapida" class="swal2-confirm swal2-styled swal-mode-btn">Creación rápida</button>
+            <button id="swal-personalizada" class="swal2-confirm swal2-styled swal-mode-btn">
                 Creación personalizada
             </button> 
             </div>
+            <button id="swal-gamificado" class="swal2-confirm swal2-styled swal-mode-btn">Jikan Play</button>
         `,
         showConfirmButton: false,
         showCancelButton: true,
@@ -105,13 +145,18 @@ async function showPopupCreateBoard() {
                 Swal.getPopup().__modo = 'personalizada';
                 Swal.clickConfirm();
             });
+            document.getElementById('swal-gamificado').addEventListener('click', () => {
+                Swal.getPopup().__modo = 'gamificado';
+                Swal.clickConfirm();
+            });
         },
         preConfirm: () => Swal.getPopup().__modo ?? null,
     });
 
     if (!modo) return;
     if (modo === 'rapida') await fastCreation();
-    else await customCreation();
+    else if (modo === 'personalizada') await customCreation();
+    else await gamifiedCreation();
 
     let botones = document.querySelectorAll('.swap-board-button');
     let boton = botones[botones.length - 1];
@@ -120,15 +165,19 @@ async function showPopupCreateBoard() {
 
 async function fastCreation() {
     const {value: name} = await Swal.fire({
-        title: 'Creación rápida del tablero',
         customClass: {popup: 'swal-custom-popup'},
+        title: 'Creación rápida del tablero',
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
         html: `
             <label for="swal-nombre" class="swal-label">Nombre del tablero</label>
             <input id="swal-nombre" class="swal2-input" placeholder="Tablero de..." autocomplete="off">
         `,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const input = document.getElementById('swal-nombre');
             input.focus();
@@ -177,14 +226,16 @@ async function customCreation() {
         `,
         showCancelButton: true,
         confirmButtonText: 'Continuar',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const nameInput = document.getElementById('swal-name');
             nameInput.focus();
             nameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') Swal.clickConfirm();
             });
-            
+
             const input = document.getElementById('swal-ncols');
             document.getElementById('sub-button').addEventListener('click', () => {
                 if (parseInt(input.value) > 2) input.value = parseInt(input.value) - 1;
@@ -192,7 +243,7 @@ async function customCreation() {
             document.getElementById('add-button').addEventListener('click', () => {
                 if (parseInt(input.value) < 5) input.value = parseInt(input.value) + 1;
             });
-        }, 
+        },
         preConfirm: () => {
             const name = document.getElementById('swal-name').value.trim();
             if (!name) {
@@ -219,7 +270,9 @@ async function customCreation() {
         html: colInputs,
         showCancelButton: true,
         confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
         cancelButtonText: 'Atrás',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         didOpen: () => {
             const firstInput = document.getElementById('swal-col-0');
             firstInput.focus();
@@ -251,6 +304,116 @@ async function customCreation() {
 
     try {
         const board = await insertarTableroBasicoEnDB(name, step2.value);
+        if (board) insertarTableroEnHTML(name);
+    } catch {
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo crear el tablero',
+            icon: 'error',
+            customClass: {popup: 'swal-custom-popup'},
+        });
+    }
+}
+
+async function gamifiedCreation() {
+    const step1 = await Swal.fire({
+        title: '¿Quieres jugar?',
+        customClass: {popup: 'swal-custom-popup'},
+        html: `
+            <p class="swal-description">
+                Bienvenido a la verdadera experiencia Jikan. En este tablero tendrás unas tareas diarias que debes
+                completar todos los días para acumular una racha, entre mayor sea la racha... ¡Mayor será la recompensa!
+            </p>
+            <label for="swal-name" class="swal-label">Nombre de tablero</label>
+            <input id="swal-name" class="swal2-input" placeholder="Tablero de..." autocomplete="off">
+            <label class="swal-label-spaced">¿Cuántas tareas deseas?</label>
+            <div class="swal-stepper">
+                <button type="button" id="sub-button" class="swal-button swal2-confirm swal2-styled">-</button>
+                <input id="swal-ntasks" type="number" min="4" max="6" value="5" readonly>
+                <button type="button" id="add-button" class="swal-button swal2-confirm swal2-styled">+</button>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Continuar',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
+        didOpen: () => {
+            const nameInput = document.getElementById('swal-name');
+            nameInput.focus();
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') Swal.clickConfirm();
+            });
+
+            const input = document.getElementById('swal-ntasks');
+            document.getElementById('sub-button').addEventListener('click', () => {
+                if (parseInt(input.value) > 4) input.value = parseInt(input.value) - 1;
+            });
+            document.getElementById('add-button').addEventListener('click', () => {
+                if (parseInt(input.value) < 6) input.value = parseInt(input.value) + 1;
+            });
+        },
+        preConfirm: () => {
+            const name = document.getElementById('swal-name').value.trim();
+            if (!name) {
+                Swal.showValidationMessage("El nombre no puede estar vacío");
+                return false;
+            }
+            return {name, ntasks: parseInt(document.getElementById('swal-ntasks').value)};
+        }
+    });
+
+    if (!step1.isConfirmed) return;
+
+    const {name, ntasks} = step1.value;
+
+    const tasksInputs = Array.from({length: ntasks}).map((_, i) =>
+        `
+            <label class="${i ? 'swal-label-spaced' : 'swal-label'}"${i + 1}º tarea</label>
+            <input id="swal-col-${i}" class="swal2-input" placeholder="Descripción de la tarea" autocomplete="off">
+        `).join('');
+
+    const step2 = await Swal.fire({
+        title: 'Definamos el reto',
+        text: 'Escribe el nombre de las tareas que deseas repetir diariamente',
+        customClass: {popup: 'swal-custom-popup'},
+        html: tasksInputs,
+        showCancelButton: true,
+        confirmButtonText: 'Crear tablero',
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
+        cancelButtonText: 'Atrás',
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
+        didOpen: () => {
+            const firstInput = document.getElementById('swal-col-0');
+            firstInput.focus();
+            for (let i = 0; i < ntasks; i++) {
+                document.getElementById(`swal-col-${i}`).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') Swal.clickConfirm();
+                });
+            }
+        },
+        preConfirm: () => {
+            const tasks = Array.from({length: ntasks}).map((_, i) =>
+                document.getElementById(`swal-col-${i}`).value.trim()
+            ).filter(Boolean);
+
+            if (tasks.length < ntasks) {
+                Swal.showValidationMessage('Introduce un nombre para todas las tareas');
+                return false;
+            }
+            return tasks;
+        }
+    })
+
+    if (step2.isDismissed && step2.dismiss == Swal.DismissReason.cancel) {
+        await gamifiedCreation();
+        return;
+    }
+
+    if (!step2.isConfirmed) return;
+
+    try {
+        const board = await insertarTableroGamificadoEnDB(name, ntasks, step2.value);
         if (board) insertarTableroEnHTML(name);
     } catch {
         Swal.fire({

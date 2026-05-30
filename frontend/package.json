@@ -1,6 +1,39 @@
 {
+  "name": "jikan",
+  "version": "1.0.1",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
   "dependencies": {
     "undo-manager": "^1.1.1",
-    "sweetalert2": "^11.26.24"
+    "sweetalert2": "^11.26.24",
+    "flatpickr": "4.6.13",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.9"
+  },
+  "devDependencies": {
+    "electron": "^42.2.0",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.jikan.app",
+    "productName": "Jikan",
+    "files": [
+      "**/*",
+      "!.git",
+      "!DockerfileFrontend",
+      "!nginx"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

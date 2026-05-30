@@ -1,5 +1,8 @@
-import { tituloEditable } from './add_column.js';
-import { tituloEditableBoard } from './assideButtonsActions.js';
+import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
+import {tituloEditable} from './add_column.js';
+import {tituloEditableBoard} from './assideButtonsActions.js';
+import {completeTasks} from './gamifiedBoardsFunctions.js';
+
 const BASE_URL = "/api";
 
 const getData = async (link) => {
@@ -17,7 +20,7 @@ const getData = async (link) => {
 
 let tablero = document.querySelector(".boards-section");
 
-export const cargarColumnas = async(boards, tablero, titulo) => {
+export const cargarColumnas = async (boards, tablero, titulo) => {
 
     titulo.textContent = boards.name;
     titulo.classList.add("editable-title");
@@ -78,6 +81,10 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
             taskContent.appendChild(checkbox);
             taskContent.appendChild(taskName);
 
+            if (boards.isGamified) {
+                taskContent.dataset.noModify = 'true';
+            }
+
             tasks.appendChild(taskContent);
         });
 
@@ -93,25 +100,80 @@ export const cargarColumnas = async(boards, tablero, titulo) => {
 
         taskSection.appendChild(col);
         tablero.appendChild(taskSection);
-    };
+    }
 
     let newBoardbutton = document.createElement("button");
     newBoardbutton.className = "create-new-column";
+    //newBoardbutton.id = "Boton-Crear-Tablero";
     newBoardbutton.textContent = "Crear nueva columna";
 
     tablero.appendChild(newBoardbutton);
+
+    if (boards.isGamified) {
+        let columnas = tablero.querySelectorAll(".task-list");
+        let lastColumn = columnas[columnas.length - 1];
+
+        lastColumn.querySelectorAll("div").forEach(task => {
+            task.draggable = false;
+            let checkbox = task.querySelector('input[type="checkbox"]');
+            checkbox.checked = true;
+            checkbox.disabled = true;
+        });
+    }
 };
 
 const init = async () => {
 
     const userMail = localStorage.getItem("userMail");
+
+    try {
+        const verifyRes = await fetch(`${BASE_URL}/auth/verify`, {credentials: 'include'});
+        if (verifyRes.ok) {
+            const {name, avatar_url} = await verifyRes.json();
+
+            const userPicture = document.querySelector('.user-picture');
+            if (userPicture && avatar_url) userPicture.src = avatar_url;
+
+            const userName = document.querySelector('.user-name-asside');
+            if (userName) userName.textContent = name;
+
+            const userEmailEl = document.querySelector('.user-email-asside');
+            if (userEmailEl) userEmailEl.textContent = userMail || '';
+        }
+    } catch (e) {
+        console.error('Error cargando datos de usuario:', e);
+    }
+
     let boards = await getData(BASE_URL + `/boards/user/${userMail}`);
 
-    let first = await getData(BASE_URL + `/boards/${boards[0].board_id}/full`); 
+    const savedBoardId = localStorage.getItem("lastBoardId");
+
+    const boardToLoad =
+        savedBoardId || boards[0].board_id;
+
+    let first = await getData(
+        BASE_URL + `/boards/${boardToLoad}/full`
+    );
 
     let tablero = document.querySelector(".boards-section");
     let titulo = document.getElementById('board-title');
+    tablero.innerHTML = '';
     await cargarColumnas(first, tablero, titulo);
+
+    if (first.isGamified) {
+        const createColBtn = document.querySelector('button.create-new-column');
+        if (createColBtn) createColBtn.remove();
+
+        tablero.dataset.isGamified = 'true';
+
+        document.querySelectorAll('.add-task').forEach(boton => boton.remove());
+        document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
+        document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
+
+        document.querySelector('.shop-button').style.display = 'block';
+        document.querySelector('.streak-badge').style.display = 'inline-flex';
+        if (window.updateStreakDisplay) window.updateStreakDisplay();
+    }
 
     let selected = null;
 
@@ -128,16 +190,66 @@ const init = async () => {
     });
 
     tablero.addEventListener("drop", async (e) => {
+        const boardId = tablero.dataset.boardId;
         const targetList = e.target.closest(".task-list");
+
+        const moverTarea = async (taskId, columnId) => {
+            await fetch(`${BASE_URL}/tasks/${taskId}`, {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({id_column: columnId}),
+            }).catch(err => console.error("Error actualizando tarea:", err));
+        }
+
         if (selected && targetList) {
             const taskId = selected.dataset.taskId;
             const columnId = targetList.dataset.columnId;
 
-            await fetch(`${BASE_URL}/tasks/${taskId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id_column: columnId }),
-            }).catch(err => console.error("Error actualizando tarea:", err));
+            const boardData = await getData(BASE_URL + `/boards/${boardId}/full`);
+            const lastColumnId = boardData.columns[boardData.columns.length - 1].column_id;
+
+            if (boardData.isGamified && parseInt(targetList.dataset.columnId) === lastColumnId) {
+
+                const {isConfirmed} = await Swal.fire({
+                    customClass: {popup: 'swal-custom-popup swal-custom-popup-inverse'},
+                    title: "¿Has terminado con esta tarea?",
+                    text: `La tarea "${selected.textContent}" se dará por finalizada y no puedes volver atrás.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, completar',
+                    cancelButtonText: 'Cancelar',
+                });
+
+                if (!isConfirmed) return;
+
+                try {
+                    await fetch(BASE_URL + `/tasks/logs`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({board_id: boardData.board_id, task_id: taskId})
+                    });
+
+                    await moverTarea(taskId, columnId);
+
+                    selected.draggable = false;
+                    let checkbox = selected.querySelector('input[type="checkbox"]');
+                    checkbox.click();
+                    checkbox.disabled = true;
+
+                    completeTasks(boardData.board_id);
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se ha podido completar la tarea",
+                    });
+                    console.log(error);
+                }
+
+            } else {
+                await moverTarea(taskId, columnId);
+            }
 
             targetList.appendChild(selected);
             selected = null;

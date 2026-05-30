@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken} = require('../utils/validations');
-
 const pool = require("../config/database");
+
+// GET /tasks/board/:boardId
+router.get('/board/:boardId', verifyToken, async (req, res) => {
+    try {
+        const {boardId} = req.params;
+        const [rows] = await pool.query(`
+            SELECT ct.*
+            FROM column_task ct
+                     INNER JOIN board_column bc ON ct.id_column = bc.id_column
+            WHERE bc.id_board = ?
+        `, [boardId]);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error('Error al obtener tareas del tablero:', error);
+        res.status(500).json({message: 'Error interno del servidor'});
+    }
+});
 
 // GET /tasks — obtener todas las tareas
 router.get('/', verifyToken, async (req, res) => {
@@ -223,6 +239,44 @@ router.delete('/:id', verifyToken, async (req, res) => {
     } catch (error) {
         console.error('Error al eliminar la tarea:', error);
         res.status(500).json({message: 'Error interno del servidor'});
+    }
+});
+
+// GET /tasks/:id/assignees
+router.get('/:id/assignees', verifyToken, async (req, res) => {
+    try {
+        const {id} = req.params;
+        const [rows] = await pool.query(`
+            SELECT u.id, u.name, u.avatar_url
+            FROM users u
+                     INNER JOIN user_task ut ON u.id = ut.user_id
+            WHERE ut.task_id = ?
+        `, [id]);
+        res.status(200).json(rows);
+    } catch (error) {
+        handleError(res, error, 'obtener asignados');
+    }
+});
+
+// PUT /tasks/:id/assignees
+router.put('/:id/assignees', verifyToken, async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {user_ids} = req.body; // array de IDs
+
+        await pool.query(`DELETE
+                          FROM user_task
+                          WHERE task_id = ?`, [id]);
+
+        if (user_ids && user_ids.length > 0) {
+            const values = user_ids.map(uid => [uid, id]);
+            await pool.query(`INSERT INTO user_task (user_id, task_id)
+                              VALUES ?`, [values]);
+        }
+
+        res.status(200).json({message: 'Asignados actualizados'});
+    } catch (error) {
+        handleError(res, error, 'actualizar asignados');
     }
 });
 

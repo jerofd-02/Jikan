@@ -1,5 +1,3 @@
-import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
-
 window.undoManager = new UndoManager();
 window.hideUndoPopup = hideUndoPopup;
 
@@ -7,7 +5,7 @@ const BASE_URL = "/api";
 
 const getData = async (link) => {
     try {
-        const response = await fetch(link, { credentials: 'include' });
+        const response = await fetch(link, {credentials: 'include'});
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -30,12 +28,14 @@ const cargarBotonesLaterales = (boards, buttonSection) => {
         boardButton.className = 'swap-board-button';
         contenedor.appendChild(boardButton);
 
-        let deleteBtn = document.createElement("button");
-        deleteBtn.classList.add("delete-board");
-        deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
-        buttonDiv.appendChild(deleteBtn);
-        boardButton.appendChild(buttonDiv);
+        if (board.role === 'owner') {
+            let deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("delete-board");
+            deleteBtn.innerHTML = `<i class="fa fa-trash" aria-hidden="true"></i>`;
+            buttonDiv.appendChild(deleteBtn);
+        }
 
+        boardButton.appendChild(buttonDiv);
         buttonSection.appendChild(contenedor);
     });
 
@@ -62,6 +62,8 @@ const init = async () => {
         document.querySelector(".user-picture").parentElement.href = "./html/user-profile.html";
         console.log("Usuario autenticado:", userMail);
     }
+
+    document.dispatchEvent(new CustomEvent('boardsLoaded'));
 };
 
 document.addEventListener("DOMContentLoaded", init);

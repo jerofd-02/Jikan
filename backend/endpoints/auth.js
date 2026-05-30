@@ -30,6 +30,12 @@ router.post('/register', async (req, res) => {
             [name, mail, hashedPassword]
         );
 
+        const defaultAvatarUrl = '/uploads/avatars/dummy_user.png';
+        await pool.query(
+            `UPDATE users SET avatar_url = ? WHERE mail = ?`,
+            [defaultAvatarUrl, mail]
+        );
+
         const [user] = (await pool.query(
             `SELECT * FROM users WHERE mail = ?`, [mail]
         ))[0];
@@ -129,7 +135,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/verify', verifyToken, async (req, res) => {
-    res.json({ ok: true, mail: req.user.mail, name: req.user.name });
+    res.json({ ok: true, mail: req.user.mail, name: req.user.name, avatar_url: req.user.avatar_url });
 });
 
 // DELETE /auth/delete-account

@@ -85,7 +85,7 @@ async function verifyToken(req, res, next) {
             return res.status(401).json({ valid: false, message: 'Token inválido o expirado' });
         }
 
-        req.user = { mail: user.mail, name: user.name, id: user.id };
+        req.user = { mail: user.mail, name: user.name, id: user.id, avatar_url: user.avatar_url };
         next();
     } catch (error) {
         console.error('Error al verificar token:', error);

@@ -14,8 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 localStorage.clear();
-                
-                // Redirigir al login (ajusta la ruta según tu proyecto)
                 window.location.href = "../html/login.html";
             }).catch(error => {
                 console.error("Error al cerrar sesión", error);

@@ -20,29 +20,32 @@ router.delete('/:id', verifyToken, async (req, res) => {
             `SELECT *
              FROM users_board
              WHERE board_id = ?
-               AND user_id = ?`, [id, userId]
+               AND user_id = ?`,
+            [id, userId]
         );
-
         if (userBoard.length === 0) {
             return res.status(403).json({message: 'No tienes permiso para eliminar este tablero'});
+        }
+
+        if (userBoard[0].role !== 'owner') {
+            return res.status(403).json({message: 'Solo el propietario del tablero puede eliminarlo'});
         }
 
         await pool.query(`DELETE
                           FROM board
                           WHERE board_id = ?`, [id]);
-
         await pool.query(`DELETE
                           FROM column_task
-                          WHERE id_column IN (SELECT id_column
-                                              FROM board_column
-                                              WHERE id_board = ?)`, [id]);
-
+                          WHERE id_column IN (SELECT id_column FROM board_column WHERE id_board = ?)`, [id]);
         await pool.query(`DELETE
                           FROM board_column
                           WHERE id_board = ?`, [id]);
-
         await pool.query(`DELETE
                           FROM users_board
+                          WHERE board_id = ?`, [id]);
+
+        await pool.query(`DELETE
+                          FROM board
                           WHERE board_id = ?`, [id]);
 
         res.status(200).json({message: 'Tablero eliminado correctamente'});
@@ -56,7 +59,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
 router.get('/user/:mail', verifyToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`
-            SELECT b.board_id, b.name
+            SELECT b.board_id, b.name, ub.role
             FROM board b
                      INNER JOIN users_board ub ON b.board_id = ub.board_id
             WHERE ub.user_id = ?
@@ -108,7 +111,10 @@ router.get('/:id/full', verifyToken, async (req, res) => {
             };
         }));
 
-        res.status(200).json({...boardRows[0], columns: columnsWithTasks});
+        const [gamified] = await pool.query('SELECT * FROM gamified_board WHERE id_board = ?', [id]);
+        const isGamified = gamified.length > 0 ? true : false;
+
+        res.status(200).json({...boardRows[0], columns: columnsWithTasks, isGamified});
     } catch (error) {
         handleError(res, error, 'obtener board completo');
     }
@@ -249,6 +255,22 @@ router.get('/name/:nombre', verifyToken, async (req, res) => {
         res.status(200).json(rows[0]);
     } catch (error) {
         handleError(res, error, 'obtener board por nombre');
+    }
+});
+
+// GET /boards/:id/members
+router.get('/:id/members', verifyToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [members] = await pool.query(`
+            SELECT u.id, u.name, u.mail, u.avatar_url, ub.role
+            FROM users u
+            INNER JOIN users_board ub ON u.id = ub.user_id
+            WHERE ub.board_id = ?
+        `, [id]);
+        res.status(200).json(members);
+    } catch (error) {
+        handleError(res, error, 'obtener miembros del tablero');
     }
 });
 

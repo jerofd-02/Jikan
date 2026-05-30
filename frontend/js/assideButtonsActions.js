@@ -36,11 +36,16 @@ export const tituloEditableBoard = (titleElement, boardId) => {
             const nuevoNombre = input.value.trim() || currentText;
 
             try {
-                await fetch(`/api/boards/${boardId}`, {
+
+                const currentBoardId =
+                    document.querySelector(".boards-section").dataset.boardId;
+
+                await fetch(`/api/boards/${currentBoardId}`, {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({name: nuevoNombre})
                 });
+
             } catch (error) {
                 console.error("Error al renombrar tablero:", error);
             }
@@ -48,13 +53,13 @@ export const tituloEditableBoard = (titleElement, boardId) => {
             titleElement.textContent = nuevoNombre;
 
             let botones = document.querySelectorAll('.swap-board-button');
+
             botones.forEach(boton => {
                 if (boton.textContent == currentText) {
                     boton.textContent = nuevoNombre;
                     return;
                 }
             });
-
         };
 
         input.addEventListener("blur", guardar);
@@ -98,6 +103,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const tablero = document.querySelector(".boards-section");
     const titulo = document.getElementById('board-title');
 
+    function dispatchBoardChanged(boardId) {
+        const dispatch = () => document.dispatchEvent(new CustomEvent('boardChanged', {
+            detail: {boardId}
+        }));
+
+        const calendarReady = document.querySelector('[data-template="calendar"] .calendar-wrap');
+        if (calendarReady) {
+            dispatch();
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            if (document.querySelector('[data-template="calendar"] .calendar-wrap')) {
+                observer.disconnect();
+                dispatch();
+            }
+        });
+        observer.observe(document.body, {childList: true, subtree: true});
+    }
+
+    const lastBoardId = localStorage.getItem("lastBoardId");
+    if (lastBoardId) {
+        dispatchBoardChanged(lastBoardId);
+    } else {
+        const observer = new MutationObserver(() => {
+            const primerBoton = document.querySelector('.swap-board-button');
+            if (primerBoton && !tablero.querySelector('.column')) {
+                observer.disconnect();
+                primerBoton.click();
+            }
+        });
+        observer.observe(botonesTableros, {childList: true, subtree: true});
+    }
+
     botonesTableros.addEventListener('click', async (e) => {
             const botonBorrar = e.target.closest('.delete-board');
             if (botonBorrar) {
@@ -130,6 +169,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (String(actualBoard) === String(boardId)) {
                         tablero.innerHTML = '';
                         titulo.textContent = '';
+                    }
+
+                    const primerBoton = document.querySelector('.swap-board-button');
+                    if (primerBoton) {
+                        primerBoton.click();
                     }
 
                     let currentBoardId = boardId;
@@ -201,15 +245,37 @@ document.addEventListener("DOMContentLoaded", () => {
             // cambiar de tablero
             const botonTablero = e.target.closest(".swap-board-button");
             if (botonTablero) {
-
                 const name = botonTablero.textContent.trim();
                 const boardId = await getData(BASE_URL + `/boards/name/${name}`);
+
+                localStorage.setItem("lastBoardId", boardId.board_id);
+
                 const boards = await getData(BASE_URL + `/boards/${boardId.board_id}/full`);
 
                 tablero.innerHTML = '';
-                cargarColumnas(boards, tablero, titulo);
+                await cargarColumnas(boards, tablero, titulo);
+
+                document.dispatchEvent(new CustomEvent('boardChanged', {
+                    detail: {boardId: boardId.board_id}
+                }));
+
+                document.querySelector('.shop-button').style.display = 'none';
+                document.querySelector('.streak-badge').style.display = 'none';
+                document.querySelector('button.share-button').style.display = 'block';
+
+                if (boards.isGamified) {
+                    tablero.dataset.isGamified = 'true';
+                    document.querySelector('button.create-new-column').remove();
+                    document.querySelectorAll('.add-task').forEach(boton => boton.remove());
+                    document.querySelectorAll('button.dropdown-item.delete-column-btn').forEach(boton => boton.remove());
+                    document.querySelectorAll('button.delete-task').forEach(boton => boton.remove());
+                    document.querySelector('button.share-button').style.display = 'none';
+                    document.querySelector('.shop-button').style.display = 'block';
+                    document.querySelector('.streak-badge').style.display = 'inline-flex';
+                } else {
+                    tablero.dataset.isGamified = 'false';
+                }
             }
         }
-    )
-    ;
+    );
 });

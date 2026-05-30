@@ -1,13 +1,13 @@
 import Swal from '/node_modules/sweetalert2/dist/sweetalert2.esm.all.min.js';
-import { openReminderDialog, initReminders } from './reminders.js';
+import {initReminders, openReminderDialog} from './reminders.js';
 
 window.undoManager = new UndoManager();
 
 function addModifyButton() {
     const tasks = document.querySelectorAll(".task");
-
     tasks.forEach(task => {
         if (task.querySelector(".modify-task")) return;
+        if (task.dataset.noModify === 'true') return;
 
         const modifyBtn = document.createElement("button");
         modifyBtn.classList.add("modify-task");
@@ -77,12 +77,13 @@ function setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsCont
     };
 }
 
-async function modifyTask(taskElement) {
-    if (!taskElement) return;
-
-    const taskId = taskElement.dataset.taskId;
+async function modifyTask(taskElement, taskObj = null) {
+    const taskId = taskElement ? String(taskElement.dataset.taskId) : String(taskObj.id_task);
 
     let taskData;
+    let boardMembers = [];
+    let currentAssignees = [];
+
     try {
         const res = await fetch(`${TASK_API_URL}/${taskId}`);
         if (!res.ok) throw new Error();
@@ -98,12 +99,26 @@ async function modifyTask(taskElement) {
         return;
     }
 
+    try {
+        const boardId = document.querySelector('.boards-section')?.dataset.boardId;
+        const [membersRes, assigneesRes] = await Promise.all([
+            fetch(`/api/boards/${boardId}/members`, { credentials: 'include' }),
+            fetch(`/api/tasks/${taskId}/assignees`, { credentials: 'include' })
+        ]);
+        if (membersRes.ok) boardMembers = await membersRes.json();
+        if (assigneesRes.ok) currentAssignees = (await assigneesRes.json()).map(u => u.id);
+    } catch {}
+
     let currentLabels = [...(taskData.labels || [])];
 
     Swal.fire({
         width: '700px',
         customClass: {popup: 'swal-custom-popup'},
         title: 'Modificar tarea',
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background3-color').trim(),
+        color: getComputedStyle(document.documentElement).getPropertyValue('--font-color').trim(),
+        confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--principal').trim(),
+        cancelButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-accent').trim(),
         html: `
             <div class="edit-task-input">
                 <div class="edit-task-left">
@@ -111,25 +126,45 @@ async function modifyTask(taskElement) {
                     <input type="text" id="name" autocomplete="off">
                     <label for="description">Descripción de la tarea</label>
                     <textarea id="description"></textarea>
+                    <label>Asignados</label>
+                    <div class="assignees-selector">
+                        <div class="assignees-selected" id="assignees-selected"></div>
+                        <div class="assignees-dropdown-trigger" id="assignees-trigger">
+                            <span>Seleccionar usuarios...</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="assignees-dropdown hidden" id="assignees-dropdown">
+                            ${boardMembers.length === 0
+                                    ? `<span class="assignees-empty">No hay más miembros en este tablero</span>`
+                                    : boardMembers.map(u => `
+                                    <label class="assignee-option">
+                                        <span>${u.name}</span>
+                                        <input type="checkbox" value="${u.id}" ${currentAssignees.includes(u.id) ? 'checked' : ''}>
+                                    </label>
+                                `).join('')
+                                }
+                        </div>
+                        <div class="assignees-selected" id="assignees-selected"></div>
+                    </div>
                 </div>
                 <div class="edit-task-right">
                     <label for="label-chips">Categorías</label>
                     <div class="label-chips-container" id="label-chips"></div>
-                        <div class="label-row">
+                    <div class="label-row">
                         <input 
                             type="text" 
                             id="new-label-input" 
                             list="labels-datalist" 
-                            placeholder="Selecciona o escibe..." 
+                            placeholder="Selecciona o escribe..." 
                             autocomplete="off"
                         >
                         <datalist id="labels-datalist"></datalist>
                         <button type="button" class="add-label-btn" id="add-label-btn" title="Nueva categoría">+</button>
                     </div>
                     <label for="date">Fecha de la tarea</label>
-                    <input type="date" id="date" autocomplete="off">
+                    <input type="text" id="date" autocomplete="off" placeholder="Selecciona fecha y hora...">
                     <label for="deadline">Fecha límite de la tarea</label>
-                    <input type="date" id="deadline" autocomplete="off">
+                    <input type="text" id="deadline" autocomplete="off" placeholder="Selecciona fecha y hora...">
                     <button type="button" class="set-reminder-btn" id="set-reminder-btn">
                         <i class="fa-solid fa-bell"></i>
                         Establecer recordatorio
@@ -140,8 +175,45 @@ async function modifyTask(taskElement) {
         didOpen: async () => {
             document.getElementById('name').value = taskData.name || '';
             document.getElementById('description').value = taskData.description || '';
-            document.getElementById('date').value = taskData.date ? taskData.date.slice(0, 10) : '';
-            document.getElementById('deadline').value = taskData.deadline ? taskData.deadline.slice(0, 10) : '';
+
+            const fpConfig = {
+                enableTime: true,
+                dateFormat: "Y-m-d\\TH:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true,
+                disableMobile: true,
+                locale: {
+                    firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                        longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                    },
+                    months: {
+                        shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                        longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                    },
+                    rangeSeparator: " a ",
+                    weekAbbreviation: "Sem",
+                    scrollTitle: "Desplázate para cambiar",
+                    toggleTitle: "Haz clic para cambiar",
+                    amPM: ["AM", "PM"],
+                    yearAriaLabel: "Año",
+                    monthAriaLabel: "Mes",
+                    hourAriaLabel: "Hora",
+                    minuteAriaLabel: "Minuto",
+                },
+            };
+
+            flatpickr(document.getElementById('date'), {
+                ...fpConfig,
+                defaultDate: taskData.date ? taskData.date.slice(0, 16) : null,
+            });
+
+            flatpickr(document.getElementById('deadline'), {
+                ...fpConfig,
+                defaultDate: taskData.deadline ? taskData.deadline.slice(0, 16) : null,
+            });
 
             const chipsContainer = document.getElementById('label-chips');
             renderLabels(chipsContainer, currentLabels);
@@ -150,14 +222,12 @@ async function modifyTask(taskElement) {
             try {
                 const res = await fetch(`${TASK_API_URL}/labels/all`);
                 if (res.ok) allLabels = await res.json();
-            } catch {
-            }
+            } catch {}
 
             const input = document.getElementById('new-label-input');
             const datalist = document.getElementById('labels-datalist');
             setupLabelComboBox(input, datalist, allLabels, currentLabels, chipsContainer);
 
-            // Botón de recordatorio
             const reminderBtn = document.getElementById('set-reminder-btn');
             if (reminderBtn) {
                 reminderBtn.addEventListener('click', () => {
@@ -165,22 +235,80 @@ async function modifyTask(taskElement) {
                     openReminderDialog(taskId, currentName);
                 });
             }
+
+            const trigger = document.getElementById('assignees-trigger');
+            const dropdown = document.getElementById('assignees-dropdown');
+            const selectedContainer = document.getElementById('assignees-selected');
+            const MAX_VISIBLE = 4;
+
+            function renderSelectedAvatars() {
+                const checked = [...dropdown.querySelectorAll('input:checked')];
+                selectedContainer.innerHTML = '';
+
+                const visible = checked.slice(0, MAX_VISIBLE);
+                const hidden = checked.slice(MAX_VISIBLE);
+
+                visible.forEach(cb => {
+                    const member = boardMembers.find(u => String(u.id) === cb.value);
+                    if (!member) return;
+                    const img = document.createElement('img');
+                    img.src = member.avatar_url || '/img/default-avatar.png';
+                    img.className = 'assignee-avatar-bubble';
+                    img.title = member.name;
+                    selectedContainer.appendChild(img);
+                });
+
+                if (hidden.length > 0) {
+                    const more = document.createElement('div');
+                    more.className = 'assignee-avatar-more';
+                    more.title = hidden.map(cb => boardMembers.find(u => String(u.id) === cb.value)?.name).join(', ');
+                    more.textContent = `+${hidden.length}`;
+                    selectedContainer.appendChild(more);
+                }
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+
+            dropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                renderSelectedAvatars();
+            });
+
+            document.addEventListener('click', () => dropdown.classList.add('hidden'));
+
+            renderSelectedAvatars();
         },
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
             const name = document.getElementById('name').value.trim();
+            const dateVal = document.getElementById('date').value;
+            const deadlineVal = document.getElementById('deadline').value;
+
+            const toLocalISO = (localStr) => {
+                if (!localStr) return null;
+                return localStr + ':00';
+            };
+
             if (!name) {
                 Swal.showValidationMessage('El nombre no puede estar vacío');
                 return false;
             }
+
+            const assigneeIds = [...document.querySelectorAll('#assignees-dropdown input:checked')]
+                .map(cb => parseInt(cb.value));
+
             return {
                 name,
                 description: document.getElementById('description').value.trim() || null,
-                date: document.getElementById('date').value || null,
-                deadline: document.getElementById('deadline').value || null,
+                date: toLocalISO(dateVal),
+                deadline: toLocalISO(deadlineVal),
                 labels: currentLabels,
+                assignee_ids: assigneeIds,
             };
         }
     }).then((result) => {
@@ -200,10 +328,16 @@ async function saveSwalTask(taskElement, newData, previousData) {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newData)
         });
-
         if (!response.ok) throw new Error("Error al guardar");
 
+        await fetch(`/api/tasks/${taskId}/assignees`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_ids: newData.assignee_ids || []})
+        });
+
         paragraph.textContent = newData.name;
+        document.dispatchEvent(new CustomEvent('taskUpdated'));
 
         undoManager.add({
             undo: async () => {
@@ -220,6 +354,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
                 });
                 if (!res.ok) throw new Error("Error al deshacer");
                 paragraph.textContent = previousData.name;
+                document.dispatchEvent(new CustomEvent('taskUpdated'));
                 hideUndoPopup();
             },
             redo: async () => {
@@ -230,6 +365,7 @@ async function saveSwalTask(taskElement, newData, previousData) {
                 });
                 if (!res.ok) throw new Error("Error al rehacer");
                 paragraph.textContent = newData.name;
+                document.dispatchEvent(new CustomEvent('taskUpdated'));
                 showUndoPopup();
             }
         });
@@ -268,6 +404,12 @@ document.addEventListener("click", (e) => {
         const task = e.target.closest(".task");
         modifyTask(task);
     }
+});
+
+document.addEventListener('openTaskEdit', (e) => {
+    const task = e.detail?.task;
+    if (!task) return;
+    modifyTask(null, task);
 });
 
 document.addEventListener("keydown", (e) => {

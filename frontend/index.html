@@ -6,15 +6,18 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--link rel="icon" type="image/png" href=""-->
+    <link rel="icon" type="image/png" href="img/favicon.ico"/>
     <title>Jikan - Inicio</title>
     <script src="/node_modules/undo-manager/lib/undomanager.js"></script>
     <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="/node_modules/flatpickr/dist/flatpickr.min.js"></script>
     <script src="./js/undoManager.js"></script>
     <script src="./js/templateLoader.js"></script>
     <script src="./js/calendar.js"></script>
     <script type="module" src="./js/deleteTask.js"></script>
     <script src="./js/add_task.js"></script>
+    <script src="./js/streak.js"></script>
+    <script defer src="./js/shop.js"></script>
     <script type="module" src="./js/modifyTask.js"></script>
     <script type="module" src="./js/add_column.js"></script>
     <script type="module" src="./js/delete_column.js"></script>
@@ -24,9 +27,11 @@
     <script type="module" src="./js/createBoard.js"></script>
     <script type="module" src="./js/assideButtonsActions.js"></script>
     <script type="module" src="./js/sessionChecker.js"></script>
+    <script type="module" src="./js/share_board.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="/node_modules/sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/node_modules/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
@@ -61,10 +66,17 @@
         <header class="main-header">
             <h1 class="board-name" id="board-title"></h1>
             <div class="header-buttons">
+                <div class="streak-badge">
+                    <i class="fas fa-fire-flame-simple"></i>
+                    <span>0</span>
+                    <div><p> 0 J </p></div>
+                </div>
+                <button class="shop-button" onclick="openShop()">
+                    <i class="fas fa-store"></i>
+                </button>
                 <button class="notifications-button">
                     <i class="fas fa-bell"></i>
                 </button>
-
                 <button class="share-button">
                     <i class="fas fa-share-alt"></i>
                 </button>

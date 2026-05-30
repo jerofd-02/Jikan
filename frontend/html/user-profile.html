@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script type="module" src="../js/verifyTheme.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="../img/favicon.ico"/>
     <script src="../js/sectionsNav.js" defer></script>
     <script src="../js/togglePassword.js" defer></script>
+    <script src="../js/themeSelector.js"></script>
+    <script src="../js/userProfile.js"></script>
+    <script src="../js/inventory.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="../js/recommendations.js"></script>
 </head>
 <body class="user-profile">
 <aside>
@@ -30,21 +37,36 @@
 </aside>
 <main>
     <section class="section active" id="section-account-info">
-        <div class="avatar-wrapper"></div>
-        <form action="">
-            <label for="username">Cambiar nombre de usuario:</label>
-            <div class="inputandbutton">
-                <input type="text" id="username" name="username" placeholder="Nombre">
-                <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+        <div class="config-wrapper">
+            <div class="contenedor-imagen">
+                <div class="avatar-wrapper">
+                    <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+                </div>
+                <div class="boton-superpuesto"><i class="far fa-pen-to-square"></i></div>
             </div>
-        </form>
-        <form action="">
-            <label for="email">Cambiar correo electrónico:</label>
-            <div class="inputandbutton">
-                <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
-                <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+            <div class="form-wrapper">
+                <form class="info-form" action="">
+                    <label for="username">Cambiar nombre de usuario:</label>
+                    <div class="inputandbutton">
+                        <input type="text" id="username" name="username" placeholder="Nombre">
+                        <button class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+                    </div>
+                </form>
+                <form class="info-form" action="">
+                    <label for="email">Cambiar correo electrónico:</label>
+                    <div class="inputandbutton">
+                        <input type="email" id="email" name="email" placeholder="correo@ejemplo.com">
+                        <button  class="input-btn" type="submit"><i class="far fa-pen-to-square"></i></button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+
+        <div class="inventory">
+            <h2>Inventario</h2>
+            <div class="inventory-grid" ></div>
+        </div>
+
     </section>
     <section class="section" id="section-security">
         <form action="">
@@ -127,7 +149,6 @@
 
 </body>
 
-<script src="../js/themeSelector.js"></script>
 <script src="../js/logout.js"></script>
 <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 <script src="../js/deleteAccount.js"></script>
